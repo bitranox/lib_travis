@@ -46,7 +46,7 @@ lib_travis
 
 small utils for travis:
  - print colored banners
- - wrap commands into run/success/error banners
+ - wrap commands into run/success/error banners, with automatic retry
  - resolve the branch to test, based on the travis environment variables
 
 ----
@@ -179,6 +179,122 @@ Usage
 
     import the module and check the code - its easy and documented there, including doctest examples.
     in case of any questions the usage section might be expanded at a later time
+
+.. code-block:: python
+
+    def get_branch() -> str:
+        """
+        Return the branch to work on
+
+
+        Parameter
+        ---------
+        TRAVIS_BRANCH
+            from environment
+        TRAVIS_PULL_REQUEST_BRANCH
+            from environment
+        TRAVIS_TAG
+            from environment
+
+        Result
+        ---------
+        the branch
+
+
+        Exceptions
+        ------------
+        none
+
+
+        ============  =============  ==========================  ==========  =======================================================
+        Build         TRAVIS_BRANCH  TRAVIS_PULL_REQUEST_BRANCH  TRAVIS_TAG  Notice
+        ============  =============  ==========================  ==========  =======================================================
+        Custom Build  <branch>       ---                         ---         return <branch> from TRAVIS_BRANCH
+        Push          <branch>       ---                         ---         return <branch> from TRAVIS_BRANCH
+        Pull Request  <master>       <branch>                    ---         return <branch> from TRAVIS_PULL_REQUEST_BRANCH
+        Tagged        <tag>          ---                         <tag>       return 'master'
+        ============  =============  ==========================  ==========  =======================================================
+
+        TRAVIS_BRANCH:
+            for push builds, or builds not triggered by a pull request, this is the name of the branch.
+            for builds triggered by a pull request this is the name of the branch targeted by the pull request.
+            for builds triggered by a tag, this is the same as the name of the tag (TRAVIS_TAG).
+            Note that for tags, git does not store the branch from which a commit was tagged. (so we use always master in that case)
+
+        TRAVIS_PULL_REQUEST_BRANCH:
+            if the current job is a pull request, the name of the branch from which the PR originated.
+            if the current job is a push build, this variable is empty ("").
+
+        TRAVIS_TAG:
+            If the current build is for a git tag, this variable is set to the tag’s name, otherwise it is empty ("").
+
+
+        Examples
+        --------
+
+        >>> # Setup
+        >>> save_TRAVIS_TAG = os.environ.pop('TRAVIS_TAG', None)
+        >>> save_TRAVIS_PULL_REQUEST_BRANCH = os.environ.pop('TRAVIS_PULL_REQUEST_BRANCH', None)
+        >>> save_TRAVIS_BRANCH = os.environ.pop('TRAVIS_BRANCH', None)
+
+        >>> # Test Tagged Commit
+        >>> os.environ['TRAVIS_TAG'] = 'test_tag'
+        >>> assert get_branch() == 'master'
+        >>> discard = os.environ.pop('TRAVIS_TAG', None)
+
+        >>> # Test Pull request
+        >>> os.environ['TRAVIS_PULL_REQUEST_BRANCH'] = 'test_pr'
+        >>> assert get_branch() == 'test_pr'
+        >>> discard = os.environ.pop('TRAVIS_PULL_REQUEST_BRANCH', None)
+
+        >>> # Test Push or Custom Build
+        >>> os.environ['TRAVIS_BRANCH'] = 'test_branch'
+        >>> assert get_branch() == 'test_branch'
+        >>> discard = os.environ.pop('TRAVIS_BRANCH', None)
+
+        >>> # Teardown
+        >>> if save_TRAVIS_TAG is not None: os.environ['TRAVIS_BRANCH'] = save_TRAVIS_TAG
+        >>> if save_TRAVIS_PULL_REQUEST_BRANCH is not None: os.environ['TRAVIS_PULL_REQUEST_BRANCH'] = save_TRAVIS_PULL_REQUEST_BRANCH
+        >>> if save_TRAVIS_BRANCH is not None: os.environ['TRAVIS_BRANCH'] = save_TRAVIS_BRANCH
+
+        """
+
+.. code-block:: python
+
+    def run_command(commands: List[str], retry: int = 3, sleep: int = 30) -> None:
+        """
+        runs and retries a command and wraps it in "success" or "error" banners
+
+
+        Parameter
+        ---------
+        retry
+            retry the command n times, default = 3
+        sleep
+            sleep for n seconds between the commands, default = 30
+
+
+        Result
+        ---------
+        none
+
+
+        Exceptions
+        ------------
+        none
+
+
+        Examples
+        ------------
+
+        >>> run_command(['unknown', 'command'], sleep=0)
+        Traceback (most recent call last):
+            ...
+        SystemExit: ...
+
+        >>> run_command(['echo', 'test'])
+
+        """
 
 Usage from Commandline
 ------------------------
