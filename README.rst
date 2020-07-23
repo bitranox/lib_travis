@@ -1,4 +1,4 @@
-Version 0.1.2 as of 2020-07-23, see changelog_
+Version 0.1.3 as of 2020-07-23, see changelog_
 
 =======================================================
 
@@ -287,12 +287,12 @@ Usage
         Examples
         ------------
 
-        >>> run_command(['unknown', 'command'], sleep=0)
+        >>> run_command('test', ['unknown', 'command'], sleep=0)
         Traceback (most recent call last):
             ...
         SystemExit: ...
 
-        >>> run_command(['echo', 'test'])
+        >>> run_command('test', ['echo', 'test'])
 
         """
 
@@ -350,6 +350,11 @@ Changelog
 - new MAJOR version for incompatible API changes,
 - new MINOR version for added functionality in a backwards compatible manner
 - new PATCH version for backwards compatible bug fixes
+
+0.1.3
+-------
+2020-07-23: patch release
+    - correct doctests
 
 0.1.2
 -------
