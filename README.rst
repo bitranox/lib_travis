@@ -1,4 +1,4 @@
-Version 0.1.0 as of 2020-07-23, see changelog_
+Version 0.1.1a as of 2020-07-23, see changelog_
 
 =======================================================
 
@@ -228,10 +228,8 @@ Changelog
 - new MINOR version for added functionality in a backwards compatible manner
 - new PATCH version for backwards compatible bug fixes
 
-0.0.1
------
-YYYY-MM-DD: <some release name>
-    - change1
-    - change2
-    - ...
+0.1.1a
+-------
+2020-07-23: initial release
+    - setup
 
