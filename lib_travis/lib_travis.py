@@ -38,12 +38,12 @@ def run_command(description: str, commands: List[str], retry: int = 3, sleep: in
     Examples
     ------------
 
-    >>> run_command(['unknown', 'command'], sleep=0)
+    >>> run_command('test', ['unknown', 'command'], sleep=0)
     Traceback (most recent call last):
         ...
     SystemExit: ...
 
-    >>> run_command(['echo', 'test'])
+    >>> run_command('test', ['echo', 'test'])
 
     """
     # run_command}}}
