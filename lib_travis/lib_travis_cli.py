@@ -7,7 +7,6 @@ import click
 
 # CONSTANTS
 CLICK_CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
-CLICK_CONTEXT_SETTINGS_RUN = dict(help_option_names=['-h', '--help'], ignore_unknown_options=True)
 
 try:
     from . import __init__conf__
@@ -52,12 +51,14 @@ def cli_get_branch() -> None:
     print(response)
 
 
-@cli_main.command('run', context_settings=CLICK_CONTEXT_SETTINGS_RUN)
+@cli_main.command('run', context_settings=CLICK_CONTEXT_SETTINGS)
+@click.option('-r', '--retry', type=int, default=3, help='retry in case of failure, default=3')
+@click.option('-s', '--sleep', type=int, default=30, help='seconds to sleep on repeat, default=30')
 @click.argument('description')
-@click.argument('commands', nargs=-1)
-def cli_run(description: str, commands: List[str]) -> None:
+@click.argument('command')
+def cli_run(description: str, command: str, retry: int, sleep: int) -> None:
     """ run commands and wrap them in run/success/error banners """
-    lib_travis.run_command(description, commands)
+    lib_travis.run_command(description, command, retry=retry, sleep=sleep)
 
 
 # entry point if main

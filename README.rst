@@ -1,4 +1,4 @@
-Version 0.1.4a0 as of 2020-07-23, see changelog_
+Version 0.2.0 as of 2020-07-24, see changelog_
 
 =======================================================
 
@@ -259,7 +259,7 @@ Usage
 
 .. code-block:: python
 
-    def run_command(description: str, commands: List[str], retry: int = 3, sleep: int = 30) -> None:
+    def run_command(description: str, command: str, retry: int = 3, sleep: int = 30) -> None:
         """
         runs and retries a command and wraps it in "success" or "error" banners
 
@@ -268,6 +268,8 @@ Usage
         ---------
         description
             description of the action, shown in the banner
+        command
+            the command to launch
         retry
             retry the command n times, default = 3
         sleep
@@ -287,12 +289,12 @@ Usage
         Examples
         ------------
 
-        >>> run_command('test', ['unknown', 'command'], sleep=0)
+        >>> run_command('test', "unknown command", sleep=0)
         Traceback (most recent call last):
             ...
         SystemExit: ...
 
-        >>> run_command('test', ['echo', 'test'])
+        >>> run_command('test', "echo test")
 
         """
 
@@ -351,10 +353,11 @@ Changelog
 - new MINOR version for added functionality in a backwards compatible manner
 - new PATCH version for backwards compatible bug fixes
 
-0.1.4a0
+0.2.0
 -------
-2020-07-23: development
-
+2020-07-23: feature release
+    - change arguments
+    - add options for retry and sleep on run command
 
 0.1.3
 -------

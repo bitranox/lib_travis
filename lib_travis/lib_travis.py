@@ -10,7 +10,7 @@ import lib_log_utils
 
 
 # run_command{{{
-def run_command(description: str, commands: List[str], retry: int = 3, sleep: int = 30) -> None:
+def run_command(description: str, command: str, retry: int = 3, sleep: int = 30) -> None:
     """
     runs and retries a command and wraps it in "success" or "error" banners
 
@@ -19,6 +19,8 @@ def run_command(description: str, commands: List[str], retry: int = 3, sleep: in
     ---------
     description
         description of the action, shown in the banner
+    command
+        the command to launch
     retry
         retry the command n times, default = 3
     sleep
@@ -38,19 +40,17 @@ def run_command(description: str, commands: List[str], retry: int = 3, sleep: in
     Examples
     ------------
 
-    >>> run_command('test', ['unknown', 'command'], sleep=0)
+    >>> run_command('test', "unknown command", sleep=0)
     Traceback (most recent call last):
         ...
     SystemExit: ...
 
-    >>> run_command('test', ['echo', 'test'])
+    >>> run_command('test', "echo test")
 
     """
     # run_command}}}
 
     lib_log_utils.setup_handler()
-    commands = quote_commands(commands)
-    command = ' '.join(commands)
     lib_log_utils.banner_debug("{description}\n{command}".format(description=description, command=command))
     tries = retry
     while True:
@@ -71,36 +71,6 @@ def run_command(description: str, commands: List[str], retry: int = 3, sleep: in
                     if exc.returncode is not None:
                         sys.exit(exc.returncode)
                 sys.exit(1)     # pragma: no cover
-
-
-def quote_commands(commands: List[str]) -> List[str]:
-    """
-    Quotes the commands if there is a blank.
-    """
-    commands = [quote_command(command) for command in commands]
-    return commands
-
-
-def quote_command(command: str) -> str:
-    """
-    Quotes the command if there is a blank.
-
-    >>> quote_command('test')
-    'test'
-    >>> quote_command('test test')
-    '"test test"'
-    >>> quote_command('test "test"')
-    '"test \\\\"test\\\\""'
-    >>> quote_command(r'test \\"test')
-    '"test \\\\"test"'
-
-    """
-    if ' ' in command:
-        # if it was already quoted before
-        if '\\"' not in command:
-            command = command.replace('"', '\\"')
-        command = ''.join(['"', command, '"'])
-    return command
 
 
 # get_branch{{{
