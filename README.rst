@@ -1,4 +1,4 @@
-Version 0.2.1a0 as of 2020-07-24, see changelog_
+Version 0.2.1 as of 2020-07-24, see changelog_
 
 =======================================================
 
@@ -366,10 +366,10 @@ Changelog
 - new MINOR version for added functionality in a backwards compatible manner
 - new PATCH version for backwards compatible bug fixes
 
-0.2.1a0
+0.2.1
 -------
-2020-07-23: development
-
+2020-07-23: patch release
+    - flush streams on exit
 
 0.2.0
 -------
