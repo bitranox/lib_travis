@@ -5,6 +5,12 @@ Changelog
 - new MINOR version for added functionality in a backwards compatible manner
 - new PATCH version for backwards compatible bug fixes
 
+0.1.3a0
+-------
+2020-07-23: development
+    -
+
+
 0.1.2
 -------
 2020-07-23: patch release
