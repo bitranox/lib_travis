@@ -1,4 +1,4 @@
-Version 0.1.1 as of 2020-07-23, see changelog_
+Version 0.1.2 as of 2020-07-23, see changelog_
 
 =======================================================
 
@@ -247,6 +247,9 @@ Usage
         >>> assert get_branch() == 'test_branch'
         >>> discard = os.environ.pop('TRAVIS_BRANCH', None)
 
+        >>> # Test unknown
+        >>> assert get_branch() == 'master'
+
         >>> # Teardown
         >>> if save_TRAVIS_TAG is not None: os.environ['TRAVIS_BRANCH'] = save_TRAVIS_TAG
         >>> if save_TRAVIS_PULL_REQUEST_BRANCH is not None: os.environ['TRAVIS_PULL_REQUEST_BRANCH'] = save_TRAVIS_PULL_REQUEST_BRANCH
@@ -256,13 +259,15 @@ Usage
 
 .. code-block:: python
 
-    def run_command(commands: List[str], retry: int = 3, sleep: int = 30) -> None:
+    def run_command(description: str, commands: List[str], retry: int = 3, sleep: int = 30) -> None:
         """
         runs and retries a command and wraps it in "success" or "error" banners
 
 
         Parameter
         ---------
+        description
+            description of the action, shown in the banner
         retry
             retry the command n times, default = 3
         sleep
@@ -345,6 +350,12 @@ Changelog
 - new MAJOR version for incompatible API changes,
 - new MINOR version for added functionality in a backwards compatible manner
 - new PATCH version for backwards compatible bug fixes
+
+0.1.2
+-------
+2020-07-23: patch release
+    - ignore unused options on cli run command
+    - added description argument to run command
 
 0.1.1
 -------

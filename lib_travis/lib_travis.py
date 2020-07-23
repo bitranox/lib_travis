@@ -10,13 +10,15 @@ import lib_log_utils
 
 
 # run_command{{{
-def run_command(commands: List[str], retry: int = 3, sleep: int = 30) -> None:
+def run_command(description: str, commands: List[str], retry: int = 3, sleep: int = 30) -> None:
     """
     runs and retries a command and wraps it in "success" or "error" banners
 
 
     Parameter
     ---------
+    description
+        description of the action, shown in the banner
     retry
         retry the command n times, default = 3
     sleep
@@ -49,21 +51,22 @@ def run_command(commands: List[str], retry: int = 3, sleep: int = 30) -> None:
     lib_log_utils.setup_handler()
     commands = quote_commands(commands)
     command = ' '.join(commands)
-    lib_log_utils.banner_debug("run: '{}'".format(command))
+    lib_log_utils.banner_debug("{description}\n{command}".format(description=description, command=command))
     tries = retry
     while True:
         try:
             subprocess.run(command, shell=True, check=True)
-            lib_log_utils.banner_success("success: '{}'".format(command))
+            lib_log_utils.banner_success("success : {description}\n{command}".format(description=description, command=command))
             break
         except subprocess.CalledProcessError as exc:
             tries = tries - 1
             # try 3 times, because sometimes connection or other errors on travis
             if tries:
-                lib_log_utils.banner_notice("retry in {} seconds '{}'\n{}".format(sleep, command, exc))
+                lib_log_utils.banner_notice("retry in {sleep} seconds: {description}\n{command}".format(
+                    sleep=sleep, description=description, command=command))
                 time.sleep(sleep)
             else:
-                lib_log_utils.banner_error("error: '{}'\n{}".format(command, exc))
+                lib_log_utils.banner_error("error: {description}\n{command}\n{exc}".format(description=description, command=command, exc=exc))
                 if hasattr(exc, 'returncode'):
                     if exc.returncode is not None:
                         sys.exit(exc.returncode)
@@ -170,6 +173,9 @@ def get_branch() -> str:
     >>> os.environ['TRAVIS_BRANCH'] = 'test_branch'
     >>> assert get_branch() == 'test_branch'
     >>> discard = os.environ.pop('TRAVIS_BRANCH', None)
+
+    >>> # Test unknown
+    >>> assert get_branch() == 'master'
 
     >>> # Teardown
     >>> if save_TRAVIS_TAG is not None: os.environ['TRAVIS_BRANCH'] = save_TRAVIS_TAG

@@ -7,6 +7,7 @@ import click
 
 # CONSTANTS
 CLICK_CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
+CLICK_CONTEXT_SETTINGS_RUN = dict(help_option_names=['-h', '--help'], ignore_unknown_options=True)
 
 try:
     from . import __init__conf__
@@ -51,11 +52,12 @@ def cli_get_branch() -> None:
     print(response)
 
 
-@cli_main.command('run', context_settings=CLICK_CONTEXT_SETTINGS)
+@cli_main.command('run', context_settings=CLICK_CONTEXT_SETTINGS_RUN)
+@click.argument('description')
 @click.argument('commands', nargs=-1)
-def cli_run(commands: List[str]) -> None:
+def cli_run(description: str, commands: List[str]) -> None:
     """ run commands and wrap them in run/success/error banners """
-    lib_travis.run_command(commands)
+    lib_travis.run_command(description, commands)
 
 
 # entry point if main
