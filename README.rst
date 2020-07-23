@@ -1,4 +1,4 @@
-Version 0.1.1a as of 2020-07-23, see changelog_
+Version 0.1.1 as of 2020-07-23, see changelog_
 
 =======================================================
 
@@ -44,7 +44,10 @@ lib_travis
 .. |snyk| image:: https://img.shields.io/snyk/vulnerabilities/github/bitranox/lib_travis
    :target: https://snyk.io/test/github/bitranox/lib_travis
 
-put your description of the project under .docs/description.rst
+small utils for travis:
+ - print colored banners
+ - wrap commands into run/success/error banners
+ - resolve the branch to test, based on the travis environment variables
 
 ----
 
@@ -192,7 +195,9 @@ Usage from Commandline
      -h, --help                    Show this message and exit.
 
    Commands:
-     info  get program informations
+     get_branch  get the branch to work on
+     info        get program informations
+     run         run commands and wrap them in run/success/error banners
 
 Requirements
 ------------
@@ -202,6 +207,8 @@ following modules will be automatically installed :
 
     ## Project Requirements
     click
+    lib_log_utils @ git+https://github.com/bitranox/lib_log_utils.git
+    rst_include @ git+https://github.com/bitranox/rst_include.git
 
 Acknowledgements
 ----------------
@@ -228,8 +235,11 @@ Changelog
 - new MINOR version for added functionality in a backwards compatible manner
 - new PATCH version for backwards compatible bug fixes
 
-0.1.1a
+0.1.1
 -------
 2020-07-23: initial release
     - setup
+    - log utils
+    - run wrapper
+    - get the branch to work on
 

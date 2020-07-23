@@ -28,3 +28,6 @@ def test_cli_commands() -> None:
         assert call_cli_command('-h')
         assert call_cli_command('info')
         assert call_cli_command('--traceback info')
+        assert call_cli_command('get_branch')
+        assert call_cli_command('run echo test')
+        assert not call_cli_command('run unknown command')

@@ -10,4 +10,6 @@
      -h, --help                    Show this message and exit.
 
    Commands:
-     info  get program informations
+     get_branch  get the branch to work on
+     info        get program informations
+     run         run commands and wrap them in run/success/error banners

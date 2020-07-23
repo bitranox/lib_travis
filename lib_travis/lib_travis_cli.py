@@ -1,6 +1,6 @@
 # STDLIB
 import sys
-from typing import Optional
+from typing import List, Optional
 
 # EXT
 import click
@@ -42,6 +42,20 @@ def cli_main(traceback: Optional[bool] = None) -> None:
 def cli_info() -> None:
     """ get program informations """
     info()
+
+
+@cli_main.command('get_branch', context_settings=CLICK_CONTEXT_SETTINGS)
+def cli_get_branch() -> None:
+    """ get the branch to work on """
+    response = lib_travis.get_branch()
+    print(response)
+
+
+@cli_main.command('run', context_settings=CLICK_CONTEXT_SETTINGS)
+@click.argument('commands', nargs=-1)
+def cli_run(commands: List[str]) -> None:
+    """ run commands and wrap them in run/success/error banners """
+    lib_travis.run_command(commands)
 
 
 # entry point if main
