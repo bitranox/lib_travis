@@ -5,10 +5,11 @@ Changelog
 - new MINOR version for added functionality in a backwards compatible manner
 - new PATCH version for backwards compatible bug fixes
 
-0.1.2a0
+0.1.2
 -------
-2020-07-23: development
-
+2020-07-23: patch release
+    - ignore unused options on cli run command
+    - added description argument to run command
 
 0.1.1
 -------
