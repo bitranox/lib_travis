@@ -5,6 +5,12 @@ Changelog
 - new MINOR version for added functionality in a backwards compatible manner
 - new PATCH version for backwards compatible bug fixes
 
+0.2.0
+-------
+2020-07-23: feature release
+    - change arguments
+    - add options for retry and sleep on run command
+
 0.1.3
 -------
 2020-07-23: patch release

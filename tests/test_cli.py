@@ -29,5 +29,5 @@ def test_cli_commands() -> None:
         assert call_cli_command('info')
         assert call_cli_command('--traceback info')
         assert call_cli_command('get_branch')
-        assert call_cli_command('run test echo test')
-        assert not call_cli_command('run description unknown command')
+        assert call_cli_command('run test "echo test"')
+        assert not call_cli_command('run description "unknown command" --retry=3 --sleep=0')
