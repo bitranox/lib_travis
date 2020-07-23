@@ -1,4 +1,4 @@
-Version 0.2.0 as of 2020-07-24, see changelog_
+Version 0.2.1 as of 2020-07-24, see changelog_
 
 =======================================================
 
@@ -174,6 +174,19 @@ Installation and Upgrade
 
 Usage
 -----------
+
+usage commandline:
+
+.. code-block:: bash
+
+    # to be used in travis.yml
+    # run a command, wrap it in colored banners, retry 3 times, sleep 30 seconds when retry
+    $> lib_travis run "description" "command -some -options" --retry=3 --sleep=30
+
+    # get the branch to work on from travis environment variables
+    $> BRANCH=$(lib_travis get_branch)
+
+python methods:
 
 .. code-block:: python
 
@@ -352,6 +365,11 @@ Changelog
 - new MAJOR version for incompatible API changes,
 - new MINOR version for added functionality in a backwards compatible manner
 - new PATCH version for backwards compatible bug fixes
+
+0.2.1
+-------
+2020-07-23: patch release
+    - flush streams on exit
 
 0.2.0
 -------
