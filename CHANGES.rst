@@ -5,10 +5,10 @@ Changelog
 - new MINOR version for added functionality in a backwards compatible manner
 - new PATCH version for backwards compatible bug fixes
 
-0.3.1a0
+0.3.1
 -------
-2020-07-23: development
-
+2020-07-23: feature release
+    - add splitting of commands
 
 0.3.0
 -------

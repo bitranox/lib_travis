@@ -5,8 +5,12 @@ usage commandline:
     # run a command passed as a list of strings
     # You need to pass '--' after the options, then all following strings are considered as arguments,
     # otherwise options would cause an error
-    # stat means, all options need to be stated before the '--' marker
+    # that means, all options need to be stated before the '--' marker
+    # commands are splitted again with shlex - in case there are multiple commands in an argument
     $> lib_travis run --retry=3 --sleep=30 -- "description" command -some -options
+
+    # in that case "echo test" will be splitted into ['echo', 'test']
+    $> lib_travis run --retry=3 --sleep=30 -- "description" "echo test"
 
     # to be used in travis.yml
     # run a command passed as string, wrap it in colored banners, retry 3 times, sleep 30 seconds when retry
