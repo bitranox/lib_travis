@@ -52,7 +52,7 @@ def cli_get_branch() -> None:
     print(response)
 
 
-@cli_main.command('run_s', context_settings=CLICK_CONTEXT_SETTINGS)
+@cli_main.command('run', context_settings=CLICK_CONTEXT_SETTINGS)
 @click.option('-r', '--retry', type=int, default=3, help='retry in case of failure, default=3')
 @click.option('-s', '--sleep', type=int, default=30, help='seconds to sleep on repeat, default=30')
 @click.option('--quote/--plain', default=False, help='use shlex auto quote')
@@ -63,7 +63,7 @@ def cli_run(description: str, command: str, retry: int, sleep: int, quote: bool)
     lib_travis.run_command(description, command, retry=retry, sleep=sleep, quote=quote)
 
 
-@cli_main.command('run', context_settings=CLICK_CONTEXT_SETTINGS)
+@cli_main.command('run_x', context_settings=CLICK_CONTEXT_SETTINGS)
 @click.option('-r', '--retry', type=int, default=3, help='retry in case of failure, default=3')
 @click.option('-s', '--sleep', type=int, default=30, help='seconds to sleep on repeat, default=30')
 @click.option('--split/--no-split', default=True, help='split the arguments with shlex, default=True')

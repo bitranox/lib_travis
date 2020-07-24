@@ -1,22 +1,33 @@
 usage commandline:
 
+
+- run a command passed as string
+
 .. code-block:: bash
 
-    # run a command passed as a list of strings
+    # to be used in travis.yml
+    # run a command passed as string, wrap it in colored banners, retry 3 times, sleep 30 seconds when retry
+    $> lib_travis run "description" "command -some -options" --retry=3 --sleep=30
+
+
+- run a command passed as a list of arguments
+
+.. code-block:: bash
+
     # You need to pass '--' after the options, then all following strings are considered as arguments,
     # otherwise options would cause an error
     # that means, all options need to be stated before the '--' marker
     # commands are splitted again with shlex - in case there are multiple commands in an argument
-    $> lib_travis run --retry=3 --sleep=30 -- "description" command -some -options
+    $> lib_travis run_x --retry=3 --sleep=30 -- "description" command -some -options
 
     # in that case "echo test" will be splitted into ['echo', 'test']
     $> lib_travis run --retry=3 --sleep=30 -- "description" "echo test"
 
-    # to be used in travis.yml
-    # run a command passed as string, wrap it in colored banners, retry 3 times, sleep 30 seconds when retry
-    $> lib_travis run_s "description" "command -some -options" --retry=3 --sleep=30
 
-    # get the branch to work on from travis environment variables
+- get the branch to work on from travis environment variables
+
+.. code-block:: bash
+
     $> BRANCH=$(lib_travis get_branch)
 
 python methods:

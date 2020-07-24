@@ -1,4 +1,4 @@
-Version 0.3.1 as of 2020-07-24, see changelog_
+Version 0.4.0 as of 2020-07-25, see changelog_
 
 =======================================================
 
@@ -177,23 +177,34 @@ Usage
 
 usage commandline:
 
+
+- run a command passed as string
+
 .. code-block:: bash
 
-    # run a command passed as a list of strings
+    # to be used in travis.yml
+    # run a command passed as string, wrap it in colored banners, retry 3 times, sleep 30 seconds when retry
+    $> lib_travis run "description" "command -some -options" --retry=3 --sleep=30
+
+
+- run a command passed as a list of arguments
+
+.. code-block:: bash
+
     # You need to pass '--' after the options, then all following strings are considered as arguments,
     # otherwise options would cause an error
     # that means, all options need to be stated before the '--' marker
     # commands are splitted again with shlex - in case there are multiple commands in an argument
-    $> lib_travis run --retry=3 --sleep=30 -- "description" command -some -options
+    $> lib_travis run_x --retry=3 --sleep=30 -- "description" command -some -options
 
     # in that case "echo test" will be splitted into ['echo', 'test']
     $> lib_travis run --retry=3 --sleep=30 -- "description" "echo test"
 
-    # to be used in travis.yml
-    # run a command passed as string, wrap it in colored banners, retry 3 times, sleep 30 seconds when retry
-    $> lib_travis run_s "description" "command -some -options" --retry=3 --sleep=30
 
-    # get the branch to work on from travis environment variables
+- get the branch to work on from travis environment variables
+
+.. code-block:: bash
+
     $> BRANCH=$(lib_travis get_branch)
 
 python methods:
@@ -314,6 +325,7 @@ python methods:
         Examples
         ------------
 
+
         >>> run_command('test', "unknown command", sleep=0)
         Traceback (most recent call last):
             ...
@@ -358,6 +370,7 @@ python methods:
         Examples
         ------------
 
+
         >>> run_commands('test', ['unknown', 'command'], sleep=0)
         Traceback (most recent call last):
             ...
@@ -386,8 +399,8 @@ Usage from Commandline
    Commands:
      get_branch  get the branch to work on
      info        get program informations
-     run         run commands wrapped in run/success/error banners
-     run_s       run string command wrapped in run/success/error banners
+     run         run string command wrapped in run/success/error banners
+     run_x       run commands wrapped in run/success/error banners
 
 Requirements
 ------------
@@ -424,6 +437,11 @@ Changelog
 - new MAJOR version for incompatible API changes,
 - new MINOR version for added functionality in a backwards compatible manner
 - new PATCH version for backwards compatible bug fixes
+
+0.4.0
+-------
+2020-07-23: feature release
+    - rename commands
 
 0.3.1
 -------
