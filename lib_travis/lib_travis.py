@@ -1,5 +1,6 @@
 # STDLIB
 import os
+import shlex
 import subprocess
 import sys
 import time
@@ -10,9 +11,9 @@ import lib_log_utils
 
 
 # run_command{{{
-def run_command(description: str, command: str, retry: int = 3, sleep: int = 30) -> None:
+def run_command(description: str, command: str, retry: int = 3, sleep: int = 30, quote: bool = False) -> None:
     """
-    runs and retries a command and wraps it in "success" or "error" banners
+    runs and retries a command passed as string and wrap it in "success" or "error" banners
 
 
     Parameter
@@ -25,6 +26,8 @@ def run_command(description: str, command: str, retry: int = 3, sleep: int = 30)
         retry the command n times, default = 3
     sleep
         sleep for n seconds between the commands, default = 30
+    quote
+        use shlex.quote for automatic quoting of shell commands, default=False
 
 
     Result
@@ -49,6 +52,8 @@ def run_command(description: str, command: str, retry: int = 3, sleep: int = 30)
 
     """
     # run_command}}}
+    if quote:
+        command = shlex.quote(command)
 
     lib_log_utils.setup_handler()
     lib_log_utils.banner_debug("{description}\n{command}".format(description=description, command=command))
@@ -67,6 +72,71 @@ def run_command(description: str, command: str, retry: int = 3, sleep: int = 30)
                 time.sleep(sleep)
             else:
                 lib_log_utils.banner_error("error: {description}\n{command}\n{exc}".format(description=description, command=command, exc=exc))
+                if hasattr(exc, 'returncode'):
+                    if exc.returncode is not None:
+                        sys.exit(exc.returncode)
+                sys.exit(1)     # pragma: no cover
+
+
+# run_commands{{{
+def run_commands(description: str, commands: List[str], retry: int = 3, sleep: int = 30) -> None:
+    """
+    runs and retries a command passed as list of strings and wrap it in "success" or "error" banners
+
+
+    Parameter
+    ---------
+    description
+        description of the action, shown in the banner
+    commands
+        the commands to launch
+    retry
+        retry the command n times, default = 3
+    sleep
+        sleep for n seconds between the commands, default = 30
+
+
+    Result
+    ---------
+    none
+
+
+    Exceptions
+    ------------
+    none
+
+
+    Examples
+    ------------
+
+    >>> run_commands('test', ['unknown', 'command'], sleep=0)
+    Traceback (most recent call last):
+        ...
+    SystemExit: ...
+
+    >>> run_commands('test', ['echo', 'test'])
+
+    """
+    # run_commands}}}
+
+    str_command = ' '.join(commands)
+    lib_log_utils.setup_handler()
+    lib_log_utils.banner_debug("{description}\n{command}".format(description=description, command=str_command))
+    tries = retry
+    while True:
+        try:
+            subprocess.run(commands, shell=True, check=True)
+            lib_log_utils.banner_success("success : {description}\n{command}".format(description=description, command=str_command))
+            break
+        except subprocess.CalledProcessError as exc:
+            tries = tries - 1
+            # try 3 times, because sometimes connection or other errors on travis
+            if tries:
+                lib_log_utils.banner_notice("retry in {sleep} seconds: {description}\n{command}".format(
+                    sleep=sleep, description=description, command=str_command))
+                time.sleep(sleep)
+            else:
+                lib_log_utils.banner_error("error: {description}\n{command}\n{exc}".format(description=description, command=str_command, exc=exc))
                 if hasattr(exc, 'returncode'):
                     if exc.returncode is not None:
                         sys.exit(exc.returncode)
