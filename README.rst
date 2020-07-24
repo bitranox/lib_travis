@@ -1,4 +1,4 @@
-Version 0.2.1 as of 2020-07-24, see changelog_
+Version 0.3.0 as of 2020-07-24, see changelog_
 
 =======================================================
 
@@ -179,9 +179,15 @@ usage commandline:
 
 .. code-block:: bash
 
+    # run a command passed as a list of strings
+    # You need to pass '--' after the options, then all following strings are considered as arguments,
+    # otherwise options would cause an error
+    # stat means, all options need to be stated before the '--' marker
+    $> lib_travis run --retry=3 --sleep=30 -- "description" command -some -options
+
     # to be used in travis.yml
-    # run a command, wrap it in colored banners, retry 3 times, sleep 30 seconds when retry
-    $> lib_travis run "description" "command -some -options" --retry=3 --sleep=30
+    # run a command passed as string, wrap it in colored banners, retry 3 times, sleep 30 seconds when retry
+    $> lib_travis run_s "description" "command -some -options" --retry=3 --sleep=30
 
     # get the branch to work on from travis environment variables
     $> BRANCH=$(lib_travis get_branch)
@@ -272,9 +278,9 @@ python methods:
 
 .. code-block:: python
 
-    def run_command(description: str, command: str, retry: int = 3, sleep: int = 30) -> None:
+    def run_command(description: str, command: str, retry: int = 3, sleep: int = 30, quote: bool = False) -> None:
         """
-        runs and retries a command and wraps it in "success" or "error" banners
+        runs and retries a command passed as string and wrap it in "success" or "error" banners
 
 
         Parameter
@@ -287,6 +293,8 @@ python methods:
             retry the command n times, default = 3
         sleep
             sleep for n seconds between the commands, default = 30
+        quote
+            use shlex.quote for automatic quoting of shell commands, default=False
 
 
         Result
@@ -311,6 +319,47 @@ python methods:
 
         """
 
+.. code-block:: python
+
+    def run_commands(description: str, commands: List[str], retry: int = 3, sleep: int = 30) -> None:
+        """
+        runs and retries a command passed as list of strings and wrap it in "success" or "error" banners
+
+
+        Parameter
+        ---------
+        description
+            description of the action, shown in the banner
+        commands
+            the commands to launch
+        retry
+            retry the command n times, default = 3
+        sleep
+            sleep for n seconds between the commands, default = 30
+
+
+        Result
+        ---------
+        none
+
+
+        Exceptions
+        ------------
+        none
+
+
+        Examples
+        ------------
+
+        >>> run_commands('test', ['unknown', 'command'], sleep=0)
+        Traceback (most recent call last):
+            ...
+        SystemExit: ...
+
+        >>> run_commands('test', ['echo', 'test'])
+
+        """
+
 Usage from Commandline
 ------------------------
 
@@ -328,7 +377,8 @@ Usage from Commandline
    Commands:
      get_branch  get the branch to work on
      info        get program informations
-     run         run commands and wrap them in run/success/error banners
+     run         run commands wrapped in run/success/error banners
+     run_s       run string command wrapped in run/success/error banners
 
 Requirements
 ------------
@@ -365,6 +415,12 @@ Changelog
 - new MAJOR version for incompatible API changes,
 - new MINOR version for added functionality in a backwards compatible manner
 - new PATCH version for backwards compatible bug fixes
+
+0.3.0
+-------
+2020-07-23: feature release
+    - add second run method
+    - add automatic quoting for commands passed as string
 
 0.2.1
 -------

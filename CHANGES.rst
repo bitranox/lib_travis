@@ -5,6 +5,12 @@ Changelog
 - new MINOR version for added functionality in a backwards compatible manner
 - new PATCH version for backwards compatible bug fixes
 
+0.3.0
+-------
+2020-07-23: feature release
+    - add second run method
+    - add automatic quoting for commands passed as string
+
 0.2.1
 -------
 2020-07-23: patch release
