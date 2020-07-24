@@ -79,7 +79,7 @@ def run_command(description: str, command: str, retry: int = 3, sleep: int = 30,
 
 
 # run_commands{{{
-def run_commands(description: str, commands: List[str], retry: int = 3, sleep: int = 30) -> None:
+def run_commands(description: str, commands: List[str], retry: int = 3, sleep: int = 30, split: bool = True) -> None:
     """
     runs and retries a command passed as list of strings and wrap it in "success" or "error" banners
 
@@ -94,6 +94,9 @@ def run_commands(description: str, commands: List[str], retry: int = 3, sleep: i
         retry the command n times, default = 3
     sleep
         sleep for n seconds between the commands, default = 30
+    split
+        split the commands again with shlex - default = True
+        this we need because some commands passed are an array of commands themself
 
 
     Result
@@ -116,8 +119,17 @@ def run_commands(description: str, commands: List[str], retry: int = 3, sleep: i
 
     >>> run_commands('test', ['echo', 'test'])
 
+    >>> run_commands('test', ['echo test'])
+
     """
     # run_commands}}}
+
+    if split:
+        splitted_commands: List[str] = list()
+        for command in commands:
+            sp_commands = shlex.split(command)
+            splitted_commands = splitted_commands + sp_commands
+        commands = splitted_commands
 
     str_command = ' '.join(commands)
     lib_log_utils.setup_handler()

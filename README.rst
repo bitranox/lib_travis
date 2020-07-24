@@ -1,4 +1,4 @@
-Version 0.3.0 as of 2020-07-24, see changelog_
+Version 0.3.1 as of 2020-07-24, see changelog_
 
 =======================================================
 
@@ -182,8 +182,12 @@ usage commandline:
     # run a command passed as a list of strings
     # You need to pass '--' after the options, then all following strings are considered as arguments,
     # otherwise options would cause an error
-    # stat means, all options need to be stated before the '--' marker
+    # that means, all options need to be stated before the '--' marker
+    # commands are splitted again with shlex - in case there are multiple commands in an argument
     $> lib_travis run --retry=3 --sleep=30 -- "description" command -some -options
+
+    # in that case "echo test" will be splitted into ['echo', 'test']
+    $> lib_travis run --retry=3 --sleep=30 -- "description" "echo test"
 
     # to be used in travis.yml
     # run a command passed as string, wrap it in colored banners, retry 3 times, sleep 30 seconds when retry
@@ -321,7 +325,7 @@ python methods:
 
 .. code-block:: python
 
-    def run_commands(description: str, commands: List[str], retry: int = 3, sleep: int = 30) -> None:
+    def run_commands(description: str, commands: List[str], retry: int = 3, sleep: int = 30, split: bool = True) -> None:
         """
         runs and retries a command passed as list of strings and wrap it in "success" or "error" banners
 
@@ -336,6 +340,9 @@ python methods:
             retry the command n times, default = 3
         sleep
             sleep for n seconds between the commands, default = 30
+        split
+            split the commands again with shlex - default = True
+            this we need because some commands passed are an array of commands themself
 
 
         Result
@@ -357,6 +364,8 @@ python methods:
         SystemExit: ...
 
         >>> run_commands('test', ['echo', 'test'])
+
+        >>> run_commands('test', ['echo test'])
 
         """
 
@@ -415,6 +424,11 @@ Changelog
 - new MAJOR version for incompatible API changes,
 - new MINOR version for added functionality in a backwards compatible manner
 - new PATCH version for backwards compatible bug fixes
+
+0.3.1
+-------
+2020-07-23: feature release
+    - add splitting of commands
 
 0.3.0
 -------
