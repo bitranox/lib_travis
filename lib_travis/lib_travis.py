@@ -43,6 +43,7 @@ def run_command(description: str, command: str, retry: int = 3, sleep: int = 30,
     Examples
     ------------
 
+
     >>> run_command('test', "unknown command", sleep=0)
     Traceback (most recent call last):
         ...
@@ -111,6 +112,7 @@ def run_commands(description: str, commands: List[str], retry: int = 3, sleep: i
 
     Examples
     ------------
+
 
     >>> run_commands('test', ['unknown', 'command'], sleep=0)
     Traceback (most recent call last):
