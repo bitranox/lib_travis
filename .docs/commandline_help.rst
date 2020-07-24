@@ -12,5 +12,5 @@
    Commands:
      get_branch  get the branch to work on
      info        get program informations
-     run         run commands wrapped in run/success/error banners
-     run_s       run string command wrapped in run/success/error banners
+     run         run string command wrapped in run/success/error banners
+     run_x       run commands wrapped in run/success/error banners

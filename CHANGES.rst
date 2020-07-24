@@ -5,10 +5,10 @@ Changelog
 - new MINOR version for added functionality in a backwards compatible manner
 - new PATCH version for backwards compatible bug fixes
 
-0.3.2a0
+0.4.0
 -------
-2020-07-23: development
-    -
+2020-07-23: feature release
+    - rename commands
 
 0.3.1
 -------
