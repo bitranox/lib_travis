@@ -5,10 +5,10 @@ Changelog
 - new MINOR version for added functionality in a backwards compatible manner
 - new PATCH version for backwards compatible bug fixes
 
-0.4.3a0
+0.4.3
 -------
-2020-07-27: development
-
+2020-07-27: test
+    - test to pass @branch, because of troubles in travis windows build
 
 0.4.2
 -------
