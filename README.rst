@@ -1,4 +1,4 @@
-Version 0.4.3 as of 2020-07-28, see changelog_
+Version 0.4.3a0 as of 2020-07-28, see changelog_
 
 =======================================================
 
@@ -447,10 +447,10 @@ Changelog
 - new MINOR version for added functionality in a backwards compatible manner
 - new PATCH version for backwards compatible bug fixes
 
-0.4.3
+0.4.3a0
 -------
-2020-07-27: test
-    - test to pass @branch, because of troubles in travis windows build
+2020-07-27: development
+
 
 0.4.2
 -------
