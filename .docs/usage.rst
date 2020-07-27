@@ -14,14 +14,16 @@ usage commandline:
 
 .. code-block:: bash
 
-    # You need to pass '--' after the options, then all following strings are considered as arguments,
-    # otherwise options would cause an error
-    # that means, all options need to be stated before the '--' marker
+    # You need to pass '--' after the options for lib_travis run_x command,
+    # then all following strings are considered as arguments to run a command,
+    # and are not parsed as options for the run_x command itself.
+    # that means, all options need to be stated before the '--' marker.
     # commands are splitted again with shlex - in case there are multiple commands in an argument
     $> lib_travis run_x --retry=3 --sleep=30 -- "description" command -some -options
 
     # in that case "echo test" will be splitted into ['echo', 'test']
-    $> lib_travis run --retry=3 --sleep=30 -- "description" "echo test"
+    $> EXAMPLE="echo test"
+    $> lib_travis run_x --retry=3 --sleep=30 -- ${EXAMPLE}
 
 
 - get the branch to work on from travis environment variables

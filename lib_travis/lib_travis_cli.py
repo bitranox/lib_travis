@@ -5,19 +5,20 @@ from typing import List, Optional
 # EXT
 import click
 
+# OWN
+import cli_exit_tools
+
 # CONSTANTS
 CLICK_CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
 # CLICK_CONTEXT_SETTINGS_RUN = dict(help_option_names=['-h', '--help'], ignore_unknown_options=True)
 
 try:
     from . import __init__conf__
-    from . import cli_exit_tools
     from . import lib_travis
 except (ImportError, ModuleNotFoundError):  # pragma: no cover
     # imports for doctest
     import __init__conf__                   # type: ignore  # pragma: no cover
-    import cli_exit_tools                   # type: ignore  # pragma: no cover
-    import lib_travis      # type: ignore  # pragma: no cover
+    import lib_travis                       # type: ignore  # pragma: no cover
 
 
 def info() -> None:
@@ -56,22 +57,24 @@ def cli_get_branch() -> None:
 @click.option('-r', '--retry', type=int, default=3, help='retry in case of failure, default=3')
 @click.option('-s', '--sleep', type=int, default=30, help='seconds to sleep on repeat, default=30')
 @click.option('--quote/--plain', default=False, help='use shlex auto quote')
+@click.option('--banner/--no-banner', default=True, help='use Banners')
 @click.argument('description')
 @click.argument('command')
-def cli_run(description: str, command: str, retry: int, sleep: int, quote: bool) -> None:
+def cli_run(description: str, command: str, retry: int, sleep: int, quote: bool, banner: bool) -> None:
     """ run string command wrapped in run/success/error banners """
-    lib_travis.run_command(description, command, retry=retry, sleep=sleep, quote=quote)
+    lib_travis.run(description, command, retry=retry, sleep=sleep, quote=quote, banner=banner)
 
 
 @cli_main.command('run_x', context_settings=CLICK_CONTEXT_SETTINGS)
 @click.option('-r', '--retry', type=int, default=3, help='retry in case of failure, default=3')
 @click.option('-s', '--sleep', type=int, default=30, help='seconds to sleep on repeat, default=30')
 @click.option('--split/--no-split', default=True, help='split the arguments with shlex, default=True')
+@click.option('--banner/--no-banner', default=True, help='use Banners')
 @click.argument('description')
 @click.argument('commands', nargs=-1)
-def cli_run_commands(description: str, commands: List[str], retry: int, sleep: int, split: bool) -> None:
+def cli_run_commands(description: str, commands: List[str], retry: int, sleep: int, split: bool, banner: bool) -> None:
     """ run commands wrapped in run/success/error banners """
-    lib_travis.run_commands(description, commands, retry=retry, sleep=sleep, split=split)
+    lib_travis.run_x(description, commands, retry=retry, sleep=sleep, split=split, banner=banner)
 
 
 # entry point if main
