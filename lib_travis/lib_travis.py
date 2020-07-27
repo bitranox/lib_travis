@@ -64,25 +64,26 @@ def run(description: str, command: str, retry: int = 3, sleep: int = 30, quote: 
         command = shlex.quote(command)
 
     lib_log_utils.setup_handler()
-    lib_log_utils.banner_debug("Action: {description}\nCommand: {command}".format(description=description, command=command))
+    lib_log_utils.banner_success("Action: {description}\nCommand: {command}".format(description=description, command=command), banner=banner)
     tries = retry
     while True:
         try:
             subprocess.run(command, shell=True, check=True)
-            lib_log_utils.banner_success("Success: {description}".format(description=description))
+            lib_log_utils.banner_success("Success: {description}".format(description=description), banner=False)
             break
-        except subprocess.CalledProcessError as exc:
+        except Exception as exc:
             tries = tries - 1
             # try 3 times, because sometimes connection or other errors on travis
             if tries:
                 lib_log_utils.banner_notice("Retry in {sleep} seconds: {description}\nCommand: {command}".format(
-                    sleep=sleep, description=description, command=command))
+                    sleep=sleep, description=description, command=command), banner=False)
                 time.sleep(sleep)
             else:
-                lib_log_utils.banner_error("Error: {description}\nCommand: {command}\n{exc}".format(description=description, command=command, exc=exc))
+                lib_log_utils.banner_error("Error: {description}\nCommand: {command}\n{exc}".format(description=description, command=command, exc=exc),
+                                           banner=True)
                 if hasattr(exc, 'returncode'):
-                    if exc.returncode is not None:
-                        sys.exit(exc.returncode)
+                    if exc.returncode is not None:  # type: ignore
+                        sys.exit(exc.returncode)    # type: ignore
                 sys.exit(1)     # pragma: no cover
 
 
@@ -145,14 +146,14 @@ def run_x(description: str, commands: List[str], retry: int = 3, sleep: int = 30
 
     str_command = ' '.join(commands)
     lib_log_utils.setup_handler()
-    lib_log_utils.banner_debug("Action: {description}\nCommand: {command}".format(description=description, command=str_command), banner=banner)
+    lib_log_utils.banner_success("Action: {description}\nCommand: {command}".format(description=description, command=str_command), banner=banner)
     tries = retry
     while True:
         try:
             subprocess.run(commands, shell=True, check=True)
-            lib_log_utils.banner_success("Success : {description}".format(description=description), banner=banner)
+            lib_log_utils.banner_success("Success : {description}".format(description=description), banner=False)
             break
-        except subprocess.CalledProcessError as exc:
+        except Exception as exc:
             tries = tries - 1
             # try 3 times, because sometimes connection or other errors on travis
             if tries:
@@ -163,8 +164,8 @@ def run_x(description: str, commands: List[str], retry: int = 3, sleep: int = 30
                 lib_log_utils.banner_error("Error: {description}\nCommand: {command}\n{exc}".format(description=description, command=str_command, exc=exc),
                                            banner=True)
                 if hasattr(exc, 'returncode'):
-                    if exc.returncode is not None:
-                        sys.exit(exc.returncode)
+                    if exc.returncode is not None:      # type: ignore
+                        sys.exit(exc.returncode)        # type: ignore
                 sys.exit(1)     # pragma: no cover
 
 

@@ -5,10 +5,11 @@ Changelog
 - new MINOR version for added functionality in a backwards compatible manner
 - new PATCH version for backwards compatible bug fixes
 
-0.4.2a0
+0.4.2
 -------
-2020-07-27: development
-
+2020-07-27: feature release
+    - change colors
+    - catch all in run exceptions (OS Error)
 
 0.4.1
 -------
