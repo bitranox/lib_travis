@@ -5,10 +5,11 @@ Changelog
 - new MINOR version for added functionality in a backwards compatible manner
 - new PATCH version for backwards compatible bug fixes
 
-0.4.1a0
+0.4.1
 -------
-2020-07-23: development
-
+2020-07-27: feature release
+    - use cli_exit_tools
+    - adding banner parameter to "run" commands
 
 0.4.0
 -------

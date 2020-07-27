@@ -1,4 +1,5 @@
 # STDLIB
+import logging
 import os
 import shlex
 import subprocess
@@ -11,7 +12,7 @@ import lib_log_utils
 
 
 # run_command{{{
-def run_command(description: str, command: str, retry: int = 3, sleep: int = 30, quote: bool = False) -> None:
+def run(description: str, command: str, retry: int = 3, sleep: int = 30, quote: bool = False, banner: bool = True) -> None:
     """
     runs and retries a command passed as string and wrap it in "success" or "error" banners
 
@@ -28,6 +29,9 @@ def run_command(description: str, command: str, retry: int = 3, sleep: int = 30,
         sleep for n seconds between the commands, default = 30
     quote
         use shlex.quote for automatic quoting of shell commands, default=False
+    banner
+        if to use banner for run/success or just colored lines.
+        Errors will be always shown as banner
 
 
     Result
@@ -44,35 +48,38 @@ def run_command(description: str, command: str, retry: int = 3, sleep: int = 30,
     ------------
 
 
-    >>> run_command('test', "unknown command", sleep=0)
+    >>> run('test', "unknown command", sleep=0)
     Traceback (most recent call last):
         ...
     SystemExit: ...
 
-    >>> run_command('test', "echo test")
+    >>> run('test', "echo test")
 
     """
     # run_command}}}
+
+    command = command.strip()
+
     if quote:
         command = shlex.quote(command)
 
     lib_log_utils.setup_handler()
-    lib_log_utils.banner_debug("{description}\n{command}".format(description=description, command=command))
+    lib_log_utils.banner_debug("Action: {description}\nCommand: {command}".format(description=description, command=command))
     tries = retry
     while True:
         try:
             subprocess.run(command, shell=True, check=True)
-            lib_log_utils.banner_success("success : {description}\n{command}".format(description=description, command=command))
+            lib_log_utils.banner_success("Success: {description}".format(description=description))
             break
         except subprocess.CalledProcessError as exc:
             tries = tries - 1
             # try 3 times, because sometimes connection or other errors on travis
             if tries:
-                lib_log_utils.banner_notice("retry in {sleep} seconds: {description}\n{command}".format(
+                lib_log_utils.banner_notice("Retry in {sleep} seconds: {description}\nCommand: {command}".format(
                     sleep=sleep, description=description, command=command))
                 time.sleep(sleep)
             else:
-                lib_log_utils.banner_error("error: {description}\n{command}\n{exc}".format(description=description, command=command, exc=exc))
+                lib_log_utils.banner_error("Error: {description}\nCommand: {command}\n{exc}".format(description=description, command=command, exc=exc))
                 if hasattr(exc, 'returncode'):
                     if exc.returncode is not None:
                         sys.exit(exc.returncode)
@@ -80,7 +87,7 @@ def run_command(description: str, command: str, retry: int = 3, sleep: int = 30,
 
 
 # run_commands{{{
-def run_commands(description: str, commands: List[str], retry: int = 3, sleep: int = 30, split: bool = True) -> None:
+def run_x(description: str, commands: List[str], retry: int = 3, sleep: int = 30, split: bool = True, banner: bool = True) -> None:
     """
     runs and retries a command passed as list of strings and wrap it in "success" or "error" banners
 
@@ -98,6 +105,9 @@ def run_commands(description: str, commands: List[str], retry: int = 3, sleep: i
     split
         split the commands again with shlex - default = True
         this we need because some commands passed are an array of commands themself
+    banner
+        if to use banner for run/success or just colored lines.
+        Errors will be always shown as banner
 
 
     Result
@@ -114,14 +124,14 @@ def run_commands(description: str, commands: List[str], retry: int = 3, sleep: i
     ------------
 
 
-    >>> run_commands('test', ['unknown', 'command'], sleep=0)
+    >>> run_x('test', ['unknown', 'command'], sleep=0)
     Traceback (most recent call last):
         ...
     SystemExit: ...
 
-    >>> run_commands('test', ['echo', 'test'])
+    >>> run_x('test', ['echo', 'test'])
 
-    >>> run_commands('test', ['echo test'])
+    >>> run_x('test', ['echo test'])
 
     """
     # run_commands}}}
@@ -135,22 +145,22 @@ def run_commands(description: str, commands: List[str], retry: int = 3, sleep: i
 
     str_command = ' '.join(commands)
     lib_log_utils.setup_handler()
-    lib_log_utils.banner_debug("{description}\n{command}".format(description=description, command=str_command))
+    lib_log_utils.banner_debug("Action: {description}\nCommand: {command}".format(description=description, command=str_command), banner=banner)
     tries = retry
     while True:
         try:
             subprocess.run(commands, shell=True, check=True)
-            lib_log_utils.banner_success("success : {description}\n{command}".format(description=description, command=str_command))
+            lib_log_utils.banner_success("Success : {description}".format(description=description, command=str_command))
             break
         except subprocess.CalledProcessError as exc:
             tries = tries - 1
             # try 3 times, because sometimes connection or other errors on travis
             if tries:
-                lib_log_utils.banner_notice("retry in {sleep} seconds: {description}\n{command}".format(
+                lib_log_utils.banner_notice("Retry in {sleep} seconds: {description}\nCommand: {command}".format(
                     sleep=sleep, description=description, command=str_command))
                 time.sleep(sleep)
             else:
-                lib_log_utils.banner_error("error: {description}\n{command}\n{exc}".format(description=description, command=str_command, exc=exc))
+                lib_log_utils.banner_error("Error: {description}\nCommand: {command}\n{exc}".format(description=description, command=str_command, exc=exc))
                 if hasattr(exc, 'returncode'):
                     if exc.returncode is not None:
                         sys.exit(exc.returncode)

@@ -1,4 +1,4 @@
-Version 0.4.1a0 as of 2020-07-25, see changelog_
+Version 0.4.1 as of 2020-07-27, see changelog_
 
 =======================================================
 
@@ -63,9 +63,9 @@ tested on linux "bionic" with python 3.6, 3.7, 3.8, 3.8-dev, pypy3
 ----
 
 - `Try it Online`_
-- `Installation and Upgrade`_
 - `Usage`_
 - `Usage from Commandline`_
+- `Installation and Upgrade`_
 - `Requirements`_
 - `Acknowledgements`_
 - `Contribute`_
@@ -82,95 +82,6 @@ Try it Online
 
 You might try it right away in Jupyter Notebook by using the "launch binder" badge, or click `here <https://mybinder.org/v2/gh/{{rst_include.
 repository_slug}}/master?filepath=lib_travis.ipynb>`_
-
-Installation and Upgrade
-------------------------
-
-- Before You start, its highly recommended to update pip and setup tools:
-
-
-.. code-block:: bash
-
-    python -m pip --upgrade pip
-    python -m pip --upgrade setuptools
-    python -m pip --upgrade wheel
-
-- to install the latest release from PyPi via pip (recommended):
-
-.. code-block:: bash
-
-    # install latest release from PyPi
-    python -m pip install --upgrade lib_travis
-
-    # test latest release from PyPi without installing (can be skipped)
-    python -m pip install lib_travis --install-option test
-
-- to install the latest development version from github via pip:
-
-
-.. code-block:: bash
-
-    # normal install
-    python -m pip install --upgrade git+https://github.com/bitranox/lib_travis.git
-
-    # to test without installing (can be skipped)
-    python -m pip install git+https://github.com/bitranox/lib_travis.git --install-option test
-
-    # to install and upgrade all dependencies regardless of version number
-    python -m pip install --upgrade git+https://github.com/bitranox/lib_travis.git --upgrade-strategy eager
-
-
-- include it into Your requirements.txt:
-
-.. code-block:: bash
-
-    # Insert following line in Your requirements.txt:
-    # for the latest Release on pypi:
-    lib_travis
-
-    # for the latest development version :
-    lib_travis @ git+https://github.com/bitranox/lib_travis.git
-
-    # to install and upgrade all modules mentioned in requirements.txt:
-    python -m pip install --upgrade -r /<path>/requirements.txt
-
-
-
-- to install the latest development version from source code:
-
-.. code-block:: bash
-
-    # cd ~
-    $ git clone https://github.com/bitranox/lib_travis.git
-    $ cd lib_travis
-
-    # to test without installing (can be skipped)
-    python setup.py test
-
-    # normal install
-    python setup.py install
-
-- via makefile:
-  makefiles are a very convenient way to install. Here we can do much more,
-  like installing virtual environments, clean caches and so on.
-
-.. code-block:: shell
-
-    # from Your shell's homedirectory:
-    $ git clone https://github.com/bitranox/lib_travis.git
-    $ cd lib_travis
-
-    # to run the tests:
-    $ make test
-
-    # to install the package
-    $ make install
-
-    # to clean the package
-    $ make clean
-
-    # uninstall the package
-    $ make uninstall
 
 Usage
 -----------
@@ -191,14 +102,16 @@ usage commandline:
 
 .. code-block:: bash
 
-    # You need to pass '--' after the options, then all following strings are considered as arguments,
-    # otherwise options would cause an error
-    # that means, all options need to be stated before the '--' marker
+    # You need to pass '--' after the options for lib_travis run_x command,
+    # then all following strings are considered as arguments to run a command,
+    # and are not parsed as options for the run_x command itself.
+    # that means, all options need to be stated before the '--' marker.
     # commands are splitted again with shlex - in case there are multiple commands in an argument
     $> lib_travis run_x --retry=3 --sleep=30 -- "description" command -some -options
 
     # in that case "echo test" will be splitted into ['echo', 'test']
-    $> lib_travis run --retry=3 --sleep=30 -- "description" "echo test"
+    $> EXAMPLE="echo test"
+    $> lib_travis run_x --retry=3 --sleep=30 -- ${EXAMPLE}
 
 
 - get the branch to work on from travis environment variables
@@ -293,7 +206,7 @@ python methods:
 
 .. code-block:: python
 
-    def run_command(description: str, command: str, retry: int = 3, sleep: int = 30, quote: bool = False) -> None:
+    def run(description: str, command: str, retry: int = 3, sleep: int = 30, quote: bool = False, banner: bool = True) -> None:
         """
         runs and retries a command passed as string and wrap it in "success" or "error" banners
 
@@ -310,6 +223,9 @@ python methods:
             sleep for n seconds between the commands, default = 30
         quote
             use shlex.quote for automatic quoting of shell commands, default=False
+        banner
+            if to use banner for run/success or just colored lines.
+            Errors will be always shown as banner
 
 
         Result
@@ -326,18 +242,18 @@ python methods:
         ------------
 
 
-        >>> run_command('test', "unknown command", sleep=0)
+        >>> run('test', "unknown command", sleep=0)
         Traceback (most recent call last):
             ...
         SystemExit: ...
 
-        >>> run_command('test', "echo test")
+        >>> run('test', "echo test")
 
         """
 
 .. code-block:: python
 
-    def run_commands(description: str, commands: List[str], retry: int = 3, sleep: int = 30, split: bool = True) -> None:
+    def run_x(description: str, commands: List[str], retry: int = 3, sleep: int = 30, split: bool = True, banner: bool = True) -> None:
         """
         runs and retries a command passed as list of strings and wrap it in "success" or "error" banners
 
@@ -355,6 +271,9 @@ python methods:
         split
             split the commands again with shlex - default = True
             this we need because some commands passed are an array of commands themself
+        banner
+            if to use banner for run/success or just colored lines.
+            Errors will be always shown as banner
 
 
         Result
@@ -371,14 +290,14 @@ python methods:
         ------------
 
 
-        >>> run_commands('test', ['unknown', 'command'], sleep=0)
+        >>> run_x('test', ['unknown', 'command'], sleep=0)
         Traceback (most recent call last):
             ...
         SystemExit: ...
 
-        >>> run_commands('test', ['echo', 'test'])
+        >>> run_x('test', ['echo', 'test'])
 
-        >>> run_commands('test', ['echo test'])
+        >>> run_x('test', ['echo test'])
 
         """
 
@@ -402,6 +321,95 @@ Usage from Commandline
      run         run string command wrapped in run/success/error banners
      run_x       run commands wrapped in run/success/error banners
 
+Installation and Upgrade
+------------------------
+
+- Before You start, its highly recommended to update pip and setup tools:
+
+
+.. code-block:: bash
+
+    python -m pip --upgrade pip
+    python -m pip --upgrade setuptools
+    python -m pip --upgrade wheel
+
+- to install the latest release from PyPi via pip (recommended):
+
+.. code-block:: bash
+
+    # install latest release from PyPi
+    python -m pip install --upgrade lib_travis
+
+    # test latest release from PyPi without installing (can be skipped)
+    python -m pip install lib_travis --install-option test
+
+- to install the latest development version from github via pip:
+
+
+.. code-block:: bash
+
+    # normal install
+    python -m pip install --upgrade git+https://github.com/bitranox/lib_travis.git
+
+    # to test without installing (can be skipped)
+    python -m pip install git+https://github.com/bitranox/lib_travis.git --install-option test
+
+    # to install and upgrade all dependencies regardless of version number
+    python -m pip install --upgrade git+https://github.com/bitranox/lib_travis.git --upgrade-strategy eager
+
+
+- include it into Your requirements.txt:
+
+.. code-block:: bash
+
+    # Insert following line in Your requirements.txt:
+    # for the latest Release on pypi:
+    lib_travis
+
+    # for the latest development version :
+    lib_travis @ git+https://github.com/bitranox/lib_travis.git
+
+    # to install and upgrade all modules mentioned in requirements.txt:
+    python -m pip install --upgrade -r /<path>/requirements.txt
+
+
+
+- to install the latest development version from source code:
+
+.. code-block:: bash
+
+    # cd ~
+    $ git clone https://github.com/bitranox/lib_travis.git
+    $ cd lib_travis
+
+    # to test without installing (can be skipped)
+    python setup.py test
+
+    # normal install
+    python setup.py install
+
+- via makefile:
+  makefiles are a very convenient way to install. Here we can do much more,
+  like installing virtual environments, clean caches and so on.
+
+.. code-block:: shell
+
+    # from Your shell's homedirectory:
+    $ git clone https://github.com/bitranox/lib_travis.git
+    $ cd lib_travis
+
+    # to run the tests:
+    $ make test
+
+    # to install the package
+    $ make install
+
+    # to clean the package
+    $ make clean
+
+    # uninstall the package
+    $ make uninstall
+
 Requirements
 ------------
 following modules will be automatically installed :
@@ -410,6 +418,7 @@ following modules will be automatically installed :
 
     ## Project Requirements
     click
+    cli_exit_tools @ git+https://github.com/bitranox/cli_exit_tools.git
     lib_log_utils @ git+https://github.com/bitranox/lib_log_utils.git
     rst_include @ git+https://github.com/bitranox/rst_include.git
 
@@ -438,10 +447,11 @@ Changelog
 - new MINOR version for added functionality in a backwards compatible manner
 - new PATCH version for backwards compatible bug fixes
 
-0.4.1a0
+0.4.1
 -------
-2020-07-23: development
-
+2020-07-27: feature release
+    - use cli_exit_tools
+    - adding banner parameter to "run" commands
 
 0.4.0
 -------

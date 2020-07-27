@@ -1,4 +1,4 @@
-Version 0.4.1a0 as of 2020-07-25, see changelog_
+Version 0.4.1 as of 2020-07-27, see changelog_
 
 =======================================================
 
@@ -26,10 +26,6 @@ Python version required: 3.6.0 or newer
 
 .. include:: ./try_in_jupyter.rst
 
-Installation and Upgrade
-------------------------
-.. include:: ./installation.rst
-
 Usage
 -----------
 .. include:: ./usage.rst
@@ -37,6 +33,10 @@ Usage
 Usage from Commandline
 ------------------------
 .. include:: ./commandline_help.rst
+
+Installation and Upgrade
+------------------------
+.. include:: ./installation.rst
 
 Requirements
 ------------
