@@ -59,6 +59,8 @@ def run(description: str, command: str, retry: int = 3, sleep: int = 30, quote: 
     # run_command}}}
 
     command = command.strip()
+    # test
+    command = command.replace('.git', '.git@{BRANCH}'.format(BRANCH=get_branch()))
 
     if quote:
         command = shlex.quote(command)
