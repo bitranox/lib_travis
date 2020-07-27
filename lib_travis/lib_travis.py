@@ -1,5 +1,4 @@
 # STDLIB
-import logging
 import os
 import shlex
 import subprocess
@@ -9,6 +8,7 @@ from typing import List
 
 # OWN
 import lib_log_utils
+import cli_exit_tools
 
 
 # run_command{{{
@@ -85,6 +85,8 @@ def run(description: str, command: str, retry: int = 3, sleep: int = 30, quote: 
                     if exc.returncode is not None:  # type: ignore
                         sys.exit(exc.returncode)    # type: ignore
                 sys.exit(1)     # pragma: no cover
+        finally:
+            cli_exit_tools.flush_streams()
 
 
 # run_commands{{{
@@ -167,6 +169,8 @@ def run_x(description: str, commands: List[str], retry: int = 3, sleep: int = 30
                     if exc.returncode is not None:      # type: ignore
                         sys.exit(exc.returncode)        # type: ignore
                 sys.exit(1)     # pragma: no cover
+        finally:
+            cli_exit_tools.flush_streams()
 
 
 # get_branch{{{
