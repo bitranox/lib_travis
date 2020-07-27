@@ -150,17 +150,18 @@ def run_x(description: str, commands: List[str], retry: int = 3, sleep: int = 30
     while True:
         try:
             subprocess.run(commands, shell=True, check=True)
-            lib_log_utils.banner_success("Success : {description}".format(description=description, command=str_command))
+            lib_log_utils.banner_success("Success : {description}".format(description=description), banner=banner)
             break
         except subprocess.CalledProcessError as exc:
             tries = tries - 1
             # try 3 times, because sometimes connection or other errors on travis
             if tries:
                 lib_log_utils.banner_notice("Retry in {sleep} seconds: {description}\nCommand: {command}".format(
-                    sleep=sleep, description=description, command=str_command))
+                    sleep=sleep, description=description, command=str_command), banner=False)
                 time.sleep(sleep)
             else:
-                lib_log_utils.banner_error("Error: {description}\nCommand: {command}\n{exc}".format(description=description, command=str_command, exc=exc))
+                lib_log_utils.banner_error("Error: {description}\nCommand: {command}\n{exc}".format(description=description, command=str_command, exc=exc),
+                                           banner=True)
                 if hasattr(exc, 'returncode'):
                     if exc.returncode is not None:
                         sys.exit(exc.returncode)
