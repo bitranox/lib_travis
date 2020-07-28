@@ -78,7 +78,7 @@ def cli_run_commands(description: str, commands: List[str], retry: int, sleep: i
 
 
 @cli_main.command('upgrade_setup_related', context_settings=CLICK_CONTEXT_SETTINGS)
-def cli_upgrade_setup_related(description: str, commands: List[str], retry: int, sleep: int, split: bool, banner: bool) -> None:
+def cli_upgrade_setup_related() -> None:
     """ updates pip, setuptools, wheel, pytest-pycodestyle """
     lib_travis.upgrade_setup_related()
 
