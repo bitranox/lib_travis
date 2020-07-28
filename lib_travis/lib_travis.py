@@ -276,10 +276,13 @@ def upgrade_setup_related() -> None:
     ...    upgrade_setup_related()
 
     """
-    run(description='upgrade pip', command='${cPREFIX} ${cPIP} install --upgrade pip')
-    run(description='upgrade setuptools', command='${cPREFIX} ${cPIP} install --upgrade setuptools')
-    run(description='upgrade wheel', command='${cPREFIX} ${cPIP} install --upgrade wheel')
-    run(description='upgrading pytest-pycodestyle', command='${cPREFIX} ${cPIP} install --upgrade "pytest-pycodestyle; python_version >= \\"3.5\\""')
+    c_prefix = os.environ['cPREFIX']
+    c_pip = os.environ['cPIP']
+    run(description='upgrade pip', command='{c_prefix} {c_pip} install --upgrade pip'.format(c_prefix=c_prefix, c_pip=c_pip))
+    run(description='upgrade setuptools', command='{c_prefix} {c_pip} install --upgrade setuptools'.format(c_prefix=c_prefix, c_pip=c_pip))
+    run(description='upgrade wheel', command='{c_prefix} {c_pip} install --upgrade wheel'.format(c_prefix=c_prefix, c_pip=c_pip))
+    run(description='upgrading pytest-pycodestyle', command='{c_prefix} {c_pip} install --upgrade "pytest-pycodestyle; python_version >= \\"3.5\\""'.format(
+        c_prefix=c_prefix, c_pip=c_pip))
 
 
 if __name__ == '__main__':
