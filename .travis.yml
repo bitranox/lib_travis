@@ -82,7 +82,7 @@ matrix:
       language: python
       python: "pypy3"
       before_install:
-          - export mypy_strict_typecheck="True"
+          - export mypy_strict_typecheck="False"
           - export build_docs="False"
           - export deploy_on_pypi="False"
 
@@ -156,7 +156,7 @@ script:
 
     # mypy typecheck strict
     - if [[ ${mypy_strict_typecheck} == "True" ]]; then
-          COMMAND="${cPREFIX} ${cPYTHON} -m mypy -p lib_travis --strict --no-warn-unused-ignores --implicit-reexport --follow-imports=silent"
+          COMMAND="${cPREFIX} ${cPYTHON} -m mypy -p lib_travis --strict --no-warn-unused-ignores --implicit-reexport --follow-imports=silent";
           ${lib_bash_banner} "running '${COMMAND}'";
           if ${COMMAND}; then ${lib_bash_banner} "'${COMMAND}' - OK"; else ${lib_bash_banner_warning} "'${COMMAND}' - FAILED" && exit 1; fi
       else
