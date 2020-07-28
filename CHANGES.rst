@@ -6,6 +6,14 @@ Changelog
 - new PATCH version for backwards compatible bug fixes
 
 
+0.4.9
+-------
+2020-07-27: feature release
+    - add command script
+    - add command after_success
+    - add command deploy
+
+
 0.4.8
 -------
 2020-07-27: debug

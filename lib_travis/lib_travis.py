@@ -13,7 +13,7 @@ import cli_exit_tools
 
 
 # run_command{{{
-def run(description: str, command: str, retry: int = 3, sleep: int = 30, quote: bool = False, banner: bool = True) -> None:
+def run(description: str, command: str, retry: int = 3, sleep: int = 30, quote: bool = False, banner: bool = True, show_command: bool = True) -> None:
     """
     runs and retries a command passed as string and wrap it in "success" or "error" banners
 
@@ -33,6 +33,8 @@ def run(description: str, command: str, retry: int = 3, sleep: int = 30, quote: 
     banner
         if to use banner for run/success or just colored lines.
         Errors will be always shown as banner
+    show_command
+        if the command is shown - take care not to reveal secrets here !
 
 
     Result
@@ -65,7 +67,13 @@ def run(description: str, command: str, retry: int = 3, sleep: int = 30, quote: 
         command = shlex.quote(command)
 
     lib_log_utils.setup_handler()
-    lib_log_utils.banner_success("Action: {description}\nCommand: {command}".format(description=description, command=command), banner=banner)
+
+    if show_command:
+        command_description = command
+    else:
+        command_description = '***secret***'
+
+    lib_log_utils.banner_success("Action: {description}\nCommand: {command}".format(description=description, command=command_description), banner=banner)
     tries = retry
     while True:
         try:
@@ -77,11 +85,11 @@ def run(description: str, command: str, retry: int = 3, sleep: int = 30, quote: 
             # try 3 times, because sometimes connection or other errors on travis
             if tries:
                 lib_log_utils.banner_notice("Retry in {sleep} seconds: {description}\nCommand: {command}".format(
-                    sleep=sleep, description=description, command=command), banner=False)
+                    sleep=sleep, description=description, command=command_description), banner=False)
                 time.sleep(sleep)
             else:
-                lib_log_utils.banner_error("Error: {description}\nCommand: {command}\n{exc}".format(description=description, command=command, exc=exc),
-                                           banner=True)
+                lib_log_utils.banner_error("Error: {description}\nCommand: {command}\n{exc}".format(
+                    description=description, command=command_description, exc=exc), banner=True)
                 if hasattr(exc, 'returncode'):
                     if exc.returncode is not None:  # type: ignore
                         sys.exit(exc.returncode)    # type: ignore
@@ -91,7 +99,7 @@ def run(description: str, command: str, retry: int = 3, sleep: int = 30, quote: 
 
 
 # run_commands{{{
-def run_x(description: str, commands: List[str], retry: int = 3, sleep: int = 30, split: bool = True, banner: bool = False) -> None:
+def run_x(description: str, commands: List[str], retry: int = 3, sleep: int = 30, split: bool = True, banner: bool = False, show_command: bool = True) -> None:
     """
     runs and retries a command passed as list of strings and wrap it in "success" or "error" banners
 
@@ -112,6 +120,8 @@ def run_x(description: str, commands: List[str], retry: int = 3, sleep: int = 30
     banner
         if to use banner for run/success or just colored lines.
         Errors will be always shown as banner
+    show_command
+        if the command is shown - take care not to reveal secrets here !
 
 
     Result
@@ -149,7 +159,13 @@ def run_x(description: str, commands: List[str], retry: int = 3, sleep: int = 30
 
     str_command = ' '.join(commands)
     lib_log_utils.setup_handler()
-    lib_log_utils.banner_success("Action: {description}\nCommand: {command}".format(description=description, command=str_command), banner=banner)
+
+    if show_command:
+        command_description = str_command
+    else:
+        command_description = '***secret***'
+
+    lib_log_utils.banner_success("Action: {description}\nCommand: {command}".format(description=description, command=command_description), banner=banner)
     tries = retry
     while True:
         try:
@@ -161,11 +177,11 @@ def run_x(description: str, commands: List[str], retry: int = 3, sleep: int = 30
             # try 3 times, because sometimes connection or other errors on travis
             if tries:
                 lib_log_utils.banner_notice("Retry in {sleep} seconds: {description}\nCommand: {command}".format(
-                    sleep=sleep, description=description, command=str_command), banner=False)
+                    sleep=sleep, description=description, command=command_description), banner=False)
                 time.sleep(sleep)
             else:
-                lib_log_utils.banner_error("Error: {description}\nCommand: {command}\n{exc}".format(description=description, command=str_command, exc=exc),
-                                           banner=True)
+                lib_log_utils.banner_error("Error: {description}\nCommand: {command}\n{exc}".format(
+                    description=description, command=command_description, exc=exc), banner=True)
                 if hasattr(exc, 'returncode'):
                     if exc.returncode is not None:      # type: ignore
                         sys.exit(exc.returncode)        # type: ignore
@@ -267,11 +283,11 @@ def get_branch() -> str:
     return branch
 
 
-def upgrade_setup_related(dry_run: bool = True) -> None:
+def install(dry_run: bool = True) -> None:
     """
     upgrades pip, setuptools, wheel and pytest-pycodestyle
 
-    >>> upgrade_setup_related()
+    >>> install()
 
     """
     if dry_run:
@@ -283,11 +299,11 @@ def upgrade_setup_related(dry_run: bool = True) -> None:
     run(description='install pytest-pycodestyle', command=' '.join([pip_prefix, 'install --upgrade "pytest-pycodestyle; python_version >= \\"3.5\\""']))
 
 
-def run_tests(dry_run: bool = True) -> None:
+def script(dry_run: bool = True) -> None:
     if dry_run:
         return
     lib_log_utils.setup_handler()
-    cli_command = get_cli_command()
+    cli_command = get_env_or_blank('CLI_COMMAND')
     command_prefix = get_command_prefix()
     pip_prefix = get_pip_prefix()
     python_prefix = get_python_prefix()
@@ -323,6 +339,51 @@ def run_tests(dry_run: bool = True) -> None:
         run(description='check distributions', command=' '.join([command_prefix, 'twine check dist/*']))
     else:
         lib_log_utils.banner_notice("check pypy deployment is disabled on this build")
+
+
+def after_success(dry_run: bool = True) -> None:
+    if dry_run:
+        return
+    command_prefix = get_command_prefix()
+    pip_prefix = get_pip_prefix()
+
+    run(description='coverage report', command=' '.join([command_prefix, 'coverage report']))
+    run(description='codecov', command=' '.join([command_prefix, 'codecov']))
+
+    if os_is_windows():
+        cc_test_reporter_id = get_env_or_blank('CC_TEST_REPORTER_ID')
+        run(description='install codeclimate-test-reporter', command=' '.join([pip_prefix, 'install codeclimate-test-reporter']))
+        run(description='report to codeclimate', command=' '.join([command_prefix, 'codeclimate-test-reporter --token', cc_test_reporter_id]),
+            show_command=False)
+    else:
+        run(description='download test reporter',
+            command='curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter')
+        run(description='test reporter set permissions', banner=False, command='chmod +x ./cc-test-reporter')
+        travis_test_result = get_env_or_blank('TRAVIS_TEST_RESULT')
+        run(description='report to codeclimate', command=' '.join(['./cc-test-reporter after-build --exit-code', travis_test_result]))
+
+
+def deploy(dry_run: bool = True) -> None:
+    if dry_run:
+        return
+
+    command_prefix = get_command_prefix()
+    pip_prefix = get_pip_prefix()
+    python_prefix = get_python_prefix()
+    github_username = get_github_username()
+    pypi_password = get_env_or_blank('pypi_password')
+
+    if do_deploy():
+        run(description='install readme renderer', command=' '.join([pip_prefix, 'install --upgrade readme_renderer']))
+        run(description='install twine', command=' '.join([pip_prefix, 'install --upgrade twine']))
+        run(description='install wheel', command=' '.join([pip_prefix, 'install --upgrade wheel']))
+        run(description='create source distribution', command=' '.join([python_prefix, 'setup.py sdist']))
+        run(description='create binary distribution (wheel)', command=' '.join([python_prefix, 'setup.py bdist_wheel']))
+        run(description='check distributions', command=' '.join([command_prefix, 'twine check dist/*']))
+        run(description='upload to pypi', command=' '.join([command_prefix, 'twine upload --repository-url https://upload.pypi.org/legacy/ -u',
+                                                            github_username, '-p', pypi_password, 'dist/*']), show_command=False)
+    else:
+        lib_log_utils.banner_notice("pypi deploy is disabled on this build")
 
 
 def get_pip_prefix() -> str:
@@ -402,21 +463,23 @@ def get_repo_name() -> str:
     return repo_name
 
 
-def get_cli_command() -> str:
+def get_github_username() -> str:
     """
-    get the registered CLI Command like 'lib_travis'
-    this will be used to check commandline registration like : lib_travis --version
+    get the github username like 'bitranox'
+
+    >>> discard = get_github_username()
 
     """
-    cli_command = ''
-    if 'CLI_COMMAND' in os.environ:
-        cli_command = os.environ['CLI_COMMAND']
-    return cli_command
+    github_username = ''
+    if 'TRAVIS_REPO_SLUG' in os.environ:
+        repo_slug = os.environ['TRAVIS_REPO_SLUG']
+        github_username = repo_slug.split('/')[0]
+    return github_username
 
 
 def do_mypy_strict_check() -> bool:
     """ if mypy check should run """
-    if 'mypy_strict_typecheck' in os.environ and os.environ['mypy_strict_typecheck'].lower() == 'true':
+    if get_env_or_blank('mypy_strict_typecheck').lower() == 'true':
         return True
     else:
         return False
@@ -424,7 +487,7 @@ def do_mypy_strict_check() -> bool:
 
 def do_build_docs() -> bool:
     """ if README.rst should be rebuilt """
-    if 'build_docs' in os.environ and os.environ['build_docs'].lower() == 'true':
+    if get_env_or_blank('build_docs').lower() == 'true':
         return True
     else:
         return False
@@ -450,6 +513,32 @@ def on_travis() -> bool:
     if we run on travis
     """
     if 'TRAVIS' in os.environ:
+        return True
+    else:
+        return False
+
+
+def os_is_windows() -> bool:
+    if get_env_or_blank('TRAVIS_OS_NAME').lower() == 'windows':
+        return True
+    else:
+        return False
+
+
+def get_env_or_blank(env_variable: str) -> str:
+    env_result = ''
+    if env_variable in os.environ:
+        env_result = os.environ[env_variable]
+    return env_result
+
+
+def do_deploy() -> bool:
+    """
+    if we should deploy
+        - when $deploy_on_pypi = True
+        - when TRAVIS_TAG != ''
+    """
+    if get_env_or_blank('$deploy_on_pypi').lower() == 'true' and get_env_or_blank('TRAVIS_TAG') != '':
         return True
     else:
         return False

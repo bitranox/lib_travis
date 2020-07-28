@@ -1,4 +1,4 @@
-Version 0.4.8 as of 2020-07-28, see changelog_
+Version 0.4.9 as of 2020-07-28, see changelog_
 
 =======================================================
 
@@ -206,7 +206,7 @@ python methods:
 
 .. code-block:: python
 
-    def run(description: str, command: str, retry: int = 3, sleep: int = 30, quote: bool = False, banner: bool = True) -> None:
+    def run(description: str, command: str, retry: int = 3, sleep: int = 30, quote: bool = False, banner: bool = True, show_command: bool = True) -> None:
         """
         runs and retries a command passed as string and wrap it in "success" or "error" banners
 
@@ -226,6 +226,8 @@ python methods:
         banner
             if to use banner for run/success or just colored lines.
             Errors will be always shown as banner
+        show_command
+            if the command is shown - take care not to reveal secrets here !
 
 
         Result
@@ -253,7 +255,7 @@ python methods:
 
 .. code-block:: python
 
-    def run_x(description: str, commands: List[str], retry: int = 3, sleep: int = 30, split: bool = True, banner: bool = False) -> None:
+    def run_x(description: str, commands: List[str], retry: int = 3, sleep: int = 30, split: bool = True, banner: bool = False, show_command: bool = True) -> None:
         """
         runs and retries a command passed as list of strings and wrap it in "success" or "error" banners
 
@@ -274,6 +276,8 @@ python methods:
         banner
             if to use banner for run/success or just colored lines.
             Errors will be always shown as banner
+        show_command
+            if the command is shown - take care not to reveal secrets here !
 
 
         Result
@@ -316,12 +320,14 @@ Usage from Commandline
      -h, --help                    Show this message and exit.
 
    Commands:
-     get_branch             get the branch to work on
-     info                   get program informations
-     run                    run string command wrapped in run/success/error...
-     run_tests              updates pip, setuptools, wheel, pytest-pycodestyle
-     run_x                  run commands wrapped in run/success/error banners
-     upgrade_setup_related  updates pip, setuptools, wheel, pytest-pycodestyle
+     after_success  coverage reports
+     deploy         deploy on pypi
+     get_branch     get the branch to work on
+     info           get program informations
+     install        updates pip, setuptools, wheel, pytest-pycodestyle
+     run            run string command wrapped in run/success/error banners
+     run_x          run commands wrapped in run/success/error banners
+     script         updates pip, setuptools, wheel, pytest-pycodestyle
 
 Installation and Upgrade
 ------------------------
@@ -448,6 +454,14 @@ Changelog
 - new MAJOR version for incompatible API changes,
 - new MINOR version for added functionality in a backwards compatible manner
 - new PATCH version for backwards compatible bug fixes
+
+
+0.4.9
+-------
+2020-07-27: feature release
+    - add command script
+    - add command after_success
+    - add command deploy
 
 
 0.4.8

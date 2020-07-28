@@ -36,5 +36,7 @@ def test_cli_commands() -> None:
         assert call_cli_command('run test "echo test"')
         assert not call_cli_command('run description "unknown command" --retry=3 --sleep=0')
 
-        assert call_cli_command('upgrade_setup_related --dry-run')
-        assert call_cli_command('run_tests --dry-run')
+        assert call_cli_command('install --dry-run')
+        assert call_cli_command('script --dry-run')
+        assert call_cli_command('after_success --dry-run')
+        assert call_cli_command('deploy --dry-run')
