@@ -68,7 +68,7 @@ def cli_run(description: str, command: str, retry: int, sleep: int, quote: bool,
 @cli_main.command('run_x', context_settings=CLICK_CONTEXT_SETTINGS)
 @click.option('-r', '--retry', type=int, default=3, help='retry in case of failure, default=3')
 @click.option('-s', '--sleep', type=int, default=30, help='seconds to sleep on repeat, default=30')
-@click.option('--split/--no-split', default=True, help='split the arguments with shlex, default=True')
+@click.option('--split/--no-split', default=False, help='split the arguments with shlex, default=False')
 @click.option('--banner/--no-banner', default=True, help='use Banners')
 @click.argument('description')
 @click.argument('commands', nargs=-1)

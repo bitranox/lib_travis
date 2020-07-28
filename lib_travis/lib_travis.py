@@ -92,7 +92,7 @@ def run(description: str, command: str, retry: int = 3, sleep: int = 30, quote: 
 
 
 # run_commands{{{
-def run_x(description: str, commands: List[str], retry: int = 3, sleep: int = 30, split: bool = True, banner: bool = True) -> None:
+def run_x(description: str, commands: List[str], retry: int = 3, sleep: int = 30, split: bool = True, banner: bool = False) -> None:
     """
     runs and retries a command passed as list of strings and wrap it in "success" or "error" banners
 
@@ -108,7 +108,7 @@ def run_x(description: str, commands: List[str], retry: int = 3, sleep: int = 30
     sleep
         sleep for n seconds between the commands, default = 30
     split
-        split the commands again with shlex - default = True
+        split the commands again with shlex - default = False
         this we need because some commands passed are an array of commands themself
     banner
         if to use banner for run/success or just colored lines.
