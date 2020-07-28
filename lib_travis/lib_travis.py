@@ -268,7 +268,7 @@ def get_branch() -> str:
     return branch
 
 
-def upgrade_setup_related():
+def upgrade_setup_related() -> None:
     """
     upgrades pip, setuptools, wheel and pytest-pycodestyle
 
