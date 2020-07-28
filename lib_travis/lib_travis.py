@@ -269,12 +269,11 @@ def get_branch() -> str:
     return branch
 
 
-def upgrade_setup_related(dry_run: bool) -> None:
+def upgrade_setup_related(dry_run: bool = True) -> None:
     """
     upgrades pip, setuptools, wheel and pytest-pycodestyle
 
-    >>> if 'TRAVIS' in os.environ:
-    ...    upgrade_setup_related()
+    >>> upgrade_setup_related()
 
     """
     if dry_run:
@@ -286,7 +285,7 @@ def upgrade_setup_related(dry_run: bool) -> None:
     run(description='install pytest-pycodestyle', command=' '.join([pip_prefix, 'install --upgrade "pytest-pycodestyle; python_version >= \\"3.5\\""']))
 
 
-def run_tests(dry_run: bool) -> None:
+def run_tests(dry_run: bool = True) -> None:
     if dry_run:
         return
     lib_log_utils.setup_handler()
