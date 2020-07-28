@@ -36,6 +36,6 @@ def test_cli_commands() -> None:
 
         assert call_cli_command('run test "echo test"')
         assert not call_cli_command('run description "unknown command" --retry=3 --sleep=0')
-        if 'TRAVIS' in os.environ:
-            assert call_cli_command('upgrade_setup_related')
-            assert call_cli_command('run_tests')
+
+        assert call_cli_command('upgrade_setup_related --dry-run')
+        assert call_cli_command('run_tests --dry-run')

@@ -269,7 +269,7 @@ def get_branch() -> str:
     return branch
 
 
-def upgrade_setup_related() -> None:
+def upgrade_setup_related(dry_run: bool) -> None:
     """
     upgrades pip, setuptools, wheel and pytest-pycodestyle
 
@@ -277,6 +277,8 @@ def upgrade_setup_related() -> None:
     ...    upgrade_setup_related()
 
     """
+    if dry_run:
+        return
     pip_prefix = get_pip_prefix()
     run(description='install pip', command=' '.join([pip_prefix, 'install --upgrade pip']))
     run(description='install setuptools', command=' '.join([pip_prefix, 'install --upgrade setuptools']))
@@ -284,8 +286,8 @@ def upgrade_setup_related() -> None:
     run(description='install pytest-pycodestyle', command=' '.join([pip_prefix, 'install --upgrade "pytest-pycodestyle; python_version >= \\"3.5\\""']))
 
 
-def run_tests() -> None:
-    if not on_travis():
+def run_tests(dry_run: bool) -> None:
+    if dry_run:
         return
     lib_log_utils.setup_handler()
     cli_command = get_cli_command()
@@ -295,7 +297,12 @@ def run_tests() -> None:
     repository = get_repository()
     repo_name = get_repo_name()
     run(description='setup.py test', command=' '.join([python_prefix, './setup.py test']))
-    run(description='pip install, option test', command=' '.join([pip_prefix, 'install', repository, '--install-option test']))
+
+    command = ' '.join([pip_prefix, 'install', repository, '--install-option test'])
+    lib_log_utils.banner_debug('repository: {}'.format(repository))
+    lib_log_utils.banner_debug('command: {}'.format(command))
+
+    run(description='pip install, option test', command=command)
     run(description='pip standard install', command=' '.join([pip_prefix, 'install', repository]))
     run(description='check CLI command', command=' '.join([command_prefix, cli_command, '--version']))
     run(description='install test requirements', command=' '.join([pip_prefix, 'install --upgrade -r ./requirements_test.txt']))
@@ -384,7 +391,9 @@ def get_repository() -> str:
     if 'TRAVIS_REPO_SLUG' in os.environ:
         c_parts.append(os.environ['TRAVIS_REPO_SLUG'])
     c_parts.append('.git@')
-    c_parts.append(get_branch())
+    branch = get_branch()
+    lib_log_utils.banner_debug('branch: {}'.format(branch))
+    c_parts.append(branch)
     repository = ''.join(c_parts)
     return repository
 
