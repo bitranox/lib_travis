@@ -1,5 +1,4 @@
 # STDLIB
-import logging
 import os
 import shlex
 import subprocess
@@ -9,6 +8,7 @@ from typing import List
 
 # OWN
 import lib_log_utils
+import cli_exit_tools
 
 
 # run_command{{{
@@ -59,6 +59,8 @@ def run(description: str, command: str, retry: int = 3, sleep: int = 30, quote: 
     # run_command}}}
 
     command = command.strip()
+    # test
+    command = command.replace('.git', '.git@{BRANCH}'.format(BRANCH=get_branch()))
 
     if quote:
         command = shlex.quote(command)
@@ -85,10 +87,12 @@ def run(description: str, command: str, retry: int = 3, sleep: int = 30, quote: 
                     if exc.returncode is not None:  # type: ignore
                         sys.exit(exc.returncode)    # type: ignore
                 sys.exit(1)     # pragma: no cover
+        finally:
+            cli_exit_tools.flush_streams()
 
 
 # run_commands{{{
-def run_x(description: str, commands: List[str], retry: int = 3, sleep: int = 30, split: bool = True, banner: bool = True) -> None:
+def run_x(description: str, commands: List[str], retry: int = 3, sleep: int = 30, split: bool = True, banner: bool = False) -> None:
     """
     runs and retries a command passed as list of strings and wrap it in "success" or "error" banners
 
@@ -104,7 +108,7 @@ def run_x(description: str, commands: List[str], retry: int = 3, sleep: int = 30
     sleep
         sleep for n seconds between the commands, default = 30
     split
-        split the commands again with shlex - default = True
+        split the commands again with shlex - default = False
         this we need because some commands passed are an array of commands themself
     banner
         if to use banner for run/success or just colored lines.
@@ -167,6 +171,8 @@ def run_x(description: str, commands: List[str], retry: int = 3, sleep: int = 30
                     if exc.returncode is not None:      # type: ignore
                         sys.exit(exc.returncode)        # type: ignore
                 sys.exit(1)     # pragma: no cover
+        finally:
+            cli_exit_tools.flush_streams()
 
 
 # get_branch{{{
@@ -260,6 +266,20 @@ def get_branch() -> str:
     else:
         branch = 'master'
     return branch
+
+
+def upgrade_setup_related() -> None:
+    """
+    upgrades pip, setuptools, wheel and pytest-pycodestyle
+
+    >>> if 'TRAVIS' in os.environ:
+    ...    upgrade_setup_related()
+
+    """
+    run(description='upgrade pip', command='${cPREFIX} ${cPIP} install --upgrade pip')
+    run(description='upgrade setuptools', command='${cPREFIX} ${cPIP} install --upgrade setuptools')
+    run(description='upgrade wheel', command='${cPREFIX} ${cPIP} install --upgrade wheel')
+    run(description='upgrading pytest-pycodestyle', command='${cPREFIX} ${cPIP} install --upgrade "pytest-pycodestyle; python_version >= \\"3.5\\""')
 
 
 if __name__ == '__main__':

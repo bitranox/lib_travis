@@ -68,13 +68,19 @@ def cli_run(description: str, command: str, retry: int, sleep: int, quote: bool,
 @cli_main.command('run_x', context_settings=CLICK_CONTEXT_SETTINGS)
 @click.option('-r', '--retry', type=int, default=3, help='retry in case of failure, default=3')
 @click.option('-s', '--sleep', type=int, default=30, help='seconds to sleep on repeat, default=30')
-@click.option('--split/--no-split', default=True, help='split the arguments with shlex, default=True')
+@click.option('--split/--no-split', default=False, help='split the arguments with shlex, default=False')
 @click.option('--banner/--no-banner', default=True, help='use Banners')
 @click.argument('description')
 @click.argument('commands', nargs=-1)
 def cli_run_commands(description: str, commands: List[str], retry: int, sleep: int, split: bool, banner: bool) -> None:
     """ run commands wrapped in run/success/error banners """
     lib_travis.run_x(description, commands, retry=retry, sleep=sleep, split=split, banner=banner)
+
+
+@cli_main.command('upgrade_setup_related', context_settings=CLICK_CONTEXT_SETTINGS)
+def cli_upgrade_setup_related() -> None:
+    """ updates pip, setuptools, wheel, pytest-pycodestyle """
+    lib_travis.upgrade_setup_related()
 
 
 # entry point if main

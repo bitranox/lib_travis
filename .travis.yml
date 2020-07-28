@@ -26,21 +26,6 @@ services:   			# start services
 matrix:
     include:
 
-    - os: windows
-      language: sh
-      name: "Windows Python 3.8"
-
-      # oddly a secure password under env: global: causes that choco fails
-      # so we need to put the option : filter_secrets: false
-      # this can be a security issue, check that You dont leak secrets here !
-      filter_secrets: false
-      before_install:
-          - git clone https://github.com/bitranox/lib_bash.git /usr/local/lib_bash
-          - chmod -R 0755 /usr/local/lib_bash
-          - chmod -R +x /usr/local/lib_bash/*.sh
-          - /usr/local/lib_bash/lib_retry.sh retry choco install python3
-          - export PATH="/c/Python38:/c/Python38/Scripts:$PATH"
-
 
     - os: linux
       language: python
@@ -82,7 +67,7 @@ matrix:
       language: python
       python: "pypy3"
       before_install:
-          - export mypy_strict_typecheck="True"
+          - export mypy_strict_typecheck="False"
           - export build_docs="False"
           - export deploy_on_pypi="False"
 
@@ -156,7 +141,7 @@ script:
 
     # mypy typecheck strict
     - if [[ ${mypy_strict_typecheck} == "True" ]]; then
-          COMMAND="${cPREFIX} ${cPYTHON} -m mypy -p lib_travis --strict --no-warn-unused-ignores --implicit-reexport --follow-imports=silent"
+          COMMAND="${cPREFIX} ${cPYTHON} -m mypy -p lib_travis --strict --no-warn-unused-ignores --implicit-reexport --follow-imports=silent";
           ${lib_bash_banner} "running '${COMMAND}'";
           if ${COMMAND}; then ${lib_bash_banner} "'${COMMAND}' - OK"; else ${lib_bash_banner_warning} "'${COMMAND}' - FAILED" && exit 1; fi
       else
