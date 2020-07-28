@@ -78,15 +78,17 @@ def cli_run_commands(description: str, commands: List[str], retry: int, sleep: i
 
 
 @cli_main.command('upgrade_setup_related', context_settings=CLICK_CONTEXT_SETTINGS)
-def cli_upgrade_setup_related() -> None:
+@click.option('--dry-run', is_flag=True, default=False, help='dry run')
+def cli_upgrade_setup_related(dry_run: bool) -> None:
     """ updates pip, setuptools, wheel, pytest-pycodestyle """
-    lib_travis.upgrade_setup_related()
+    lib_travis.upgrade_setup_related(dry_run)
 
 
 @cli_main.command('run_tests', context_settings=CLICK_CONTEXT_SETTINGS)
-def cli_run_tests() -> None:
+@click.option('--dry-run', is_flag=True, default=False, help='dry run')
+def cli_run_tests(dry_run: bool) -> None:
     """ updates pip, setuptools, wheel, pytest-pycodestyle """
-    lib_travis.run_tests()
+    lib_travis.run_tests(dry_run)
 
 
 # entry point if main

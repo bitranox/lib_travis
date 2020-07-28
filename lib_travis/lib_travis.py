@@ -269,7 +269,7 @@ def get_branch() -> str:
     return branch
 
 
-def upgrade_setup_related() -> None:
+def upgrade_setup_related(dry_run: bool) -> None:
     """
     upgrades pip, setuptools, wheel and pytest-pycodestyle
 
@@ -277,6 +277,8 @@ def upgrade_setup_related() -> None:
     ...    upgrade_setup_related()
 
     """
+    if dry_run:
+        return
     pip_prefix = get_pip_prefix()
     run(description='install pip', command=' '.join([pip_prefix, 'install --upgrade pip']))
     run(description='install setuptools', command=' '.join([pip_prefix, 'install --upgrade setuptools']))
@@ -284,8 +286,8 @@ def upgrade_setup_related() -> None:
     run(description='install pytest-pycodestyle', command=' '.join([pip_prefix, 'install --upgrade "pytest-pycodestyle; python_version >= \\"3.5\\""']))
 
 
-def run_tests() -> None:
-    if not on_travis():
+def run_tests(dry_run: bool) -> None:
+    if dry_run:
         return
     lib_log_utils.setup_handler()
     cli_command = get_cli_command()
