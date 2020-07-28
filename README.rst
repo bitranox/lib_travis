@@ -1,4 +1,4 @@
-Version 0.4.7 as of 2020-07-28, see changelog_
+Version 0.4.8a as of 2020-07-28, see changelog_
 
 =======================================================
 
@@ -448,6 +448,12 @@ Changelog
 - new MAJOR version for incompatible API changes,
 - new MINOR version for added functionality in a backwards compatible manner
 - new PATCH version for backwards compatible bug fixes
+
+
+0.4.8a
+-------
+2020-07-27: debug
+
 
 0.4.7
 -------
