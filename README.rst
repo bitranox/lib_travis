@@ -1,4 +1,4 @@
-Version 0.4.5a0 as of 2020-07-28, see changelog_
+Version 0.4.5 as of 2020-07-28, see changelog_
 
 =======================================================
 
@@ -319,6 +319,7 @@ Usage from Commandline
      get_branch             get the branch to work on
      info                   get program informations
      run                    run string command wrapped in run/success/error...
+     run_tests              updates pip, setuptools, wheel, pytest-pycodestyle
      run_x                  run commands wrapped in run/success/error banners
      upgrade_setup_related  updates pip, setuptools, wheel, pytest-pycodestyle
 
@@ -448,9 +449,10 @@ Changelog
 - new MINOR version for added functionality in a backwards compatible manner
 - new PATCH version for backwards compatible bug fixes
 
-0.4.4a0
+0.4.5
 -------
-2020-07-27: development
+2020-07-27: feature release
+    - add command run_tests
 
 0.4.3
 -------

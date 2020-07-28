@@ -83,6 +83,12 @@ def cli_upgrade_setup_related() -> None:
     lib_travis.upgrade_setup_related()
 
 
+@cli_main.command('run_tests', context_settings=CLICK_CONTEXT_SETTINGS)
+def cli_run_tests() -> None:
+    """ updates pip, setuptools, wheel, pytest-pycodestyle """
+    lib_travis.run_tests()
+
+
 # entry point if main
 if __name__ == '__main__':
     try:

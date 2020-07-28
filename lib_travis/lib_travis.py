@@ -1,5 +1,6 @@
 # STDLIB
 import os
+import pathlib
 import shlex
 import subprocess
 import sys
@@ -276,13 +277,183 @@ def upgrade_setup_related() -> None:
     ...    upgrade_setup_related()
 
     """
-    c_prefix = os.environ['cPREFIX']
-    c_pip = os.environ['cPIP']
-    run(description='upgrade pip', command='{c_prefix} {c_pip} install --upgrade pip'.format(c_prefix=c_prefix, c_pip=c_pip))
-    run(description='upgrade setuptools', command='{c_prefix} {c_pip} install --upgrade setuptools'.format(c_prefix=c_prefix, c_pip=c_pip))
-    run(description='upgrade wheel', command='{c_prefix} {c_pip} install --upgrade wheel'.format(c_prefix=c_prefix, c_pip=c_pip))
-    run(description='upgrading pytest-pycodestyle', command='{c_prefix} {c_pip} install --upgrade "pytest-pycodestyle; python_version >= \\"3.5\\""'.format(
-        c_prefix=c_prefix, c_pip=c_pip))
+    pip_prefix = get_pip_prefix()
+    run(description='install pip', command=' '.join([pip_prefix, 'install --upgrade pip']))
+    run(description='install setuptools', command=' '.join([pip_prefix, 'install --upgrade setuptools']))
+    run(description='install wheel', command=' '.join([pip_prefix, 'install --upgrade wheel']))
+    run(description='install pytest-pycodestyle', command=' '.join([pip_prefix, 'install --upgrade "pytest-pycodestyle; python_version >= \\"3.5\\""']))
+
+
+def run_tests() -> None:
+    if not on_travis():
+        return
+    lib_log_utils.setup_handler()
+    cli_command = get_cli_command()
+    command_prefix = get_command_prefix()
+    pip_prefix = get_pip_prefix()
+    python_prefix = get_python_prefix()
+    repository = get_repository()
+    repo_name = get_repo_name()
+    run(description='setup.py test', command=' '.join([python_prefix, './setup.py test']))
+    run(description='pip install, option test', command=' '.join([pip_prefix, 'install', repository, '--install-option test']))
+    run(description='pip standard install', command=' '.join([pip_prefix, 'install', repository]))
+    run(description='check CLI command', command=' '.join([command_prefix, cli_command, '--version']))
+    run(description='install test requirements', command=' '.join([pip_prefix, 'install --upgrade -r ./requirements_test.txt']))
+    run(description='install codecov', command=' '.join([pip_prefix, 'install --upgrade codecov']))
+    run(description='install pytest-cov', command=' '.join([pip_prefix, 'install --upgrade pytest-cov']))
+    run(description='run pytest, coverage only', command=' '.join([python_prefix, '-m pytest --cov={}'.format(repo_name)]))
+
+    if do_mypy_strict_check():
+        run(description='run mypy strict', command=' '.join([python_prefix, '-m mypy -p', repo_name, '--strict --no-warn-unused-ignores',
+                                                             '--implicit-reexport --follow-imports=silent']))
+    else:
+        lib_log_utils.banner_notice("mypy typecheck --strict disabled on this build")
+
+    if do_build_docs():
+        run(description='rebuild README.rst', command=' '.join([command_prefix, cli_command,
+                                                                'rst_include include "./.docs/README_template.rst" "./README.rst"']))
+    else:
+        lib_log_utils.banner_notice("rebuild READE.rst is disabled on this build")
+
+    if do_check_deployment():
+        run(description='install readme renderer', command=' '.join([pip_prefix, 'install --upgrade readme_renderer']))
+        run(description='install twine', command=' '.join([pip_prefix, 'install --upgrade twine']))
+        run(description='install wheel', command=' '.join([pip_prefix, 'install --upgrade wheel']))
+        run(description='create source distribution', command=' '.join([python_prefix, 'setup.py sdist']))
+        run(description='create binary distribution (wheel)', command=' '.join([python_prefix, 'setup.py bdist_wheel']))
+        run(description='check distributions', command=' '.join([command_prefix, 'twine check dist/*']))
+    else:
+        lib_log_utils.banner_notice("check pypy deployment is disabled on this build")
+
+
+def get_pip_prefix() -> str:
+    """
+    get the pip_prefix including the command prefix like : 'wine python -m pip'
+
+    >>> if 'TRAVIS' in os.environ:
+    ...    discard = get_pip_prefix()
+
+    """
+    c_parts: List[str] = list()
+    c_parts.append(get_command_prefix())
+    if 'cPIP' in os.environ:
+        c_parts.append(os.environ['cPIP'])
+    command_prefix = ' '.join(c_parts).strip()
+    return command_prefix
+
+
+def get_python_prefix() -> str:
+    """
+    get the python_prefix including the command prefix like : 'wine python'
+
+    >>> if 'TRAVIS' in os.environ:
+    ...    discard = get_python_prefix()
+
+    """
+    c_parts: List[str] = list()
+    c_parts.append(get_command_prefix())
+    if 'cPYTHON' in os.environ:
+        c_parts.append(os.environ['cPYTHON'])
+    python_prefix = ' '.join(c_parts).strip()
+    return python_prefix
+
+
+def get_command_prefix() -> str:
+    """
+    get the command_prefix like : 'wine' or ''
+    """
+
+    command_prefix = ''
+    if 'cPREFIX' in os.environ:
+        command_prefix = os.environ['cPREFIX']
+    return command_prefix
+
+
+def get_repository() -> str:
+    """
+    get the repository including the branch to work on , like :
+    'git+https://github.com/bitranox/lib_travis.git@master'
+
+    >>> get_repository()
+    'git+https://github.com/...git@...'
+
+    """
+
+    c_parts: List[str] = list()
+    c_parts.append('git+https://github.com/')
+    if 'TRAVIS_REPO_SLUG' in os.environ:
+        c_parts.append(os.environ['TRAVIS_REPO_SLUG'])
+    c_parts.append('.git@')
+    c_parts.append(get_branch())
+    repository = ''.join(c_parts)
+    return repository
+
+
+def get_repo_name() -> str:
+    """
+    get the repo name like 'lib_travis'
+
+    >>> discard = get_repo_name()
+
+    """
+    repo_name = ''
+    if 'TRAVIS_REPO_SLUG' in os.environ:
+        repo_slug = os.environ['TRAVIS_REPO_SLUG']
+        repo_name = repo_slug.split('/')[1]
+    return repo_name
+
+
+def get_cli_command() -> str:
+    """
+    get the registered CLI Command like 'lib_travis'
+    this will be used to check commandline registration like : lib_travis --version
+
+    """
+    cli_command = ''
+    if 'CLI_COMMAND' in os.environ:
+        cli_command = os.environ['CLI_COMMAND']
+    return cli_command
+
+
+def do_mypy_strict_check() -> bool:
+    """ if mypy check should run """
+    if 'mypy_strict_typecheck' in os.environ and os.environ['mypy_strict_typecheck'].lower() == 'true':
+        return True
+    else:
+        return False
+
+
+def do_build_docs() -> bool:
+    """ if README.rst should be rebuilt """
+    if 'build_docs' in os.environ and os.environ['build_docs'].lower() == 'true':
+        return True
+    else:
+        return False
+
+
+def do_check_deployment() -> bool:
+    """ if we should check if deployment would work on pypi
+        we only check when :
+            - setup.py is existing
+            - there is no Travis_TAG (then it will be deployed anyway
+            - and build_docs = True
+    """
+    path_setup_file = pathlib.Path('./setup.py')
+    if not path_setup_file.is_file():
+        return False
+    if 'TRAVIS_TAG' in os.environ and os.environ['TRAVIS_TAG'] != '':
+        return False
+    return do_build_docs()
+
+
+def on_travis() -> bool:
+    """
+    if we run on travis
+    """
+    if 'TRAVIS' in os.environ:
+        return True
+    else:
+        return False
 
 
 if __name__ == '__main__':
