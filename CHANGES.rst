@@ -6,7 +6,7 @@ Changelog
 - new PATCH version for backwards compatible bug fixes
 
 
-0.4.8a
+0.4.8
 -------
 2020-07-27: debug
 
