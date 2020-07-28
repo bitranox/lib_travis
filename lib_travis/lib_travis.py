@@ -60,8 +60,6 @@ def run(description: str, command: str, retry: int = 3, sleep: int = 30, quote: 
     # run_command}}}
 
     command = command.strip()
-    # test
-    command = command.replace('.git', '.git@{BRANCH}'.format(BRANCH=get_branch()))
 
     if quote:
         command = shlex.quote(command)
@@ -296,12 +294,7 @@ def run_tests(dry_run: bool = True) -> None:
     repository = get_repository()
     repo_name = get_repo_name()
     run(description='setup.py test', command=' '.join([python_prefix, './setup.py test']))
-
-    command = ' '.join([pip_prefix, 'install', repository, '--install-option test'])
-    lib_log_utils.banner_debug('repository: {}'.format(repository))
-    lib_log_utils.banner_debug('command: {}'.format(command))
-
-    run(description='pip install, option test', command=command)
+    run(description='pip install, option test', command=' '.join([pip_prefix, 'install', repository, '--install-option test']))
     run(description='pip standard install', command=' '.join([pip_prefix, 'install', repository]))
     run(description='check CLI command', command=' '.join([command_prefix, cli_command, '--version']))
     run(description='install test requirements', command=' '.join([pip_prefix, 'install --upgrade -r ./requirements_test.txt']))
@@ -390,9 +383,7 @@ def get_repository() -> str:
     if 'TRAVIS_REPO_SLUG' in os.environ:
         c_parts.append(os.environ['TRAVIS_REPO_SLUG'])
     c_parts.append('.git@')
-    branch = get_branch()
-    lib_log_utils.banner_debug('branch: {}'.format(branch))
-    c_parts.append(branch)
+    c_parts.append(get_branch())
     repository = ''.join(c_parts)
     return repository
 
