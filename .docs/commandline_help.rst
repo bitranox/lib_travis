@@ -13,5 +13,6 @@
      get_branch             get the branch to work on
      info                   get program informations
      run                    run string command wrapped in run/success/error...
+     run_tests              updates pip, setuptools, wheel, pytest-pycodestyle
      run_x                  run commands wrapped in run/success/error banners
      upgrade_setup_related  updates pip, setuptools, wheel, pytest-pycodestyle
