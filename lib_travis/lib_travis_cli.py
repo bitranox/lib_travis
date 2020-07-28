@@ -77,18 +77,32 @@ def cli_run_commands(description: str, commands: List[str], retry: int, sleep: i
     lib_travis.run_x(description, commands, retry=retry, sleep=sleep, split=split, banner=banner)
 
 
-@cli_main.command('upgrade_setup_related', context_settings=CLICK_CONTEXT_SETTINGS)
+@cli_main.command('install', context_settings=CLICK_CONTEXT_SETTINGS)
 @click.option('--dry-run', is_flag=True, default=False, help='dry run')
-def cli_upgrade_setup_related(dry_run: bool) -> None:
+def cli_install(dry_run: bool) -> None:
     """ updates pip, setuptools, wheel, pytest-pycodestyle """
-    lib_travis.upgrade_setup_related(dry_run)
+    lib_travis.install(dry_run)
 
 
-@cli_main.command('run_tests', context_settings=CLICK_CONTEXT_SETTINGS)
+@cli_main.command('script', context_settings=CLICK_CONTEXT_SETTINGS)
 @click.option('--dry-run', is_flag=True, default=False, help='dry run')
-def cli_run_tests(dry_run: bool) -> None:
+def cli_script(dry_run: bool) -> None:
     """ updates pip, setuptools, wheel, pytest-pycodestyle """
-    lib_travis.run_tests(dry_run)
+    lib_travis.script(dry_run)
+
+
+@cli_main.command('after_success', context_settings=CLICK_CONTEXT_SETTINGS)
+@click.option('--dry-run', is_flag=True, default=False, help='dry run')
+def cli_after_success(dry_run: bool) -> None:
+    """ coverage reports """
+    lib_travis.after_success(dry_run)
+
+
+@cli_main.command('deploy', context_settings=CLICK_CONTEXT_SETTINGS)
+@click.option('--dry-run', is_flag=True, default=False, help='dry run')
+def cli_deploy(dry_run: bool) -> None:
+    """ deploy on pypi """
+    lib_travis.deploy(dry_run)
 
 
 # entry point if main
