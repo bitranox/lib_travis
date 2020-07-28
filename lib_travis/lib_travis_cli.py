@@ -77,6 +77,12 @@ def cli_run_commands(description: str, commands: List[str], retry: int, sleep: i
     lib_travis.run_x(description, commands, retry=retry, sleep=sleep, split=split, banner=banner)
 
 
+@cli_main.command('upgrade_setup_related', context_settings=CLICK_CONTEXT_SETTINGS)
+def cli_upgrade_setup_related(description: str, commands: List[str], retry: int, sleep: int, split: bool, banner: bool) -> None:
+    """ updates pip, setuptools, wheel, pytest-pycodestyle """
+    lib_travis.upgrade_setup_related()
+
+
 # entry point if main
 if __name__ == '__main__':
     try:

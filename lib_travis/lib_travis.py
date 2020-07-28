@@ -268,5 +268,19 @@ def get_branch() -> str:
     return branch
 
 
+def upgrade_setup_related():
+    """
+    upgrades pip, setuptools, wheel and pytest-pycodestyle
+
+    >>> if 'TRAVIS' in os.environ:
+    ...    upgrade_setup_related()
+
+    """
+    run(description='upgrade pip', command='${cPREFIX} ${cPIP} install --upgrade pip')
+    run(description='upgrade setuptools', command='${cPREFIX} ${cPIP} install --upgrade setuptools')
+    run(description='upgrade wheel', command='${cPREFIX} ${cPIP} install --upgrade wheel')
+    run(description='upgrading pytest-pycodestyle', command='${cPREFIX} ${cPIP} install --upgrade "pytest-pycodestyle; python_version >= \\"3.5\\""')
+
+
 if __name__ == '__main__':
     print(b'this is a library only, the executable is named "lib_travis_cli.py"', file=sys.stderr)

@@ -1,4 +1,4 @@
-Version 0.4.3a0 as of 2020-07-28, see changelog_
+Version 0.4.3 as of 2020-07-28, see changelog_
 
 =======================================================
 
@@ -253,7 +253,7 @@ python methods:
 
 .. code-block:: python
 
-    def run_x(description: str, commands: List[str], retry: int = 3, sleep: int = 30, split: bool = True, banner: bool = True) -> None:
+    def run_x(description: str, commands: List[str], retry: int = 3, sleep: int = 30, split: bool = True, banner: bool = False) -> None:
         """
         runs and retries a command passed as list of strings and wrap it in "success" or "error" banners
 
@@ -269,7 +269,7 @@ python methods:
         sleep
             sleep for n seconds between the commands, default = 30
         split
-            split the commands again with shlex - default = True
+            split the commands again with shlex - default = False
             this we need because some commands passed are an array of commands themself
         banner
             if to use banner for run/success or just colored lines.
@@ -316,10 +316,11 @@ Usage from Commandline
      -h, --help                    Show this message and exit.
 
    Commands:
-     get_branch  get the branch to work on
-     info        get program informations
-     run         run string command wrapped in run/success/error banners
-     run_x       run commands wrapped in run/success/error banners
+     get_branch             get the branch to work on
+     info                   get program informations
+     run                    run string command wrapped in run/success/error...
+     run_x                  run commands wrapped in run/success/error banners
+     upgrade_setup_related  updates pip, setuptools, wheel, pytest-pycodestyle
 
 Installation and Upgrade
 ------------------------
@@ -447,10 +448,11 @@ Changelog
 - new MINOR version for added functionality in a backwards compatible manner
 - new PATCH version for backwards compatible bug fixes
 
-0.4.3a0
+0.4.3
 -------
 2020-07-27: development
-
+    - set default to --no-split on run_x
+    - add command upgrade_setup_related
 
 0.4.2
 -------

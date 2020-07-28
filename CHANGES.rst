@@ -5,10 +5,11 @@ Changelog
 - new MINOR version for added functionality in a backwards compatible manner
 - new PATCH version for backwards compatible bug fixes
 
-0.4.3a0
+0.4.3
 -------
 2020-07-27: development
-
+    - set default to --no-split on run_x
+    - add command upgrade_setup_related
 
 0.4.2
 -------
