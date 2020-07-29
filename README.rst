@@ -1,4 +1,4 @@
-Version 1.0.2 as of 2020-07-29, see changelog_
+Version 1.0.3 as of 2020-07-29, see changelog_
 
 =======================================================
 
@@ -881,6 +881,11 @@ Changelog
 - new MINOR version for added functionality in a backwards compatible manner
 - new PATCH version for backwards compatible bug fixes
 
+
+1.0.3
+--------
+2020-07-29: feature release
+    - fix code coverage test report
 
 1.0.2
 --------

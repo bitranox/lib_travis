@@ -454,10 +454,9 @@ def after_success(dry_run: bool = True) -> None:
 
     if get_env_or_blank('CC_TEST_REPORTER_ID') != '':
         if os_is_windows():
-            cc_test_reporter_id = get_env_or_blank('CC_TEST_REPORTER_ID')
+            os.environ['CODECLIMATE_REPO_TOKEN'] = get_env_or_blank('CC_TEST_REPORTER_ID')
             run(description='install codeclimate-test-reporter', command=' '.join([pip_prefix, 'install codeclimate-test-reporter']))
-            run(description='report to codeclimate', command=' '.join([command_prefix, 'codeclimate-test-reporter --token', cc_test_reporter_id]),
-                show_command=False)
+            run(description='report to codeclimate', command=' '.join([command_prefix, 'codeclimate-test-reporter']))
         else:
             run(description='download test reporter',
                 command='curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter')
