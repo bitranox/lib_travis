@@ -8,10 +8,7 @@ import click
 # OWN
 import cli_exit_tools
 
-# CONSTANTS
-CLICK_CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
-# CLICK_CONTEXT_SETTINGS_RUN = dict(help_option_names=['-h', '--help'], ignore_unknown_options=True)
-
+# PROJ
 try:
     from . import __init__conf__
     from . import lib_travis
@@ -19,6 +16,10 @@ except (ImportError, ModuleNotFoundError):  # pragma: no cover
     # imports for doctest
     import __init__conf__                   # type: ignore  # pragma: no cover
     import lib_travis                       # type: ignore  # pragma: no cover
+
+# CONSTANTS
+CLICK_CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
+# CLICK_CONTEXT_SETTINGS_RUN = dict(help_option_names=['-h', '--help'], ignore_unknown_options=True)
 
 
 def info() -> None:

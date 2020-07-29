@@ -359,6 +359,8 @@ def script(dry_run: bool = True) -> None:
     DEPLOY_CHECK
         from environment, if deployment to pypi should be tested
         only if setup.py exists and on non-tagged builds (there we deploy for real)
+    PACKAGE_NAME
+        from environment, the package name to pass to mypy
     dry_run
         if set, this returns immediately - for CLI tests
 
@@ -377,7 +379,7 @@ def script(dry_run: bool = True) -> None:
     pip_prefix = get_pip_prefix()
     python_prefix = get_python_prefix()
     repository = get_repository()
-    repo_name = get_repo_name()
+    package_name = get_env_or_blank('PACKAGE_NAME')
     run(description='setup.py test', command=' '.join([python_prefix, './setup.py test']))
     run(description='pip install, option test', command=' '.join([pip_prefix, 'install', repository, '--install-option test']))
     run(description='pip standard install', command=' '.join([pip_prefix, 'install', repository]))
@@ -385,10 +387,11 @@ def script(dry_run: bool = True) -> None:
     run(description='install test requirements', command=' '.join([pip_prefix, 'install --upgrade -r ./requirements_test.txt']))
     run(description='install codecov', command=' '.join([pip_prefix, 'install --upgrade codecov']))
     run(description='install pytest-cov', command=' '.join([pip_prefix, 'install --upgrade pytest-cov']))
-    run(description='run pytest, coverage only', command=' '.join([python_prefix, '-m pytest --cov={}'.format(repo_name)]))
+    run(description='run pytest, coverage only', command=' '.join([python_prefix, '-m pytest --cov={package_name}'.format(package_name=package_name)]))
 
     if do_mypy_strict_check():
-        run(description='run mypy strict', command=' '.join([python_prefix, '-m mypy -p', repo_name, '--strict --no-warn-unused-ignores',
+
+        run(description='run mypy strict', command=' '.join([python_prefix, '-m mypy -p', package_name, '--strict --no-warn-unused-ignores',
                                                              '--implicit-reexport --follow-imports=silent']))
     else:
         lib_log_utils.banner_notice("mypy typecheck --strict disabled on this build")
@@ -593,20 +596,6 @@ def get_repository() -> str:
     c_parts.append(get_branch())
     repository = ''.join(c_parts)
     return repository
-
-
-def get_repo_name() -> str:
-    """
-    get the repo name like 'lib_travis'
-
-    >>> discard = get_repo_name()
-
-    """
-    repo_name = ''
-    if 'TRAVIS_REPO_SLUG' in os.environ:
-        repo_slug = os.environ['TRAVIS_REPO_SLUG']
-        repo_name = repo_slug.split('/')[1]
-    return repo_name
 
 
 def get_github_username() -> str:
