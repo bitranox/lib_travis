@@ -245,38 +245,6 @@ def get_branch() -> str:
     TRAVIS_TAG:
         If the current build is for a git tag, this variable is set to the tag’s name, otherwise it is empty ("").
 
-
-    Examples
-    --------
-
-    >>> # Setup
-    >>> save_TRAVIS_TAG = get_env_or_blank('TRAVIS_TAG')
-    >>> save_TRAVIS_PULL_REQUEST_BRANCH = get_env_or_blank('TRAVIS_PULL_REQUEST_BRANCH')
-    >>> save_TRAVIS_BRANCH = get_env_or_blank('TRAVIS_BRANCH')
-
-    >>> # Test Tagged Commit
-    >>> os.environ['TRAVIS_TAG'] = 'test_tag'
-    >>> assert get_branch() == 'master'
-    >>> discard = get_env_or_blank('TRAVIS_TAG')
-
-    >>> # Test Pull request
-    >>> os.environ['TRAVIS_PULL_REQUEST_BRANCH'] = 'test_pr'
-    >>> assert get_branch() == 'test_pr'
-    >>> discard = get_env_or_blank('TRAVIS_PULL_REQUEST_BRANCH')
-
-    >>> # Test Push or Custom Build
-    >>> os.environ['TRAVIS_BRANCH'] = 'test_branch'
-    >>> assert get_branch() == 'test_branch'
-    >>> discard = get_env_or_blank('TRAVIS_BRANCH')
-
-    >>> # Test unknown
-    >>> assert get_branch() == 'master'
-
-    >>> # Teardown
-    >>> if save_TRAVIS_TAG is not None: os.environ['TRAVIS_BRANCH'] = save_TRAVIS_TAG
-    >>> if save_TRAVIS_PULL_REQUEST_BRANCH is not None: os.environ['TRAVIS_PULL_REQUEST_BRANCH'] = save_TRAVIS_PULL_REQUEST_BRANCH
-    >>> if save_TRAVIS_BRANCH is not None: os.environ['TRAVIS_BRANCH'] = save_TRAVIS_BRANCH
-
     """
     # get_branch}}}
 
