@@ -767,9 +767,12 @@ following modules will be automatically installed :
 
     ## Project Requirements
     click
-    cli_exit_tools @ git+https://github.com/bitranox/cli_exit_tools.git
-    lib_log_utils @ git+https://github.com/bitranox/lib_log_utils.git
-    rst_include @ git+https://github.com/bitranox/rst_include.git
+    # cli_exit_tools @ git+https://github.com/bitranox/cli_exit_tools.git
+    # lib_log_utils @ git+https://github.com/bitranox/lib_log_utils.git
+    # rst_include @ git+https://github.com/bitranox/rst_include.git
+    cli_exit_tools
+    lib_log_utils
+    rst_include
 
 Acknowledgements
 ----------------
