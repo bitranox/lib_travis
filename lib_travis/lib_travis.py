@@ -682,7 +682,7 @@ def do_deploy() -> bool:
         - when $deploy_on_pypi = True
         - when TRAVIS_TAG != ''
     """
-    if get_env_or_blank('TRAVIS_TAG') != '':
+    if not get_env_or_blank('TRAVIS_TAG'):
         return False
     if not get_env_or_blank('PYPI_PASSWORD'):
         return False
