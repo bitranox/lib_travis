@@ -12,7 +12,7 @@ import lib_log_utils
 import cli_exit_tools
 
 
-# run_command{{{
+# run{{{
 def run(description: str, command: str, retry: int = 3, sleep: int = 30, quote: bool = False, banner: bool = True, show_command: bool = True) -> None:
     """
     runs and retries a command passed as string and wrap it in "success" or "error" banners
@@ -59,7 +59,7 @@ def run(description: str, command: str, retry: int = 3, sleep: int = 30, quote: 
     >>> run('test', "echo test")
 
     """
-    # run_command}}}
+    # run}}}
 
     command = command.strip()
 
@@ -98,7 +98,7 @@ def run(description: str, command: str, retry: int = 3, sleep: int = 30, quote: 
             cli_exit_tools.flush_streams()
 
 
-# run_commands{{{
+# run_x{{{
 def run_x(description: str, commands: List[str], retry: int = 3, sleep: int = 30, split: bool = True, banner: bool = False, show_command: bool = True) -> None:
     """
     runs and retries a command passed as list of strings and wrap it in "success" or "error" banners
@@ -148,7 +148,7 @@ def run_x(description: str, commands: List[str], retry: int = 3, sleep: int = 30
     >>> run_x('test', ['echo test'])
 
     """
-    # run_commands}}}
+    # run_x}}}
 
     if split:
         splitted_commands: List[str] = list()
@@ -283,13 +283,24 @@ def get_branch() -> str:
     return branch
 
 
+# install{{{
 def install(dry_run: bool = True) -> None:
     """
     upgrades pip, setuptools, wheel and pytest-pycodestyle
 
+
+    Parameter
+    ---------
+    cPIP
+        from environment, the command to launch pip, like "python -m pip"
+
+
+    Examples
+    --------
     >>> install()
 
     """
+    # install}}}
     if dry_run:
         return
     pip_prefix = get_pip_prefix()
@@ -299,7 +310,57 @@ def install(dry_run: bool = True) -> None:
     run(description='install pytest-pycodestyle', command=' '.join([pip_prefix, 'install --upgrade "pytest-pycodestyle; python_version >= \\"3.5\\""']))
 
 
+# script{{{
 def script(dry_run: bool = True) -> None:
+    """
+    travis jobs to run in travis.yml section "script":
+    - run setup.py test
+    - run pip with install option test
+    - run pip standard install
+    - test the CLI Registration
+    - install the test requirements
+    - install codecov
+    - install pytest-codecov
+    - run pytest coverage
+    - run mypy strict
+        - if MYPY_STRICT="True"
+    - rebuild the rst files (resolve rst file includes)
+        - needs RST_INCLUDE_SOURCE, RST_INCLUDE_TARGET set and BUILD_DOCS="True"
+    - check if deployment would succeed
+        - needs CHECK_DEPLOYMENT="True", setup.py exists and not a tagged build)
+
+
+    Parameter
+    ---------
+    cPREFIX
+        from environment, the command prefix like 'wine' or ''
+    cPIP
+        from environment, the command to launch pip, like "python -m pip"
+    cPYTHON
+        from environment, the command to launch python, like 'python' or 'python3' on MacOS
+    CLI_COMMAND
+        from environment, must be set in travis - the CLI command to test with option --version
+    MYPY_STRICT
+        from environment, if pytest with mypy --strict should run
+    BUILD_DOCS
+        from environment, if rst file should be rebuilt
+    RST_INCLUDE_SOURCE
+        from environment, the rst template with rst includes to resolve
+    RST_INCLUDE_TARGET
+        from environment, the rst target file
+    DEPLOY_CHECK
+        from environment, if deployment to pypi should be tested
+        only if setup.py exists and on non-tagged builds (there we deploy for real)
+    dry_run
+        if set, this returns immediately - for CLI tests
+
+
+    Examples
+    --------
+    >>> script()
+
+    """
+    # script}}}
     if dry_run:
         return
     lib_log_utils.setup_handler()
@@ -345,7 +406,36 @@ def script(dry_run: bool = True) -> None:
         lib_log_utils.banner_notice("check pypy deployment is disabled on this build")
 
 
+# after_success{{{
 def after_success(dry_run: bool = True) -> None:
+    """
+    travis jobs to run in travis.yml section "after_success":
+        - coverage report
+        - codecov
+        - codeclimate report upload
+
+
+    Parameter
+    ---------
+    cPREFIX
+        from environment, the command prefix like 'wine' or ''
+    cPIP
+        from environment, the command to launch pip, like "python -m pip"
+    CC_TEST_REPORTER_ID
+        from environment, must be set in travis
+    TRAVIS_TEST_RESULT
+        from environment, this is set by TRAVIS automatically
+    dry_run
+        if set, this returns immediately - for CLI tests
+
+
+    Examples
+    --------
+    >>> after_success()
+
+    """
+    # after_success}}}
+
     if dry_run:
         return
     command_prefix = get_command_prefix()
@@ -354,20 +444,65 @@ def after_success(dry_run: bool = True) -> None:
     run(description='coverage report', command=' '.join([command_prefix, 'coverage report']))
     run(description='codecov', command=' '.join([command_prefix, 'codecov']))
 
-    if os_is_windows():
-        cc_test_reporter_id = get_env_or_blank('CC_TEST_REPORTER_ID')
-        run(description='install codeclimate-test-reporter', command=' '.join([pip_prefix, 'install codeclimate-test-reporter']))
-        run(description='report to codeclimate', command=' '.join([command_prefix, 'codeclimate-test-reporter --token', cc_test_reporter_id]),
-            show_command=False)
+    if get_env_or_blank('CC_TEST_REPORTER_ID') != '':
+        if os_is_windows():
+            cc_test_reporter_id = get_env_or_blank('CC_TEST_REPORTER_ID')
+            run(description='install codeclimate-test-reporter', command=' '.join([pip_prefix, 'install codeclimate-test-reporter']))
+            run(description='report to codeclimate', command=' '.join([command_prefix, 'codeclimate-test-reporter --token', cc_test_reporter_id]),
+                show_command=False)
+        else:
+            run(description='download test reporter',
+                command='curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter')
+            run(description='test reporter set permissions', banner=False, command='chmod +x ./cc-test-reporter')
+            travis_test_result = get_env_or_blank('TRAVIS_TEST_RESULT')
+            run(description='report to codeclimate', command=' '.join(['./cc-test-reporter after-build --exit-code', travis_test_result]))
     else:
-        run(description='download test reporter',
-            command='curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter')
-        run(description='test reporter set permissions', banner=False, command='chmod +x ./cc-test-reporter')
-        travis_test_result = get_env_or_blank('TRAVIS_TEST_RESULT')
-        run(description='report to codeclimate', command=' '.join(['./cc-test-reporter after-build --exit-code', travis_test_result]))
+        lib_log_utils.banner_notice("Code Climate Coverage is disabled, no CC_TEST_REPORTER_ID")
 
 
+# deploy{{{
 def deploy(dry_run: bool = True) -> None:
+    """
+        travis jobs to run in travis.yml section "script":
+    - run setup.py test
+    - run pip with install option test
+    - run pip standard install
+    - test the CLI Registration
+    - install the test requirements
+    - install codecov
+    - install pytest-codecov
+    - run pytest coverage
+    - run mypy strict
+        - if MYPY_STRICT="True"
+    - rebuild the rst files (resolve rst file includes)
+        - needs RST_INCLUDE_SOURCE, RST_INCLUDE_TARGET set and BUILD_DOCS="True"
+    - check if deployment would succeed
+        - needs CHECK_DEPLOYMENT="True", setup.py exists and not a tagged build)
+
+
+    Parameter
+    ---------
+    cPREFIX
+        from environment, the command prefix like 'wine' or ''
+    cPIP
+        from environment, the command to launch pip, like "python -m pip"
+    cPYTHON
+        from environment, the command to launch python, like 'python' or 'python3' on MacOS
+    PYPI_PASSWORD
+        from environment, passed as secure, encrypted variable to environment
+    DEPLOY
+        from environment, needs to be "True"
+    dry_run
+        if set, this returns immediately - for CLI tests
+
+
+    Examples
+    --------
+    >>> deploy()
+
+    """
+    # deploy}}}
+
     if dry_run:
         return
 
@@ -375,7 +510,7 @@ def deploy(dry_run: bool = True) -> None:
     pip_prefix = get_pip_prefix()
     python_prefix = get_python_prefix()
     github_username = get_github_username()
-    pypi_password = get_env_or_blank('pypi_password')
+    pypi_password = get_env_or_blank('PYPI_PASSWORD')
 
     if do_deploy():
         run(description='install readme renderer', command=' '.join([pip_prefix, 'install --upgrade readme_renderer']))
@@ -483,7 +618,7 @@ def get_github_username() -> str:
 
 def do_mypy_strict_check() -> bool:
     """ if mypy check should run """
-    if get_env_or_blank('mypy_strict_typecheck').lower() == 'true':
+    if get_env_or_blank('MYPY_STRICT').lower() == 'true':
         return True
     else:
         return False
@@ -491,10 +626,16 @@ def do_mypy_strict_check() -> bool:
 
 def do_build_docs() -> bool:
     """ if README.rst should be rebuilt """
-    if get_env_or_blank('build_docs').lower() == 'true':
-        return True
-    else:
+    if get_env_or_blank('BUILD_DOCS').lower() != 'true':
         return False
+
+    if not get_env_or_blank('RST_INCLUDE_SOURCE'):
+        return False
+
+    if not get_env_or_blank('RST_INCLUDE_TARGET'):
+        return False
+    else:
+        return True
 
 
 def do_check_deployment() -> bool:
@@ -502,14 +643,17 @@ def do_check_deployment() -> bool:
         we only check when :
             - setup.py is existing
             - there is no Travis_TAG (then it will be deployed anyway
-            - and build_docs = True
+            - and CHECK_DEPLOYMENT = True
     """
     path_setup_file = pathlib.Path('./setup.py')
     if not path_setup_file.is_file():
         return False
-    if 'TRAVIS_TAG' in os.environ and os.environ['TRAVIS_TAG'] != '':
+    if get_env_or_blank('TRAVIS_TAG'):
         return False
-    return do_build_docs()
+    if get_env_or_blank('DEPLOY_CHECK') == 'true':
+        return True
+    else:
+        return False
 
 
 def on_travis() -> bool:
@@ -542,7 +686,11 @@ def do_deploy() -> bool:
         - when $deploy_on_pypi = True
         - when TRAVIS_TAG != ''
     """
-    if get_env_or_blank('$deploy_on_pypi').lower() == 'true' and get_env_or_blank('TRAVIS_TAG') != '':
+    if get_env_or_blank('TRAVIS_TAG') != '':
+        return False
+    if not get_env_or_blank('PYPI_PASSWORD'):
+        return False
+    if get_env_or_blank('DEPLOY').lower() == 'true':
         return True
     else:
         return False

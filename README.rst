@@ -1,4 +1,4 @@
-Version 1.0.0 as of 2020-07-29, see changelog_
+Version 1.0.1 as of 2020-07-29, see changelog_
 
 =======================================================
 
@@ -88,6 +88,55 @@ Usage
 
 usage commandline:
 
+.. code-block:: text
+
+   Usage: lib_travis [OPTIONS] COMMAND [ARGS]...
+
+     travis related utilities
+
+   Options:
+     --version                     Show the version and exit.
+     --traceback / --no-traceback  return traceback information on cli
+     -h, --help                    Show this message and exit.
+
+   Commands:
+     install
+        updates pip, setuptools, wheel, pytest-pycodestyle
+        --dry-run
+
+     script
+        updates pip, setuptools, wheel, pytest-pycodestyle
+        --dry-run
+
+     after_success
+        coverage reports
+        --dry-run
+
+     deploy
+        deploy on pypi
+        --dry-run
+
+     get_branch
+        get the branch to work on
+
+     info
+        get program informations
+
+     run [Options] <description> <command>
+        run string command wrapped in run/success/error banners
+        -r --retry              retry n times, default = 3
+        -s --sleep              sleep when retry, default = 30 seconds
+        --quote --plain         use shlex auto quote, default = False
+        --banner --no-banner    wrap in banners, default = True
+
+     run_x [Options] -- <description> <command1> <command2> ...
+        run commands wrapped in run/success/error banners
+        -r --retry              retry n times, default = 3
+        -s --sleep              sleep when retry, default = 30 seconds
+        --split --no-split      if to split arguments with shlex, default = False
+        --banner --no-banner    wrap in banners, default = True
+
+
 
 - run a command passed as string
 
@@ -106,12 +155,12 @@ usage commandline:
     # then all following strings are considered as arguments to run a command,
     # and are not parsed as options for the run_x command itself.
     # that means, all options need to be stated before the '--' marker.
-    # commands are splitted again with shlex - in case there are multiple commands in an argument
+    # commands can be splitted again with shlex - in case there are multiple commands in an argument
     $> lib_travis run_x --retry=3 --sleep=30 -- "description" command -some -options
 
     # in that case "echo test" will be splitted into ['echo', 'test']
     $> EXAMPLE="echo test"
-    $> lib_travis run_x --retry=3 --sleep=30 -- ${EXAMPLE}
+    $> lib_travis run_x --retry=3 --sleep=30 --split -- ${EXAMPLE}
 
 
 - get the branch to work on from travis environment variables
@@ -121,6 +170,160 @@ usage commandline:
     $> BRANCH=$(lib_travis get_branch)
 
 python methods:
+
+- install, jobs to do in the Travis "install" section
+
+.. code-block:: python
+
+    def install(dry_run: bool = True) -> None:
+        """
+        upgrades pip, setuptools, wheel and pytest-pycodestyle
+
+
+        Parameter
+        ---------
+        cPIP
+            from environment, the command to launch pip, like "python -m pip"
+
+
+        Examples
+        --------
+        >>> install()
+
+        """
+
+- script, jobs to do in the Travis "script" section
+
+.. code-block:: python
+
+    def script(dry_run: bool = True) -> None:
+        """
+        travis jobs to run in travis.yml section "script":
+        - run setup.py test
+        - run pip with install option test
+        - run pip standard install
+        - test the CLI Registration
+        - install the test requirements
+        - install codecov
+        - install pytest-codecov
+        - run pytest coverage
+        - run mypy strict
+            - if MYPY_STRICT="True"
+        - rebuild the rst files (resolve rst file includes)
+            - needs RST_INCLUDE_SOURCE, RST_INCLUDE_TARGET set and BUILD_DOCS="True"
+        - check if deployment would succeed
+            - needs CHECK_DEPLOYMENT="True", setup.py exists and not a tagged build)
+
+
+        Parameter
+        ---------
+        cPREFIX
+            from environment, the command prefix like 'wine' or ''
+        cPIP
+            from environment, the command to launch pip, like "python -m pip"
+        cPYTHON
+            from environment, the command to launch python, like 'python' or 'python3' on MacOS
+        CLI_COMMAND
+            from environment, must be set in travis - the CLI command to test with option --version
+        MYPY_STRICT
+            from environment, if pytest with mypy --strict should run
+        BUILD_DOCS
+            from environment, if rst file should be rebuilt
+        RST_INCLUDE_SOURCE
+            from environment, the rst template with rst includes to resolve
+        RST_INCLUDE_TARGET
+            from environment, the rst target file
+        DEPLOY_CHECK
+            from environment, if deployment to pypi should be tested
+            only if setup.py exists and on non-tagged builds (there we deploy for real)
+        dry_run
+            if set, this returns immediately - for CLI tests
+
+
+        Examples
+        --------
+        >>> script()
+
+        """
+
+- after_success, jobs to do in the Travis "after_success" section
+
+.. code-block:: python
+
+    def after_success(dry_run: bool = True) -> None:
+        """
+        travis jobs to run in travis.yml section "after_success":
+            - coverage report
+            - codecov
+            - codeclimate report upload
+
+
+        Parameter
+        ---------
+        cPREFIX
+            from environment, the command prefix like 'wine' or ''
+        cPIP
+            from environment, the command to launch pip, like "python -m pip"
+        CC_TEST_REPORTER_ID
+            from environment, must be set in travis
+        TRAVIS_TEST_RESULT
+            from environment, this is set by TRAVIS automatically
+        dry_run
+            if set, this returns immediately - for CLI tests
+
+
+        Examples
+        --------
+        >>> after_success()
+
+        """
+
+- deploy, deploy to pypi in the Travis "after_success" section
+
+.. code-block:: python
+
+    def deploy(dry_run: bool = True) -> None:
+        """
+            travis jobs to run in travis.yml section "script":
+        - run setup.py test
+        - run pip with install option test
+        - run pip standard install
+        - test the CLI Registration
+        - install the test requirements
+        - install codecov
+        - install pytest-codecov
+        - run pytest coverage
+        - run mypy strict
+            - if MYPY_STRICT="True"
+        - rebuild the rst files (resolve rst file includes)
+            - needs RST_INCLUDE_SOURCE, RST_INCLUDE_TARGET set and BUILD_DOCS="True"
+        - check if deployment would succeed
+            - needs CHECK_DEPLOYMENT="True", setup.py exists and not a tagged build)
+
+
+        Parameter
+        ---------
+        cPREFIX
+            from environment, the command prefix like 'wine' or ''
+        cPIP
+            from environment, the command to launch pip, like "python -m pip"
+        cPYTHON
+            from environment, the command to launch python, like 'python' or 'python3' on MacOS
+        PYPI_PASSWORD
+            from environment, passed as secure, encrypted variable to environment
+        DEPLOY
+            from environment, needs to be "True"
+        dry_run
+            if set, this returns immediately - for CLI tests
+
+
+        Examples
+        --------
+        >>> deploy()
+
+        """
+
+- get_branch, determine the branch to work on from Travis environment
 
 .. code-block:: python
 
@@ -204,6 +407,8 @@ python methods:
 
         """
 
+- run, usually used internally
+
 .. code-block:: python
 
     def run(description: str, command: str, retry: int = 3, sleep: int = 30, quote: bool = False, banner: bool = True, show_command: bool = True) -> None:
@@ -252,6 +457,8 @@ python methods:
         >>> run('test', "echo test")
 
         """
+
+- run_x, usually used internally
 
 .. code-block:: python
 
@@ -304,6 +511,225 @@ python methods:
         >>> run_x('test', ['echo test'])
 
         """
+
+- travis.py example
+
+.. code-block:: yaml
+
+    language: python
+    group: travis_latest
+    dist: bionic
+    sudo: true
+
+    env:
+        global:
+            - cPREFIX=""				# prefix before commands - used for wine, there the prefix is "wine"
+            - cPYTHON="python"			# command to launch python interpreter (its different on macOs, there we need python3)
+            - cPIP="python -m pip"   	# command to launch pip (its different on macOs, there we need pip3)
+            - WINEDEBUG=fixme-all       # switch off wine fix me messages
+            - secure: "PmyawDvf+hN5ACdHD0n3RjwfYmrh801cfcRGy9tyXvjnUWyrpseCQc1/Is3SX4Ju29zcWFS6P34uolGJ/4vPfrWS2vpIVXJuHa3tYPuQe0wKq1Ke9MmohjeM/4IRYWzyIQozjo1fy3RAk4hMzMK9mf9WDIcGNbi2jrxALJwG0HKeHberF+irjxfnV5/n/pz9mO9QPc+qc0b2cdFakNsth51XoxGkT1YdGbI6wjtPcsRX4JAKCF4K/gIAfXrAadNV+j9ttqQlq3qk5CrRKK5NyjnxMJwenCYd+GzEK7oFWwKOdJfoGQFpjZ0pV7bw8Xs6w0neZKq973GRvBvPhFBprF13dGeg1EOPlggzi9EAhLTgvCyfQGWkEEVCry8luNP56VSAzBGbMahN1KLZ/9FN1ZdZFF87E8Vg/jWiCHR7IM6DaETY5283NSnhB29rBmogoCxsC9l8FCY+OhYwnpKUl13LBi+XeqBry+hn5Y+sVGhYxwJsd8eY7+zjodVedtHCqO8mfOR6xAGh/stRAojOmP1o1DcB7CvmUDIO8vhDkrhwa5dUWZwOg6AeABmLlHn8KtyePqQ65RzkDYqoiphCG8EeVZWzEsuht8YORIi3ea4ZfcTDyKX9zxE6VI/wIBJeUPy0Pwbzb2m7k1DoMeecSaMHjHBrHWMErhbswwb1TTw="  # CC_TEST_REPORTER_ID.secret
+            - secure: "MrMbBlF5fVSWXV7KkvcC52S7Pm2jTkJlMTYzIXJux9wGHulA6ujYfs5doNVcuejRIOe0+91ruH8ENLOw1mITmli/bfHz5gLgUCQONjMxbhr3KI1E8xzUasRroQ8rSHKeFeXStRJglRwQJ+eqNsaX25F9YdwqR89v6lYjk+g4R8BkyoJROwkfPs4p3PRO+826q//nELtWUUQOUvRxqLWEC99JMOUEssHelAjaedf9eKKfGf9t2yoANIOYMQxdAbSn3HxYr7CBf0+53Z5bkAxRKq1cAsrISa4VDHyJAabfycvCBW8EBjdvvbS/20octdKxnqf4NUd97B2PDEzXSgZ4IRB8LtTda9xgdhUUx+e23mWNdpsXwpIM13A0ql5e2pWvnjxfMSNNctc5GN/+0DM+a9RWsmfYxQa8P9iZKtsCl4uiYzjHALVXakAcoaTamx0eH+g0JIAgUvhNXwL10w+24mqioleDNYQuuWRibgWTN0qKlt2+7VXd+J03TmIA7mPamNlil1oOyLPM03qgXXWbpZ2hjlHeEIcw6qSPqIUXPXXVoRnxvbRZWWDFji7H2sVd2fpUWe9lUMyu+fHj5i1PeOEoXrLcRi0BnOLzZWHl/GM6h0eh/0SwjgoY/SzUOAYtd3YhHsLNSMp4wIclHtcFkmi0pOoZ2ARtTvV0kRK0vJ8="  # pypi_password.secret
+
+
+    addons:
+        apt:
+            packages:
+                - xvfb      # install xvfb virtual framebuffer - this we need for WINE
+                - winbind   # needed for WINE
+
+    services:   			# start services
+      - xvfb    			# is needed for WINE on headless installation
+
+
+    matrix:
+        include:
+
+
+        - os: linux
+          language: python
+          python: "3.6"
+          before_install:
+              - export mypy_strict_typecheck="True"
+              - export build_docs="False"
+              - export deploy_on_pypi="False"
+
+
+        - os: linux
+          language: python
+          python: "3.7"
+          before_install:
+              - export mypy_strict_typecheck="True"
+              - export build_docs="False"
+              - export deploy_on_pypi="False"
+
+
+        - os: linux
+          language: python
+          python: "3.8"
+          before_install:
+              - export mypy_strict_typecheck="True"
+              - export build_docs="True"
+              - export deploy_on_pypi="True"
+
+
+        - os: linux
+          language: python
+          python: "3.8-dev"
+          before_install:
+              - export mypy_strict_typecheck="True"
+              - export build_docs="False"
+              - export deploy_on_pypi="False"
+
+
+        - os: linux
+          language: python
+          python: "pypy3"
+          before_install:
+              - export mypy_strict_typecheck="False"
+              - export build_docs="False"
+              - export deploy_on_pypi="False"
+
+
+        - os: osx
+          language: sh
+          name: "macOS 10.15.4"
+          python: "3.8"
+          osx_image: xcode11.5
+          env:
+            # on osx pip and python points to python 2.7 - therefore we have to use pip3 and python3 here
+            - cPREFIX=""				# prefix before commands - used for wine, there the prefix is "wine"
+            - cPYTHON="python3"			# command to launch python interpreter (its different on macOs, there we need python3)
+            - cPIP="python3 -m pip"   	# command to launch pip (its different on macOs, there we need pip3)
+
+
+    install:
+        # install lib_bash_wine - this installs also lib_bash
+        - $(command -v sudo 2>/dev/null) git clone https://github.com/bitranox/lib_bash_wine.git /usr/local/lib_bash_wine
+        - $(command -v sudo 2>/dev/null) chmod -R 0755 /usr/local/lib_bash_wine
+        - $(command -v sudo 2>/dev/null) chmod -R +x /usr/local/lib_bash_wine/*.sh
+        - $(command -v sudo 2>/dev/null) /usr/local/lib_bash_wine/install_or_update.sh
+        - export lib_bash_color="/usr/local/lib_bash/lib_color.sh"
+        - export lib_bash_banner="/usr/local/lib_bash/lib_helpers.sh banner"
+        - export lib_bash_banner_warning="/usr/local/lib_bash/lib_helpers.sh banner_warning"
+        - export lib_bash_wine="/usr/local/lib_bash_wine"
+        - ${lib_bash_banner} "upgrading pip"; ${cPREFIX} ${cPIP} install --upgrade pip
+        - ${lib_bash_banner} "upgrading setuptools"; ${cPREFIX} ${cPIP} install --upgrade setuptools
+        - ${lib_bash_banner} "upgrading wheel"; ${cPREFIX} ${cPIP} install --upgrade wheel
+        - ${lib_bash_banner} "upgrading pytest-pycodestyle"; ${cPREFIX} ${cPIP} install --upgrade "pytest-pycodestyle; python_version >= \"3.5\""
+        - ${lib_bash_banner} "installing lib_log_utils"; ${cPREFIX} ${cPIP} install git+https://github.com/bitranox/lib_log_utils.git
+        - if [[ ${build_docs} == "True" ]]; then
+              ${lib_bash_banner} "installing rst_include"; ${cPREFIX} ${cPIP} install git+https://github.com/bitranox/rst_include.git;
+          fi
+
+        - if [[ ${cPREFIX} == "wine" ]]; then ${lib_bash_wine}/001_000_install_wine.sh ; fi
+        - if [[ ${cPREFIX} == "wine" ]]; then ${lib_bash_wine}/002_000_install_wine_machine.sh ; fi
+        - if [[ ${wine_python_version} == "python3" ]]; then ${lib_bash_wine}/003_000_install_wine_python3_preinstalled.sh ; fi
+        - if [[ ${cPREFIX} == "wine" ]]; then ${lib_bash_wine}/004_000_install_wine_git_portable.sh ; fi
+        - if [[ ${cPREFIX} == "wine" ]]; then ${lib_bash_wine}/005_000_install_wine_powershell_core.sh ; fi
+
+    script:
+
+        # setup.py test
+        - COMMAND="${cPREFIX} ${cPYTHON} ./setup.py test"
+        - ${lib_bash_banner} "running '${COMMAND}'"
+        - if ${COMMAND}; then ${lib_bash_banner} "'${COMMAND}' - OK"; else ${lib_bash_banner_warning} "'${COMMAND}' - FAILED" && exit 1; fi
+
+        # pip install git+https://github.com/bitranox/lib_travis.git --install-option test
+        - COMMAND="${cPREFIX} ${cPIP} install git+https://github.com/bitranox/lib_travis.git --install-option test"
+        - ${lib_bash_banner} "running '${COMMAND}'"
+        - if ${COMMAND}; then ${lib_bash_banner} "'${COMMAND}' - OK"; else ${lib_bash_banner_warning} "'${COMMAND}' - FAILED" && exit 1; fi
+
+        # pip install git+https://github.com/bitranox/lib_travis.git
+        - COMMAND="${cPREFIX} ${cPIP} install git+https://github.com/bitranox/lib_travis.git"
+        - ${lib_bash_banner} "running '${COMMAND}'"
+        - if ${COMMAND}; then ${lib_bash_banner} "'${COMMAND}' - OK"; else ${lib_bash_banner_warning} "'${COMMAND}' - FAILED" && exit 1; fi
+
+        # commandline registration check
+        - COMMAND="${cPREFIX} lib_travis --version"
+        - ${lib_bash_banner} "running '${COMMAND}' (check commandline registration)"
+        - if ${COMMAND}; then ${lib_bash_banner} "'${COMMAND}' - OK"; else ${lib_bash_banner_warning} "'${COMMAND}' - FAILED" && exit 1; fi
+
+        # pytest codecov only
+        - COMMAND="${cPREFIX} ${cPYTHON} -m pytest --cov=lib_travis"
+        - ${lib_bash_banner} "running '${COMMAND}' - (coverage only)"
+        - ${cPREFIX} ${cPIP} install --upgrade -r ./requirements_test.txt > /dev/null 2>&1
+        - ${cPREFIX} ${cPIP} install --upgrade codecov > /dev/null 2>&1
+        - ${cPREFIX} ${cPIP} install --upgrade pytest-cov > /dev/null 2>&1
+        - if ${COMMAND}; then ${lib_bash_banner} "'${COMMAND}' - OK"; else ${lib_bash_banner_warning} "'${COMMAND}' - FAILED" && exit 1; fi
+
+        # mypy typecheck strict
+        - if [[ ${mypy_strict_typecheck} == "True" ]]; then
+              COMMAND="${cPREFIX} ${cPYTHON} -m mypy -p lib_travis --strict --no-warn-unused-ignores --implicit-reexport --follow-imports=silent";
+              ${lib_bash_banner} "running '${COMMAND}'";
+              if ${COMMAND}; then ${lib_bash_banner} "'${COMMAND}' - OK"; else ${lib_bash_banner_warning} "'${COMMAND}' - FAILED" && exit 1; fi
+          else
+              ${lib_bash_banner_warning} "mypy typecheck --strict disabled on this build";
+          fi
+
+        # Bild Docs
+        - if [[ "${build_docs}" == "True" ]]; then
+              COMMAND="${cPREFIX}" rst_include include "./.docs/README_template.rst" "./README.rst";
+              ${lib_bash_banner} "running '${COMMAND}' - rebuild README.rst";
+              if ${COMMAND}; then ${lib_bash_banner} "'${COMMAND}' - OK"; else ${lib_bash_banner_warning} "'${COMMAND}' - FAILED" && exit 1; fi
+          else
+              ${lib_bash_banner_warning} "rebuild README.rst disabled on this build" ;
+          fi
+
+        # Check if Deployment would work on non-tagged builds
+        - if [[ -f setup.py ]] && [[ -z ${TRAVIS_TAG} ]] && [[ ${build_docs} == "True" ]]; then
+              ${lib_bash_banner} "Testing PyPi Deployment";
+              ${cPREFIX} ${cPIP} install readme_renderer > /dev/null 2>&1;
+              ${cPREFIX} ${cPIP} install --upgrade twine > /dev/null 2>&1;
+              ${cPREFIX} ${cPIP} install wheel > /dev/null 2>&1;
+              ${cPREFIX} ${cPYTHON} setup.py sdist bdist_wheel || ${lib_bash_banner_warning} "Building Wheels failed" 1>&2;
+              if ${cPREFIX} twine check dist/*; then
+                  ${lib_bash_banner} "PyPi Deployment would be OK";
+              else
+                  ${lib_bash_banner_warning} "PyPi Deployment would fail";
+                  exit 1;
+              fi
+          else
+              ${lib_bash_banner_warning} "Check PyPi Deployment disabled on this build" ;
+          fi
+
+    after_success:
+        - ${cPREFIX} coverage report
+        - ${cPREFIX} codecov
+        # codeclimate coverage upload - TODO: check function on wine
+        - if [ "${TRAVIS_OS_NAME}" == 'windows' ]; then
+              CODECLIMATE_REPO_TOKEN="${CC_TEST_REPORTER_ID}";
+              ${cPREFIX} ${cPIP} install codeclimate-test-reporter;
+              ${cPREFIX} codeclimate-test-reporter;
+          else
+              curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter;
+              chmod +x ./cc-test-reporter;
+              ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT;
+          fi
+
+        # This works for sure - the Travis deploy is somehow buggy.
+        # create the secret :
+        # pypi_password
+        # to create the secret :
+        # cd /<repository>
+        # sudo travis encrypt -r <github_account>/<repository> pypi_password=*****
+        # copy and paste the encrypted password in the PizzaCutter Config File
+        - if [[ ${deploy_on_pypi} == "True" ]] && [[ -n ${TRAVIS_TAG} ]]; then
+              ${lib_bash_banner} "Deploy on PyPi";
+              export travis_deploy="True";
+              ${cPREFIX} ${cPIP} install readme_renderer;
+              ${cPREFIX} ${cPIP} install --upgrade twine;
+              ${cPREFIX} ${cPIP} install wheel;
+              ${cPREFIX} ${cPYTHON} setup.py sdist bdist_wheel;
+              ${cPREFIX} twine check dist/*;
+              ${cPREFIX} twine upload --repository-url https://upload.pypi.org/legacy/ -u bitranox -p ${pypi_password} dist/*;
+          fi
+
+    notifications:
+      email:
+        recipients:
+            - bitranox@gmail.com
+        on_success: never # default: change
+        on_failure: always # default: always
 
 Usage from Commandline
 ------------------------
@@ -456,9 +882,14 @@ Changelog
 - new PATCH version for backwards compatible bug fixes
 
 
+1.0.1
+--------
+2020-07-29: feature release
+    - documentation updates
+
 1.0.0
 --------
-2020-07-27: Release 1.0.0 fully functional
+2020-07-29: Release 1.0.0 fully functional
 
 
 0.4.9
