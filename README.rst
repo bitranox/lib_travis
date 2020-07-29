@@ -1,4 +1,4 @@
-Version 1.0.4 as of 2020-07-29, see changelog_
+Version 1.0.5 as of 2020-07-29, see changelog_
 
 =======================================================
 
@@ -236,6 +236,8 @@ python methods:
         DEPLOY_CHECK
             from environment, if deployment to pypi should be tested
             only if setup.py exists and on non-tagged builds (there we deploy for real)
+        PACKAGE_NAME
+            from environment, the package name to pass to mypy
         dry_run
             if set, this returns immediately - for CLI tests
 
@@ -531,6 +533,10 @@ python methods:
             - cPIP="python -m pip"
             # switch off wine fix me messages
             - WINEDEBUG=fixme-all
+            # mypy path
+            - MYPYPATH="./lib_travis/3rd_party_stubs"
+            # package name
+            - PACKAGE_NAME="lib_travis"
             # the registered CLI Command
             - CLI_COMMAND=lib_travis
             # the source file for rst_include (rebuild rst file includes)
@@ -789,6 +795,12 @@ Changelog
 - new MAJOR version for incompatible API changes,
 - new MINOR version for added functionality in a backwards compatible manner
 - new PATCH version for backwards compatible bug fixes
+
+
+1.0.5
+--------
+2020-07-29: feature release
+    - pass correct package name to mypy and codecov
 
 
 1.0.4

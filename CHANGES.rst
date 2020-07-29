@@ -6,6 +6,12 @@ Changelog
 - new PATCH version for backwards compatible bug fixes
 
 
+1.0.5
+--------
+2020-07-29: feature release
+    - pass correct package name to mypy and codecov
+
+
 1.0.4
 --------
 2020-07-29: feature release
