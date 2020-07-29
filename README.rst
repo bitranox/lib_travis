@@ -1,4 +1,4 @@
-Version 1.0.5 as of 2020-07-29, see changelog_
+Version 1.0.6 as of 2020-07-29, see changelog_
 
 =======================================================
 
@@ -380,24 +380,24 @@ python methods:
         --------
 
         >>> # Setup
-        >>> save_TRAVIS_TAG = os.environ.pop('TRAVIS_TAG', None)
-        >>> save_TRAVIS_PULL_REQUEST_BRANCH = os.environ.pop('TRAVIS_PULL_REQUEST_BRANCH', None)
-        >>> save_TRAVIS_BRANCH = os.environ.pop('TRAVIS_BRANCH', None)
+        >>> save_TRAVIS_TAG = get_env_or_blank('TRAVIS_TAG')
+        >>> save_TRAVIS_PULL_REQUEST_BRANCH = get_env_or_blank('TRAVIS_PULL_REQUEST_BRANCH')
+        >>> save_TRAVIS_BRANCH = get_env_or_blank('TRAVIS_BRANCH')
 
         >>> # Test Tagged Commit
         >>> os.environ['TRAVIS_TAG'] = 'test_tag'
         >>> assert get_branch() == 'master'
-        >>> discard = os.environ.pop('TRAVIS_TAG', None)
+        >>> discard = get_env_or_blank('TRAVIS_TAG')
 
         >>> # Test Pull request
         >>> os.environ['TRAVIS_PULL_REQUEST_BRANCH'] = 'test_pr'
         >>> assert get_branch() == 'test_pr'
-        >>> discard = os.environ.pop('TRAVIS_PULL_REQUEST_BRANCH', None)
+        >>> discard = get_env_or_blank('TRAVIS_PULL_REQUEST_BRANCH')
 
         >>> # Test Push or Custom Build
         >>> os.environ['TRAVIS_BRANCH'] = 'test_branch'
         >>> assert get_branch() == 'test_branch'
-        >>> discard = os.environ.pop('TRAVIS_BRANCH', None)
+        >>> discard = get_env_or_blank('TRAVIS_BRANCH')
 
         >>> # Test unknown
         >>> assert get_branch() == 'master'
@@ -800,11 +800,15 @@ Changelog
 - new PATCH version for backwards compatible bug fixes
 
 
+1.0.6
+--------
+2020-07-29: feature release
+    - preserve Travis Tag
+
 1.0.5
 --------
 2020-07-29: feature release
     - pass correct package name to mypy and codecov
-
 
 1.0.4
 --------
