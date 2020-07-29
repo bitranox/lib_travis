@@ -325,10 +325,14 @@ def script(dry_run: bool = True) -> None:
         lib_log_utils.banner_notice("mypy typecheck --strict disabled on this build")
 
     if do_build_docs():
-        run(description='rebuild README.rst', command=' '.join([command_prefix, cli_command,
-                                                                'rst_include include "./.docs/README_template.rst" "./README.rst"']))
+        rst_include_source = get_env_or_blank('RST_INCLUDE_SOURCE')
+        rst_include_target = get_env_or_blank('RST_INCLUDE_TARGET')
+        rst_include_source_name = pathlib.Path(rst_include_source).name
+        rst_include_target_name = pathlib.Path(rst_include_target).name
+        run(description=' '.join(['rst rebuild', rst_include_target_name, 'from', rst_include_source_name]),
+            command=' '.join([command_prefix, 'rst_include include', rst_include_source, rst_include_target]))
     else:
-        lib_log_utils.banner_notice("rebuild READE.rst is disabled on this build")
+        lib_log_utils.banner_notice("rebuild doc file is disabled on this build")
 
     if do_check_deployment():
         run(description='install readme renderer', command=' '.join([pip_prefix, 'install --upgrade readme_renderer']))
