@@ -88,8 +88,12 @@ def run(description: str, command: str, retry: int = 3, sleep: int = 30, quote: 
                     sleep=sleep, description=description, command=command_description), banner=False)
                 time.sleep(sleep)
             else:
+                if show_command:
+                    exc_message = str(exc)
+                else:
+                    exc_message = 'Command ***secret*** returned non-zero exit status'
                 lib_log_utils.banner_error("Error: {description}\nCommand: {command}\n{exc}".format(
-                    description=description, command=command_description, exc=exc), banner=True)
+                    description=description, command=command_description, exc=exc_message), banner=True)
                 if hasattr(exc, 'returncode'):
                     if exc.returncode is not None:  # type: ignore
                         sys.exit(exc.returncode)    # type: ignore
@@ -180,8 +184,12 @@ def run_x(description: str, commands: List[str], retry: int = 3, sleep: int = 30
                     sleep=sleep, description=description, command=command_description), banner=False)
                 time.sleep(sleep)
             else:
+                if show_command:
+                    exc_message = str(exc)
+                else:
+                    exc_message = 'Command ***secret*** returned non-zero exit status'
                 lib_log_utils.banner_error("Error: {description}\nCommand: {command}\n{exc}".format(
-                    description=description, command=command_description, exc=exc), banner=True)
+                    description=description, command=command_description, exc=exc_message), banner=True)
                 if hasattr(exc, 'returncode'):
                     if exc.returncode is not None:      # type: ignore
                         sys.exit(exc.returncode)        # type: ignore
