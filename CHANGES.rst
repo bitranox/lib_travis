@@ -6,10 +6,11 @@ Changelog
 - new PATCH version for backwards compatible bug fixes
 
 
-1.0.4a0
+1.0.4
 --------
 2020-07-29: feature release
-    - fix code coverage test report
+    - use the new pizzacutter template
+    - use cli_exit_tools
 
 1.0.3
 --------
