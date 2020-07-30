@@ -104,10 +104,13 @@ matrix:
         - cPIP="python3 -m pip"   	# command to launch pip (its different on macOs, there we need pip3)
 
 
-script:
+install:
+    - git clone --depth=50 --branch=master https://github.com/bitranox/lib_travis.git /home/travis/build/bitranox/lib_travis
     - /home/travis/build/bitranox/lib_travis/setup.py
     - log_util --colortest
     - lib_travis install
+
+script:
     - BRANCH=$(lib_travis get_branch)
     - log_util --level=NOTICE --banner "working on branch ${BRANCH}"
     - lib_travis script
