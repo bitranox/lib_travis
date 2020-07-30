@@ -1,4 +1,4 @@
-Version 1.0.7a0 as of 2020-07-29, see changelog_
+Version 1.0.7 as of 2020-07-30, see changelog_
 
 =======================================================
 
@@ -735,12 +735,9 @@ following modules will be automatically installed :
 
     ## Project Requirements
     click
-    # cli_exit_tools @ git+https://github.com/bitranox/cli_exit_tools.git
-    # lib_log_utils @ git+https://github.com/bitranox/lib_log_utils.git
-    # rst_include @ git+https://github.com/bitranox/rst_include.git
-    cli_exit_tools
-    lib_log_utils
-    rst_include
+    cli_exit_tools @ git+https://github.com/bitranox/cli_exit_tools.git
+    lib_log_utils @ git+https://github.com/bitranox/lib_log_utils.git
+    rst_include @ git+https://github.com/bitranox/rst_include.git
 
 Acknowledgements
 ----------------
@@ -768,9 +765,9 @@ Changelog
 - new PATCH version for backwards compatible bug fixes
 
 
-1.0.7a0
+1.0.7
 --------
-2020-07-29: development
+2020-07-29: fix pypi deploy
 
 1.0.6
 --------
