@@ -105,7 +105,7 @@ matrix:
 
 
 install:
-    - ./setup.py
+    - /home/travis/build/bitranox/lib_travis/setup.py
     - log_util --colortest
     - lib_travis install
 
