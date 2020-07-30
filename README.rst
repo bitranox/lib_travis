@@ -536,7 +536,7 @@ python methods:
           before_install:
               - export MYPY_STRICT="True"
               - export BUILD_DOCS="False"
-              - export DEPLOY_CHECK="False"
+              - export DEPLOY_CHECK="True"
               - export DEPLOY="False"
 
 
@@ -546,7 +546,7 @@ python methods:
           before_install:
               - export MYPY_STRICT="True"
               - export BUILD_DOCS="False"
-              - export DEPLOY_CHECK="False"
+              - export DEPLOY_CHECK="True"
               - export DEPLOY="False"
 
 
@@ -566,7 +566,7 @@ python methods:
           before_install:
               - export MYPY_STRICT="True"
               - export BUILD_DOCS="False"
-              - export DEPLOY_CHECK="False"
+              - export DEPLOY_CHECK="True"
               - export DEPLOY="False"
 
 
@@ -576,7 +576,7 @@ python methods:
           before_install:
               - export MYPY_STRICT="False"
               - export BUILD_DOCS="False"
-              - export DEPLOY_CHECK="False"
+              - export DEPLOY_CHECK="True"
               - export DEPLOY="False"
 
 

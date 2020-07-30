@@ -48,7 +48,7 @@ matrix:
       before_install:
           - export MYPY_STRICT="True"
           - export BUILD_DOCS="False"
-          - export DEPLOY_CHECK="False"
+          - export DEPLOY_CHECK="True"
           - export DEPLOY="False"
 
 
@@ -58,7 +58,7 @@ matrix:
       before_install:
           - export MYPY_STRICT="True"
           - export BUILD_DOCS="False"
-          - export DEPLOY_CHECK="False"
+          - export DEPLOY_CHECK="True"
           - export DEPLOY="False"
 
 
@@ -78,7 +78,7 @@ matrix:
       before_install:
           - export MYPY_STRICT="True"
           - export BUILD_DOCS="False"
-          - export DEPLOY_CHECK="False"
+          - export DEPLOY_CHECK="True"
           - export DEPLOY="False"
 
 
@@ -88,7 +88,7 @@ matrix:
       before_install:
           - export MYPY_STRICT="False"
           - export BUILD_DOCS="False"
-          - export DEPLOY_CHECK="False"
+          - export DEPLOY_CHECK="True"
           - export DEPLOY="False"
 
 
