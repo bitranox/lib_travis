@@ -609,12 +609,16 @@ def do_check_deployment() -> bool:
             - there is no Travis_TAG (then it will be deployed anyway
             - and CHECK_DEPLOYMENT = True
     """
-    # package_name = get_env_or_blank('PACKAGE_NAME')
-    # path_setup_file = pathlib.Path('.') / package_name / 'setup.py'
-    # if not path_setup_file.is_file():
-    #     return False
+    package_name = get_env_or_blank('PACKAGE_NAME')
+    path_setup_file = pathlib.Path('.') / package_name / 'setup.py'
+
     lib_log_utils.banner_warning('TRAVIS TAG = "{}"'.format(get_env_or_blank('TRAVIS_TAG')))
     lib_log_utils.banner_warning('DEPLOY_CHECK = "{}"'.format(get_env_or_blank('DEPLOY_CHECK')))
+    lib_log_utils.banner_warning('SETUP.PY = "{}"'.format(path_setup_file.is_file()))
+
+    if not path_setup_file.is_file():
+        return False
+
     if get_env_or_blank('TRAVIS_TAG'):
         return False
     if get_env_or_blank('DEPLOY_CHECK').lower() == 'true':
