@@ -58,11 +58,14 @@ def get_requirements_from_file(requirements_filename: str) -> List[str]:
     >>> assert len(get_requirements_from_file('requirements.txt')) > 0
     """
     l_requirements = list()
-    with open(str(pathlib.Path(__file__).parent / requirements_filename), mode='r') as requirements_file:
-        for line in requirements_file:
-            line_data = get_line_data(line)
-            if line_data:
-                l_requirements.append(line_data)
+    try:
+        with open(str(pathlib.Path(__file__).parent / requirements_filename), mode='r') as requirements_file:
+            for line in requirements_file:
+                line_data = get_line_data(line)
+                if line_data:
+                    l_requirements.append(line_data)
+    except FileNotFoundError:
+        pass
     return l_requirements
 
 
@@ -85,7 +88,7 @@ if is_travis_deploy() and is_tagged_commit():
 
 setup_kwargs: Dict[str, Any] = dict()
 setup_kwargs['name'] = 'lib_travis'
-setup_kwargs['version'] = '1.0.10'
+setup_kwargs['version'] = '1.0.11a0'
 setup_kwargs['url'] = 'https://github.com/bitranox/lib_travis'
 setup_kwargs['packages'] = find_packages()
 setup_kwargs['package_data'] = {'lib_travis': ['py.typed', '*.pyi', '__init__.pyi']}

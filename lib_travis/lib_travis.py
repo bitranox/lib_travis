@@ -493,14 +493,8 @@ def deploy(dry_run: bool = True) -> None:
     python_prefix = get_python_prefix()
     github_username = get_github_username()
     pypi_password = get_env_or_blank('PYPI_PASSWORD')
-    pip_prefix = get_pip_prefix()
 
     if do_deploy():
-        run(description='install readme renderer', command=' '.join([pip_prefix, 'install --upgrade readme_renderer']))
-        run(description='install twine', command=' '.join([pip_prefix, 'install --upgrade twine']))
-        run(description='install wheel', command=' '.join([pip_prefix, 'install --upgrade wheel']))
-        run(description='install cibuildwheel', command=' '.join([pip_prefix, 'install --upgrade cibuildwheel']))
-
         run(description='create source distribution', command=' '.join([python_prefix, 'setup.py sdist']))
         run(description='check distributions', command=' '.join([command_prefix, 'twine check dist/*']))
         run(description='upload to pypi', command=' '.join([command_prefix, 'twine upload --repository-url https://upload.pypi.org/legacy/ -u',
