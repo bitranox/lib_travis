@@ -13,10 +13,12 @@ from setuptools import find_packages
 
 
 def is_travis_deploy() -> bool:
-    if 'travis_deploy' in os.environ:
-        if os.environ['travis_deploy'] == 'True':
-            return True
-    return False
+    if 'DEPLOY' not in os.environ:
+        return False
+    if os.environ['DEPLOY'].lower() == 'True' and is_tagged_commit():
+        return True
+    else:
+        return False
 
 
 def is_tagged_commit() -> bool:
@@ -83,7 +85,7 @@ if is_travis_deploy() and is_tagged_commit():
 
 setup_kwargs: Dict[str, Any] = dict()
 setup_kwargs['name'] = 'lib_travis'
-setup_kwargs['version'] = '1.0.6'
+setup_kwargs['version'] = '1.0.7'
 setup_kwargs['url'] = 'https://github.com/bitranox/lib_travis'
 setup_kwargs['packages'] = find_packages()
 setup_kwargs['package_data'] = {'lib_travis': ['py.typed', '*.pyi', '__init__.pyi']}

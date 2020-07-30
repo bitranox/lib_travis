@@ -494,8 +494,7 @@ def deploy(dry_run: bool = True) -> None:
         run(description='install readme renderer', command=' '.join([pip_prefix, 'install --upgrade readme_renderer']))
         run(description='install twine', command=' '.join([pip_prefix, 'install --upgrade twine']))
         run(description='install wheel', command=' '.join([pip_prefix, 'install --upgrade wheel']))
-        run(description='create source distribution', command=' '.join([python_prefix, 'setup.py sdist']))
-        run(description='create binary distribution (wheel)', command=' '.join([python_prefix, 'setup.py bdist_wheel']))
+        run(description='create source and wheel distribution', command=' '.join([python_prefix, 'setup.py sdist bdist_wheel']))
         run(description='check distributions', command=' '.join([command_prefix, 'twine check dist/*']))
         run(description='upload to pypi', command=' '.join([command_prefix, 'twine upload --repository-url https://upload.pypi.org/legacy/ -u',
                                                             github_username, '-p', pypi_password, 'dist/*']), show_command=False)
