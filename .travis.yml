@@ -18,7 +18,7 @@ env:
         # package name
         - PACKAGE_NAME="lib_travis"
         # the registered CLI Command
-        - CLI_COMMAND=lib_travis
+        - CLI_COMMAND="lib_travis"
         # the source file for rst_include (rebuild rst file includes)
         - RST_INCLUDE_SOURCE="./.docs/README_template.rst"
         # the target file for rst_include (rebuild rst file includes)

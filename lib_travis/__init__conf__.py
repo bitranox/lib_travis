@@ -1,6 +1,6 @@
 name = 'lib_travis'
 title = 'travis related utilities'
-version = '1.0.8'
+version = '1.0.9'
 url = 'https://github.com/bitranox/lib_travis'
 author = 'Robert Nowotny'
 author_email = 'bitranox@gmail.com'
@@ -14,7 +14,7 @@ Info for lib_travis:
 
     travis related utilities
 
-    Version : 1.0.8
+    Version : 1.0.9
     Url     : https://github.com/bitranox/lib_travis
     Author  : Robert Nowotny
     Email   : bitranox@gmail.com""")
