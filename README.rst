@@ -1,4 +1,4 @@
-Version 1.0.7 as of 2020-07-30, see changelog_
+Version 1.0.8 as of 2020-07-30, see changelog_
 
 =======================================================
 
@@ -765,7 +765,7 @@ Changelog
 - new PATCH version for backwards compatible bug fixes
 
 
-1.0.7
+1.0.8
 --------
 2020-07-29: fix pypi deploy
 

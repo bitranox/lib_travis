@@ -23,7 +23,7 @@ def is_travis_deploy() -> bool:
 
 def is_tagged_commit() -> bool:
     if 'TRAVIS_TAG' in os.environ:
-        if os.environ['TRAVIS_TAG'] != '':
+        if os.environ['TRAVIS_TAG']:
             return True
     return False
 
@@ -85,7 +85,7 @@ if is_travis_deploy() and is_tagged_commit():
 
 setup_kwargs: Dict[str, Any] = dict()
 setup_kwargs['name'] = 'lib_travis'
-setup_kwargs['version'] = '1.0.7'
+setup_kwargs['version'] = '1.0.8'
 setup_kwargs['url'] = 'https://github.com/bitranox/lib_travis'
 setup_kwargs['packages'] = find_packages()
 setup_kwargs['package_data'] = {'lib_travis': ['py.typed', '*.pyi', '__init__.pyi']}
