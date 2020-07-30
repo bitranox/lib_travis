@@ -105,7 +105,7 @@ matrix:
 
 
 install:
-    - ${cPIP} install lib_travis@git+https://github.com/bitranox/lib_travis.git
+    - ./setup.py
     - log_util --colortest
     - lib_travis install
 
