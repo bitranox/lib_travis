@@ -1,4 +1,4 @@
-Version 1.0.10 as of 2020-07-30, see changelog_
+Version 1.0.11a0 as of 2020-07-30, see changelog_
 
 =======================================================
 
@@ -763,6 +763,10 @@ Changelog
 - new MAJOR version for incompatible API changes,
 - new MINOR version for added functionality in a backwards compatible manner
 - new PATCH version for backwards compatible bug fixes
+
+
+1.0.11a0
+--------
 
 
 1.0.10
