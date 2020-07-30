@@ -615,7 +615,7 @@ def do_check_deployment() -> bool:
     #     return False
     if get_env_or_blank('TRAVIS_TAG'):
         return False
-    if get_env_or_blank('DEPLOY_CHECK') == 'true':
+    if get_env_or_blank('DEPLOY_CHECK').lower() == 'true':
         return True
     else:
         return False
