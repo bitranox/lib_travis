@@ -1,4 +1,4 @@
-Version 1.0.7 as of 2020-07-30, see changelog_
+Version 1.0.9 as of 2020-07-30, see changelog_
 
 =======================================================
 
@@ -506,7 +506,7 @@ python methods:
             # package name
             - PACKAGE_NAME="lib_travis"
             # the registered CLI Command
-            - CLI_COMMAND=lib_travis
+            - CLI_COMMAND="lib_travis"
             # the source file for rst_include (rebuild rst file includes)
             - RST_INCLUDE_SOURCE="./.docs/README_template.rst"
             # the target file for rst_include (rebuild rst file includes)
@@ -536,7 +536,7 @@ python methods:
           before_install:
               - export MYPY_STRICT="True"
               - export BUILD_DOCS="False"
-              - export DEPLOY_CHECK="False"
+              - export DEPLOY_CHECK="True"
               - export DEPLOY="False"
 
 
@@ -546,7 +546,7 @@ python methods:
           before_install:
               - export MYPY_STRICT="True"
               - export BUILD_DOCS="False"
-              - export DEPLOY_CHECK="False"
+              - export DEPLOY_CHECK="True"
               - export DEPLOY="False"
 
 
@@ -566,7 +566,7 @@ python methods:
           before_install:
               - export MYPY_STRICT="True"
               - export BUILD_DOCS="False"
-              - export DEPLOY_CHECK="False"
+              - export DEPLOY_CHECK="True"
               - export DEPLOY="False"
 
 
@@ -576,7 +576,7 @@ python methods:
           before_install:
               - export MYPY_STRICT="False"
               - export BUILD_DOCS="False"
-              - export DEPLOY_CHECK="False"
+              - export DEPLOY_CHECK="True"
               - export DEPLOY="False"
 
 
@@ -765,7 +765,7 @@ Changelog
 - new PATCH version for backwards compatible bug fixes
 
 
-1.0.7
+1.0.9
 --------
 2020-07-29: fix pypi deploy
 

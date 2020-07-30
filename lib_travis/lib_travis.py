@@ -282,7 +282,10 @@ def install(dry_run: bool = True) -> None:
     pip_prefix = get_pip_prefix()
     run(description='install pip', command=' '.join([pip_prefix, 'install --upgrade pip']))
     run(description='install setuptools', command=' '.join([pip_prefix, 'install --upgrade setuptools']))
+    run(description='install readme renderer', command=' '.join([pip_prefix, 'install --upgrade readme_renderer']))
+    run(description='install twine', command=' '.join([pip_prefix, 'install --upgrade twine']))
     run(description='install wheel', command=' '.join([pip_prefix, 'install --upgrade wheel']))
+    run(description='install cibuildwheel', command=' '.join([pip_prefix, 'install --upgrade cibuildwheel']))
     run(description='install pytest-pycodestyle', command=' '.join([pip_prefix, 'install --upgrade "pytest-pycodestyle; python_version >= \\"3.5\\""']))
 
 
@@ -375,14 +378,16 @@ def script(dry_run: bool = True) -> None:
         lib_log_utils.banner_notice("rebuild doc file is disabled on this build")
 
     if do_check_deployment():
-        run(description='install readme renderer', command=' '.join([pip_prefix, 'install --upgrade readme_renderer']))
-        run(description='install twine', command=' '.join([pip_prefix, 'install --upgrade twine']))
-        run(description='install wheel', command=' '.join([pip_prefix, 'install --upgrade wheel']))
         run(description='create source distribution', command=' '.join([python_prefix, 'setup.py sdist']))
         run(description='create binary distribution (wheel)', command=' '.join([python_prefix, 'setup.py bdist_wheel']))
         run(description='check distributions', command=' '.join([command_prefix, 'twine check dist/*']))
     else:
         lib_log_utils.banner_notice("check pypy deployment is disabled on this build")
+
+    if do_deploy():
+        run(description='create wheel distribution', command=' '.join([python_prefix, 'setup.py bdist_wheel']))
+    else:
+        lib_log_utils.banner_notice("create wheel distribution is disabled on this build")
 
 
 # after_success{{{
@@ -485,16 +490,12 @@ def deploy(dry_run: bool = True) -> None:
         return
 
     command_prefix = get_command_prefix()
-    pip_prefix = get_pip_prefix()
     python_prefix = get_python_prefix()
     github_username = get_github_username()
     pypi_password = get_env_or_blank('PYPI_PASSWORD')
 
     if do_deploy():
-        run(description='install readme renderer', command=' '.join([pip_prefix, 'install --upgrade readme_renderer']))
-        run(description='install twine', command=' '.join([pip_prefix, 'install --upgrade twine']))
-        run(description='install wheel', command=' '.join([pip_prefix, 'install --upgrade wheel']))
-        run(description='create source and wheel distribution', command=' '.join([python_prefix, 'setup.py sdist bdist_wheel']))
+        run(description='create source distribution', command=' '.join([python_prefix, 'setup.py sdist']))
         run(description='check distributions', command=' '.join([command_prefix, 'twine check dist/*']))
         run(description='upload to pypi', command=' '.join([command_prefix, 'twine upload --repository-url https://upload.pypi.org/legacy/ -u',
                                                             github_username, '-p', pypi_password, 'dist/*']), show_command=False)
@@ -608,12 +609,19 @@ def do_check_deployment() -> bool:
             - there is no Travis_TAG (then it will be deployed anyway
             - and CHECK_DEPLOYMENT = True
     """
-    path_setup_file = pathlib.Path('./setup.py')
+    package_name = get_env_or_blank('PACKAGE_NAME')
+    path_setup_file = pathlib.Path('.') / package_name / 'setup.py'
+
+    lib_log_utils.banner_warning('TRAVIS TAG = "{}"'.format(get_env_or_blank('TRAVIS_TAG')))
+    lib_log_utils.banner_warning('DEPLOY_CHECK = "{}"'.format(get_env_or_blank('DEPLOY_CHECK')))
+    lib_log_utils.banner_warning('SETUP.PY = "{}"'.format(path_setup_file.is_file()))
+
     if not path_setup_file.is_file():
         return False
+
     if get_env_or_blank('TRAVIS_TAG'):
         return False
-    if get_env_or_blank('DEPLOY_CHECK') == 'true':
+    if get_env_or_blank('DEPLOY_CHECK').lower() == 'true':
         return True
     else:
         return False
