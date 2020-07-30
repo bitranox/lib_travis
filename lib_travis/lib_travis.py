@@ -345,12 +345,12 @@ def script(dry_run: bool = True) -> None:
     if dry_run:
         return
     lib_log_utils.setup_handler()
-    cli_command = get_env_or_blank('CLI_COMMAND')
+    cli_command = os.getenv('CLI_COMMAND', '')
     command_prefix = get_command_prefix()
     pip_prefix = get_pip_prefix()
     python_prefix = get_python_prefix()
     repository = get_repository()
-    package_name = get_env_or_blank('PACKAGE_NAME')
+    package_name = os.getenv('PACKAGE_NAME', '')
     run(description='setup.py test', command=' '.join([python_prefix, './setup.py test']))
     run(description='pip install, option test', command=' '.join([pip_prefix, 'install', repository, '--install-option test']))
     run(description='pip standard install', command=' '.join([pip_prefix, 'install', repository]))
@@ -368,8 +368,8 @@ def script(dry_run: bool = True) -> None:
         lib_log_utils.banner_notice("mypy typecheck --strict disabled on this build")
 
     if do_build_docs():
-        rst_include_source = get_env_or_blank('RST_INCLUDE_SOURCE')
-        rst_include_target = get_env_or_blank('RST_INCLUDE_TARGET')
+        rst_include_source = os.getenv('RST_INCLUDE_SOURCE', '')
+        rst_include_target = os.getenv('RST_INCLUDE_TARGET', '')
         rst_include_source_name = pathlib.Path(rst_include_source).name
         rst_include_target_name = pathlib.Path(rst_include_target).name
         run(description=' '.join(['rst rebuild', rst_include_target_name, 'from', rst_include_source_name]),
@@ -428,16 +428,16 @@ def after_success(dry_run: bool = True) -> None:
     run(description='coverage report', command=' '.join([command_prefix, 'coverage report']))
     run(description='codecov', command=' '.join([command_prefix, 'codecov']))
 
-    if get_env_or_blank('CC_TEST_REPORTER_ID') != '':
+    if os.getenv('CC_TEST_REPORTER_ID'):
         if os_is_windows():
-            os.environ['CODECLIMATE_REPO_TOKEN'] = get_env_or_blank('CC_TEST_REPORTER_ID')
+            os.environ['CODECLIMATE_REPO_TOKEN'] = os.getenv('CC_TEST_REPORTER_ID', '')
             run(description='install codeclimate-test-reporter', command=' '.join([pip_prefix, 'install codeclimate-test-reporter']))
             run(description='report to codeclimate', command=' '.join([command_prefix, 'codeclimate-test-reporter']))
         else:
             run(description='download test reporter',
                 command='curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter')
             run(description='test reporter set permissions', banner=False, command='chmod +x ./cc-test-reporter')
-            travis_test_result = get_env_or_blank('TRAVIS_TEST_RESULT')
+            travis_test_result = os.getenv('TRAVIS_TEST_RESULT', '')
             run(description='report to codeclimate', command=' '.join(['./cc-test-reporter after-build --exit-code', travis_test_result]))
     else:
         lib_log_utils.banner_notice("Code Climate Coverage is disabled, no CC_TEST_REPORTER_ID")
@@ -492,7 +492,7 @@ def deploy(dry_run: bool = True) -> None:
     command_prefix = get_command_prefix()
     python_prefix = get_python_prefix()
     github_username = get_github_username()
-    pypi_password = get_env_or_blank('PYPI_PASSWORD')
+    pypi_password = os.getenv('PYPI_PASSWORD', '')
 
     if do_deploy():
         run(description='create source distribution', command=' '.join([python_prefix, 'setup.py sdist']))
@@ -573,16 +573,14 @@ def get_github_username() -> str:
     >>> discard = get_github_username()
 
     """
-    github_username = ''
-    if 'TRAVIS_REPO_SLUG' in os.environ:
-        repo_slug = os.environ['TRAVIS_REPO_SLUG']
-        github_username = repo_slug.split('/')[0]
+    repo_slug = os.getenv('TRAVIS_REPO_SLUG', '')
+    github_username = repo_slug.split('/')[0]
     return github_username
 
 
 def do_mypy_strict_check() -> bool:
     """ if mypy check should run """
-    if get_env_or_blank('MYPY_STRICT').lower() == 'true':
+    if os.getenv('MYPY_STRICT', '').lower() == 'true':
         return True
     else:
         return False
@@ -590,13 +588,13 @@ def do_mypy_strict_check() -> bool:
 
 def do_build_docs() -> bool:
     """ if README.rst should be rebuilt """
-    if get_env_or_blank('BUILD_DOCS').lower() != 'true':
+    if os.getenv('BUILD_DOCS', '').lower() != 'true':
         return False
 
-    if not get_env_or_blank('RST_INCLUDE_SOURCE'):
+    if not os.getenv('RST_INCLUDE_SOURCE'):
         return False
 
-    if not get_env_or_blank('RST_INCLUDE_TARGET'):
+    if not os.getenv('RST_INCLUDE_TARGET'):
         return False
     else:
         return True
@@ -609,19 +607,17 @@ def do_check_deployment() -> bool:
             - there is no Travis_TAG (then it will be deployed anyway
             - and CHECK_DEPLOYMENT = True
     """
-    package_name = get_env_or_blank('PACKAGE_NAME')
-    path_setup_file = pathlib.Path('.') / package_name / 'setup.py'
-
-    lib_log_utils.banner_warning('TRAVIS TAG = "{}"'.format(get_env_or_blank('TRAVIS_TAG')))
-    lib_log_utils.banner_warning('DEPLOY_CHECK = "{}"'.format(get_env_or_blank('DEPLOY_CHECK')))
+    path_setup_file = pathlib.Path('./setup.py')
+    lib_log_utils.banner_warning('TRAVIS TAG = "{}"'.format(os.getenv('TRAVIS_TAG')))
+    lib_log_utils.banner_warning('DEPLOY_CHECK = "{}"'.format(os.getenv('DEPLOY_CHECK')))
     lib_log_utils.banner_warning('SETUP.PY = "{}"'.format(path_setup_file.is_file()))
 
     if not path_setup_file.is_file():
         return False
 
-    if get_env_or_blank('TRAVIS_TAG'):
+    if os.getenv('TRAVIS_TAG'):
         return False
-    if get_env_or_blank('DEPLOY_CHECK').lower() == 'true':
+    if os.getenv('DEPLOY_CHECK', '').lower() == 'true':
         return True
     else:
         return False
@@ -638,17 +634,10 @@ def on_travis() -> bool:
 
 
 def os_is_windows() -> bool:
-    if get_env_or_blank('TRAVIS_OS_NAME').lower() == 'windows':
+    if os.getenv('TRAVIS_OS_NAME', '').lower() == 'windows':
         return True
     else:
         return False
-
-
-def get_env_or_blank(env_variable: str) -> str:
-    env_result = ''
-    if env_variable in os.environ:
-        env_result = os.environ[env_variable]
-    return env_result
 
 
 def do_deploy() -> bool:
@@ -657,11 +646,11 @@ def do_deploy() -> bool:
         - when $deploy_on_pypi = True
         - when TRAVIS_TAG != ''
     """
-    if not get_env_or_blank('TRAVIS_TAG'):
+    if not os.getenv('TRAVIS_TAG'):
         return False
-    if not get_env_or_blank('PYPI_PASSWORD'):
+    if not os.getenv('PYPI_PASSWORD'):
         return False
-    if get_env_or_blank('DEPLOY').lower() == 'true':
+    if os.getenv('DEPLOY', '').lower() == 'true':
         return True
     else:
         return False
