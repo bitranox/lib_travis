@@ -304,9 +304,7 @@ def script(dry_run: bool = True) -> None:
         - if MYPY_STRICT="True"
     - rebuild the rst files (resolve rst file includes)
         - needs RST_INCLUDE_SOURCE, RST_INCLUDE_TARGET set and BUILD_DOCS="True"
-    - check if deployment would succeed
-        - needs CHECK_DEPLOYMENT="True", setup.py exists and not a tagged build)
-
+    - check if deployment would succeed, if setup.py exists and not a tagged build
 
     Parameter
     ---------
@@ -320,17 +318,17 @@ def script(dry_run: bool = True) -> None:
         from environment, must be set in travis - the CLI command to test with option --version
     MYPY_STRICT
         from environment, if pytest with mypy --strict should run
+    PACKAGE_NAME
+        from environment, the package name to pass to mypy
     BUILD_DOCS
         from environment, if rst file should be rebuilt
     RST_INCLUDE_SOURCE
         from environment, the rst template with rst includes to resolve
     RST_INCLUDE_TARGET
         from environment, the rst target file
-    DEPLOY_CHECK
-        from environment, if deployment to pypi should be tested
+    DEPLOY_WHEEL
+        from environment, if a wheel should be generated
         only if setup.py exists and on non-tagged builds (there we deploy for real)
-    PACKAGE_NAME
-        from environment, the package name to pass to mypy
     dry_run
         if set, this returns immediately - for CLI tests
 
@@ -376,17 +374,20 @@ def script(dry_run: bool = True) -> None:
     else:
         lib_log_utils.banner_notice("rebuild doc file is disabled on this build")
 
-    if do_check_deployment():
+    if do_deploy_sdist():
         run(description='create source distribution', command=' '.join([python_prefix, 'setup.py sdist']))
-        run(description='create binary distribution (wheel)', command=' '.join([python_prefix, 'setup.py bdist_wheel']))
-        run(description='check distributions', command=' '.join([command_prefix, 'twine check dist/*']))
     else:
-        lib_log_utils.banner_notice("check pypy deployment is disabled on this build")
+        lib_log_utils.banner_notice("create source distribution is disabled on this build")
 
-    if do_deploy():
-        run(description='create wheel distribution', command=' '.join([python_prefix, 'setup.py bdist_wheel']))
+    if do_deploy_wheel():
+        # run(description='create binary distribution (wheel)', command=' '.join([python_prefix, 'setup.py bdist_wheel']))
+        # python3 -m cibuildwheel --output-dir wheelhouse
+        run(description='create binary distribution (wheel)', command=' '.join([python_prefix, '-m cibuildwheel --output-dir dist']))
     else:
         lib_log_utils.banner_notice("create wheel distribution is disabled on this build")
+
+    if do_deploy_sdist() or do_deploy_wheel():
+        run(description='check distributions', command=' '.join([command_prefix, 'twine check dist/*']))
 
 
 # after_success{{{
@@ -445,35 +446,19 @@ def after_success(dry_run: bool = True) -> None:
 # deploy{{{
 def deploy(dry_run: bool = True) -> None:
     """
-        travis jobs to run in travis.yml section "script":
-    - run setup.py test
-    - run pip with install option test
-    - run pip standard install
-    - test the CLI Registration
-    - install the test requirements
-    - install codecov
-    - install pytest-codecov
-    - run pytest coverage
-    - run mypy strict
-        - if MYPY_STRICT="True"
-    - rebuild the rst files (resolve rst file includes)
-        - needs RST_INCLUDE_SOURCE, RST_INCLUDE_TARGET set and BUILD_DOCS="True"
-    - check if deployment would succeed
-        - needs CHECK_DEPLOYMENT="True", setup.py exists and not a tagged build)
+    uploads sdist and wheels to pypi on success
 
 
     Parameter
     ---------
     cPREFIX
         from environment, the command prefix like 'wine' or ''
-    cPIP
-        from environment, the command to launch pip, like "python -m pip"
-    cPYTHON
-        from environment, the command to launch python, like 'python' or 'python3' on MacOS
     PYPI_PASSWORD
         from environment, passed as secure, encrypted variable to environment
-    DEPLOY
-        from environment, needs to be "True"
+    TRAVIS_TAG
+        from environment, needs to be set
+    DEPLOY_SDIST, DEPLOY_WHEEL
+        from environment, one of it needs to be true
     dry_run
         if set, this returns immediately - for CLI tests
 
@@ -489,13 +474,10 @@ def deploy(dry_run: bool = True) -> None:
         return
 
     command_prefix = get_command_prefix()
-    python_prefix = get_python_prefix()
     github_username = get_github_username()
     pypi_password = os.getenv('PYPI_PASSWORD', '')
 
     if do_deploy():
-        run(description='create source distribution', command=' '.join([python_prefix, 'setup.py sdist']))
-        run(description='check distributions', command=' '.join([command_prefix, 'twine check dist/*']))
         run(description='upload to pypi', command=' '.join([command_prefix, 'twine upload --repository-url https://upload.pypi.org/legacy/ -u',
                                                             github_username, '-p', pypi_password, 'dist/*']), show_command=False)
     else:
@@ -599,6 +581,20 @@ def do_build_docs() -> bool:
         return True
 
 
+def do_deploy_sdist() -> bool:
+    if os.getenv('DEPLOY_SDIST', '').lower() == 'true':
+        return True
+    else:
+        return False
+
+
+def do_deploy_wheel() -> bool:
+    if os.getenv('DEPLOY_WHEEL', '').lower() == 'true':
+        return True
+    else:
+        return False
+
+
 def do_check_deployment() -> bool:
     """ if we should check if deployment would work on pypi
         we only check when :
@@ -643,9 +639,7 @@ def do_deploy() -> bool:
     """
     if not os.getenv('TRAVIS_TAG'):
         return False
-    if not os.getenv('PYPI_PASSWORD'):
-        return False
-    if os.getenv('DEPLOY', '').lower() == 'true':
+    if do_deploy_sdist() or do_deploy_wheel():
         return True
     else:
         return False

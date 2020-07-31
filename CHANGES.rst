@@ -5,6 +5,10 @@ Changelog
 - new MINOR version for added functionality in a backwards compatible manner
 - new PATCH version for backwards compatible bug fixes
 
+v2.0.0
+---------
+2020-07-31: integrate cibuildwheel, architectures for arm, powerpc, S390
+
 v1.1.0
 ---------
 2020-07-31: fix pypi deploy
