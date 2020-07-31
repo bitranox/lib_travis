@@ -1,4 +1,4 @@
-Version v1.1.0 as of 2020-07-31, see changelog_
+Version v2.0.0 as of 2020-07-31, see changelog_
 
 =======================================================
 
@@ -56,7 +56,7 @@ automated tests, Travis Matrix, Documentation, Badges, etc. are managed with `Pi
 
 Python version required: 3.6.0 or newer
 
-tested on linux "bionic" with python 3.6, 3.7, 3.8, 3.8-dev, pypy3
+tested on linux "bionic" with python 3.6, 3.7, 3.8, 3.8-dev, pypy3, wheels for architectures: amd64, ppc64le, s390x, arm64
 
 `100% code coverage <https://codecov.io/gh/bitranox/lib_travis>`_, codestyle checking ,mypy static type checking ,tested under `Linux, macOS <https://travis-ci.org/bitranox/lib_travis>`_, automatic daily builds and monitoring
 
@@ -211,9 +211,7 @@ python methods:
             - if MYPY_STRICT="True"
         - rebuild the rst files (resolve rst file includes)
             - needs RST_INCLUDE_SOURCE, RST_INCLUDE_TARGET set and BUILD_DOCS="True"
-        - check if deployment would succeed
-            - needs CHECK_DEPLOYMENT="True", setup.py exists and not a tagged build)
-
+        - check if deployment would succeed, if setup.py exists and not a tagged build
 
         Parameter
         ---------
@@ -227,17 +225,17 @@ python methods:
             from environment, must be set in travis - the CLI command to test with option --version
         MYPY_STRICT
             from environment, if pytest with mypy --strict should run
+        PACKAGE_NAME
+            from environment, the package name to pass to mypy
         BUILD_DOCS
             from environment, if rst file should be rebuilt
         RST_INCLUDE_SOURCE
             from environment, the rst template with rst includes to resolve
         RST_INCLUDE_TARGET
             from environment, the rst target file
-        DEPLOY_CHECK
-            from environment, if deployment to pypi should be tested
+        DEPLOY_WHEEL
+            from environment, if a wheel should be generated
             only if setup.py exists and on non-tagged builds (there we deploy for real)
-        PACKAGE_NAME
-            from environment, the package name to pass to mypy
         dry_run
             if set, this returns immediately - for CLI tests
 
@@ -286,35 +284,19 @@ python methods:
 
     def deploy(dry_run: bool = True) -> None:
         """
-            travis jobs to run in travis.yml section "script":
-        - run setup.py test
-        - run pip with install option test
-        - run pip standard install
-        - test the CLI Registration
-        - install the test requirements
-        - install codecov
-        - install pytest-codecov
-        - run pytest coverage
-        - run mypy strict
-            - if MYPY_STRICT="True"
-        - rebuild the rst files (resolve rst file includes)
-            - needs RST_INCLUDE_SOURCE, RST_INCLUDE_TARGET set and BUILD_DOCS="True"
-        - check if deployment would succeed
-            - needs CHECK_DEPLOYMENT="True", setup.py exists and not a tagged build)
+        uploads sdist and wheels to pypi on success
 
 
         Parameter
         ---------
         cPREFIX
             from environment, the command prefix like 'wine' or ''
-        cPIP
-            from environment, the command to launch pip, like "python -m pip"
-        cPYTHON
-            from environment, the command to launch python, like 'python' or 'python3' on MacOS
         PYPI_PASSWORD
             from environment, passed as secure, encrypted variable to environment
-        DEPLOY
-            from environment, needs to be "True"
+        TRAVIS_TAG
+            from environment, needs to be set
+        DEPLOY_SDIST, DEPLOY_WHEEL
+            from environment, one of it needs to be true
         dry_run
             if set, this returns immediately - for CLI tests
 
@@ -524,61 +506,198 @@ python methods:
 
     services:   			# start services
       - xvfb    			# is needed for WINE on headless installation
-
+      - docker              # is needed for cibuildwheel
 
     matrix:
         include:
 
 
         - os: linux
+          arch: "amd64"
+          if: true
           language: python
           python: "3.6"
           before_install:
-              - export MYPY_STRICT="True"
               - export BUILD_DOCS="False"
-              - export DEPLOY_CHECK="True"
-              - export DEPLOY="False"
-
+              - export DEPLOY_SDIST="False"
+              - export DEPLOY_WHEEL="True"
+              - export MYPY_STRICT="True"
 
         - os: linux
+          arch: "amd64"
+          if: true
           language: python
           python: "3.7"
           before_install:
-              - export MYPY_STRICT="True"
               - export BUILD_DOCS="False"
-              - export DEPLOY_CHECK="True"
-              - export DEPLOY="False"
-
+              - export DEPLOY_SDIST="False"
+              - export DEPLOY_WHEEL="True"
+              - export MYPY_STRICT="True"
 
         - os: linux
+          arch: "amd64"
+          if: true
           language: python
           python: "3.8"
           before_install:
-              - export MYPY_STRICT="True"
               - export BUILD_DOCS="True"
-              - export DEPLOY_CHECK="True"
-              - export DEPLOY="True"
-
+              - export DEPLOY_SDIST="True"
+              - export DEPLOY_WHEEL="True"
+              - export MYPY_STRICT="True"
 
         - os: linux
+          arch: "amd64"
+          if: true
           language: python
           python: "3.8-dev"
           before_install:
-              - export MYPY_STRICT="True"
               - export BUILD_DOCS="False"
-              - export DEPLOY_CHECK="True"
-              - export DEPLOY="False"
-
+              - export DEPLOY_SDIST="False"
+              - export DEPLOY_WHEEL="False"
+              - export MYPY_STRICT="True"
 
         - os: linux
+          arch: "amd64"
+          if: true
           language: python
           python: "pypy3"
           before_install:
-              - export MYPY_STRICT="False"
               - export BUILD_DOCS="False"
-              - export DEPLOY_CHECK="True"
-              - export DEPLOY="False"
+              - export DEPLOY_SDIST="False"
+              - export DEPLOY_WHEEL="True"
+              - export MYPY_STRICT="False"
 
+        - os: linux
+          arch: "ppc64le"
+          if: tag IS present
+          language: python
+          python: "3.6"
+          before_install:
+              - export BUILD_DOCS="False"
+              - export DEPLOY_SDIST="False"
+              - export DEPLOY_WHEEL="True"
+              - export MYPY_STRICT="True"
+
+        - os: linux
+          arch: "ppc64le"
+          if: tag IS present
+          language: python
+          python: "3.7"
+          before_install:
+              - export BUILD_DOCS="False"
+              - export DEPLOY_SDIST="False"
+              - export DEPLOY_WHEEL="True"
+              - export MYPY_STRICT="True"
+
+        - os: linux
+          arch: "ppc64le"
+          if: tag IS present
+          language: python
+          python: "3.8"
+          before_install:
+              - export BUILD_DOCS="False"
+              - export DEPLOY_SDIST="False"
+              - export DEPLOY_WHEEL="True"
+              - export MYPY_STRICT="True"
+
+        - os: linux
+          arch: "ppc64le"
+          if: tag IS present
+          language: python
+          python: "3.8-dev"
+          before_install:
+              - export BUILD_DOCS="False"
+              - export DEPLOY_SDIST="False"
+              - export DEPLOY_WHEEL="False"
+              - export MYPY_STRICT="True"
+
+        - os: linux
+          arch: "s390x"
+          if: tag IS present
+          language: python
+          python: "3.6"
+          before_install:
+              - export BUILD_DOCS="False"
+              - export DEPLOY_SDIST="False"
+              - export DEPLOY_WHEEL="True"
+              - export MYPY_STRICT="True"
+
+        - os: linux
+          arch: "s390x"
+          if: tag IS present
+          language: python
+          python: "3.7"
+          before_install:
+              - export BUILD_DOCS="False"
+              - export DEPLOY_SDIST="False"
+              - export DEPLOY_WHEEL="True"
+              - export MYPY_STRICT="True"
+
+        - os: linux
+          arch: "s390x"
+          if: tag IS present
+          language: python
+          python: "3.8"
+          before_install:
+              - export BUILD_DOCS="False"
+              - export DEPLOY_SDIST="False"
+              - export DEPLOY_WHEEL="True"
+              - export MYPY_STRICT="True"
+
+        - os: linux
+          arch: "s390x"
+          if: tag IS present
+          language: python
+          python: "3.8-dev"
+          before_install:
+              - export BUILD_DOCS="False"
+              - export DEPLOY_SDIST="False"
+              - export DEPLOY_WHEEL="False"
+              - export MYPY_STRICT="True"
+
+        - os: linux
+          arch: "arm64"
+          if: tag IS present
+          language: python
+          python: "3.6"
+          before_install:
+              - export BUILD_DOCS="False"
+              - export DEPLOY_SDIST="False"
+              - export DEPLOY_WHEEL="True"
+              - export MYPY_STRICT="True"
+
+        - os: linux
+          arch: "arm64"
+          if: tag IS present
+          language: python
+          python: "3.7"
+          before_install:
+              - export BUILD_DOCS="False"
+              - export DEPLOY_SDIST="False"
+              - export DEPLOY_WHEEL="True"
+              - export MYPY_STRICT="True"
+
+        - os: linux
+          arch: "arm64"
+          if: tag IS present
+          language: python
+          python: "3.8"
+          before_install:
+              - export BUILD_DOCS="False"
+              - export DEPLOY_SDIST="False"
+              - export DEPLOY_WHEEL="True"
+              - export MYPY_STRICT="True"
+
+        - os: linux
+          arch: "arm64"
+          if: tag IS present
+          language: python
+          python: "3.8-dev"
+          before_install:
+              - export BUILD_DOCS="False"
+              - export DEPLOY_SDIST="False"
+              - export DEPLOY_WHEEL="False"
+              - export MYPY_STRICT="True"
 
         - os: osx
           language: sh
@@ -763,6 +882,10 @@ Changelog
 - new MAJOR version for incompatible API changes,
 - new MINOR version for added functionality in a backwards compatible manner
 - new PATCH version for backwards compatible bug fixes
+
+v2.0.0
+---------
+2020-07-31: integrate cibuildwheel, architectures for arm, powerpc, S390
 
 v1.1.0
 ---------
