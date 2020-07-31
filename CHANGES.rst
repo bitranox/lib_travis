@@ -6,6 +6,14 @@ Changelog
 - new PATCH version for backwards compatible bug fixes
 
 
+1.0.18
+------
+2020-07-31: fix pypi deploy
+
+1.0.17
+------
+2020-07-31: fix pypi deploy
+
 1.0.16
 ------
 2020-07-30: fix pypi deploy

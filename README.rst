@@ -1,4 +1,4 @@
-Version 1.0.16 as of 2020-07-31, see changelog_
+Version 1.0.18 as of 2020-07-31, see changelog_
 
 =======================================================
 
@@ -764,6 +764,14 @@ Changelog
 - new MINOR version for added functionality in a backwards compatible manner
 - new PATCH version for backwards compatible bug fixes
 
+
+1.0.18
+------
+2020-07-31: fix pypi deploy
+
+1.0.17
+------
+2020-07-31: fix pypi deploy
 
 1.0.16
 ------

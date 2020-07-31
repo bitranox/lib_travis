@@ -161,11 +161,10 @@ def run_x(description: str, commands: List[str], retry: int = 3, sleep: int = 30
             splitted_commands = splitted_commands + sp_commands
         commands = splitted_commands
 
-    str_command = ' '.join(commands)
     lib_log_utils.setup_handler()
 
     if show_command:
-        command_description = str_command
+        command_description = ' '.join(commands)
     else:
         command_description = '***secret***'
 
@@ -608,13 +607,9 @@ def do_check_deployment() -> bool:
             - and CHECK_DEPLOYMENT = True
     """
     path_setup_file = pathlib.Path('./setup.py')
-    lib_log_utils.banner_warning('TRAVIS TAG = "{}"'.format(os.getenv('TRAVIS_TAG')))
-    lib_log_utils.banner_warning('DEPLOY_CHECK = "{}"'.format(os.getenv('DEPLOY_CHECK')))
-    lib_log_utils.banner_warning('SETUP.PY = "{}"'.format(path_setup_file.is_file()))
 
     if not path_setup_file.is_file():
         return False
-
     if os.getenv('TRAVIS_TAG'):
         return False
     if os.getenv('DEPLOY_CHECK', '').lower() == 'true':
