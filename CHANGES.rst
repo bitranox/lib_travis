@@ -8,7 +8,7 @@ Changelog
 
 v2.0.6
 ---------
-2020-08-01: fix cibuildwheel
+2020-08-01: fix pypi deploy
 
 v1.0.9
 ---------

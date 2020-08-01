@@ -103,7 +103,7 @@ matrix:
 
     - os: linux
       arch: "ppc64le"
-      if: true
+      if: tag IS present
       language: python
       python: "3.6"
       before_install:
@@ -115,7 +115,7 @@ matrix:
 
     - os: linux
       arch: "ppc64le"
-      if: true
+      if: tag IS present
       language: python
       python: "3.7"
       before_install:
@@ -127,7 +127,7 @@ matrix:
 
     - os: linux
       arch: "ppc64le"
-      if: true
+      if: tag IS present
       language: python
       python: "3.8"
       before_install:
@@ -139,7 +139,7 @@ matrix:
 
     - os: linux
       arch: "ppc64le"
-      if: true
+      if: tag IS present
       language: python
       python: "3.8-dev"
       before_install:
@@ -151,7 +151,7 @@ matrix:
 
     - os: linux
       arch: "s390x"
-      if: true
+      if: tag IS present
       language: python
       python: "3.6"
       before_install:
@@ -163,7 +163,7 @@ matrix:
 
     - os: linux
       arch: "s390x"
-      if: true
+      if: tag IS present
       language: python
       python: "3.7"
       before_install:
@@ -175,7 +175,7 @@ matrix:
 
     - os: linux
       arch: "s390x"
-      if: true
+      if: tag IS present
       language: python
       python: "3.8"
       before_install:
@@ -187,7 +187,7 @@ matrix:
 
     - os: linux
       arch: "s390x"
-      if: true
+      if: tag IS present
       language: python
       python: "3.8-dev"
       before_install:
@@ -199,7 +199,7 @@ matrix:
 
     - os: linux
       arch: "arm64"
-      if: true
+      if: tag IS present
       language: python
       python: "3.6"
       before_install:
@@ -211,7 +211,7 @@ matrix:
 
     - os: linux
       arch: "arm64"
-      if: true
+      if: tag IS present
       language: python
       python: "3.7"
       before_install:
@@ -223,7 +223,7 @@ matrix:
 
     - os: linux
       arch: "arm64"
-      if: true
+      if: tag IS present
       language: python
       python: "3.8"
       before_install:
@@ -235,7 +235,7 @@ matrix:
 
     - os: linux
       arch: "arm64"
-      if: true
+      if: tag IS present
       language: python
       python: "3.8-dev"
       before_install:
