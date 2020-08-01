@@ -6,13 +6,13 @@ Changelog
 - new PATCH version for backwards compatible bug fixes
 
 
-v2.0.6
+v2.0.9
+---------
+2020-08-01: fix environment namings
+
+v2.0.8
 ---------
 2020-08-01: fix pypi deploy
-
-v1.0.9
----------
-2020-07-29: fix pypi deploy
 
 v1.0.6
 ---------

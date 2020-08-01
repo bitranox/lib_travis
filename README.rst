@@ -2,7 +2,7 @@ lib_travis
 ==========
 
 
-Version v2.0.6 as of 2020-08-01 see `Changelog`_
+Version v2.0.9 as of 2020-08-01 see `Changelog`_
 
 |travis_build| |license| |jupyter| |pypi|
 
@@ -519,7 +519,7 @@ python methods:
               - export BUILD_DOCS="False"
               - export DEPLOY_SDIST="False"
               - export DEPLOY_WHEEL="False"
-              - export DEPLOY_TEST="True"
+              - export BUILD_TEST="True"
               - export MYPY_STRICT="True"
 
         - os: linux
@@ -531,7 +531,7 @@ python methods:
               - export BUILD_DOCS="False"
               - export DEPLOY_SDIST="False"
               - export DEPLOY_WHEEL="False"
-              - export DEPLOY_TEST="True"
+              - export BUILD_TEST="True"
               - export MYPY_STRICT="True"
 
         - os: linux
@@ -543,7 +543,7 @@ python methods:
               - export BUILD_DOCS="True"
               - export DEPLOY_SDIST="True"
               - export DEPLOY_WHEEL="True"
-              - export DEPLOY_TEST="True"
+              - export BUILD_TEST="True"
               - export MYPY_STRICT="True"
 
         - os: linux
@@ -555,7 +555,7 @@ python methods:
               - export BUILD_DOCS="False"
               - export DEPLOY_SDIST="False"
               - export DEPLOY_WHEEL="False"
-              - export DEPLOY_TEST="True"
+              - export BUILD_TEST="True"
               - export MYPY_STRICT="True"
 
         - os: linux
@@ -567,7 +567,7 @@ python methods:
               - export BUILD_DOCS="False"
               - export DEPLOY_SDIST="False"
               - export DEPLOY_WHEEL="False"
-              - export DEPLOY_TEST="True"
+              - export BUILD_TEST="True"
               - export MYPY_STRICT="False"
 
         - os: linux
@@ -578,8 +578,8 @@ python methods:
           before_install:
               - export BUILD_DOCS="False"
               - export DEPLOY_SDIST="False"
-              - export DEPLOY_WHEEL="True"
-              - export DEPLOY_TEST="True"
+              - export DEPLOY_WHEEL="False"
+              - export BUILD_TEST="True"
               - export MYPY_STRICT="True"
 
         - os: linux
@@ -590,8 +590,8 @@ python methods:
           before_install:
               - export BUILD_DOCS="False"
               - export DEPLOY_SDIST="False"
-              - export DEPLOY_WHEEL="True"
-              - export DEPLOY_TEST="True"
+              - export DEPLOY_WHEEL="False"
+              - export BUILD_TEST="True"
               - export MYPY_STRICT="True"
 
         - os: linux
@@ -602,8 +602,8 @@ python methods:
           before_install:
               - export BUILD_DOCS="False"
               - export DEPLOY_SDIST="False"
-              - export DEPLOY_WHEEL="True"
-              - export DEPLOY_TEST="True"
+              - export DEPLOY_WHEEL="False"
+              - export BUILD_TEST="True"
               - export MYPY_STRICT="True"
 
         - os: osx
@@ -798,13 +798,13 @@ Changelog
 - new PATCH version for backwards compatible bug fixes
 
 
-v2.0.6
+v2.0.9
+---------
+2020-08-01: fix environment namings
+
+v2.0.8
 ---------
 2020-08-01: fix pypi deploy
-
-v1.0.9
----------
-2020-07-29: fix pypi deploy
 
 v1.0.6
 ---------

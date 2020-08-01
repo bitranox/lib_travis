@@ -374,18 +374,18 @@ def script(dry_run: bool = True) -> None:
     else:
         lib_log_utils.banner_notice("rebuild doc file is disabled on this build")
 
-    if do_deploy_sdist() or do_deploy_test():
+    if do_deploy_sdist() or do_build_test():
         run(description='create source distribution', command=' '.join([python_prefix, 'setup.py sdist']))
     else:
         lib_log_utils.banner_notice("create source distribution is disabled on this build")
 
-    if do_deploy_wheel() or do_deploy_test():
+    if do_deploy_wheel() or do_build_test():
         run(description='create binary distribution (wheel)', command=' '.join([python_prefix, 'setup.py bdist_wheel']))
         # run(description='create binary distribution (wheel)', command=' '.join([python_prefix, '-m cibuildwheel --output-dir dist']))
     else:
         lib_log_utils.banner_notice("create wheel distribution is disabled on this build")
 
-    if do_deploy_sdist() or do_deploy_wheel() or do_deploy_test():
+    if do_deploy_sdist() or do_deploy_wheel() or do_build_test():
         run(description='check distributions', command=' '.join([command_prefix, 'twine check dist/*']))
 
 
@@ -594,8 +594,8 @@ def do_deploy_wheel() -> bool:
         return False
 
 
-def do_deploy_test() -> bool:
-    if os.getenv('DEPLOY_TEST', '').lower() == 'true':
+def do_build_test() -> bool:
+    if os.getenv('BUILD_TEST', '').lower() == 'true':
         return True
     else:
         return False
