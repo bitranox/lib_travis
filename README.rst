@@ -1,4 +1,4 @@
-Version v2.0.0 as of 2020-07-31, see changelog_
+Version v2.0.5 as of 2020-07-31, see `Changelog`_
 
 =======================================================
 
@@ -506,7 +506,6 @@ python methods:
 
     services:   			# start services
       - xvfb    			# is needed for WINE on headless installation
-      - docker              # is needed for cibuildwheel
 
     matrix:
         include:
@@ -700,6 +699,7 @@ python methods:
               - export MYPY_STRICT="True"
 
         - os: osx
+          if: true
           language: sh
           name: "macOS 10.15.4"
           python: "3.8"
@@ -709,6 +709,10 @@ python methods:
             - cPREFIX=""				# prefix before commands - used for wine, there the prefix is "wine"
             - cPYTHON="python3"			# command to launch python interpreter (its different on macOs, there we need python3)
             - cPIP="python3 -m pip"   	# command to launch pip (its different on macOs, there we need pip3)
+            - export BUILD_DOCS="False"
+            - export DEPLOY_SDIST="False"
+            - export DEPLOY_WHEEL="True"
+            - export MYPY_STRICT="True"
 
 
     install:
@@ -882,6 +886,26 @@ Changelog
 - new MAJOR version for incompatible API changes,
 - new MINOR version for added functionality in a backwards compatible manner
 - new PATCH version for backwards compatible bug fixes
+
+v2.0.5
+---------
+2020-07-31: fix cibuildwheel
+
+v2.0.4
+---------
+2020-07-31: fix cibuildwheel
+
+v2.0.3
+---------
+2020-07-31: fix cibuildwheel
+
+v2.0.2
+---------
+2020-07-31: fix cibuildwheel
+
+v2.0.1
+---------
+2020-07-31: fix cibuildwheel
 
 v2.0.0
 ---------
