@@ -49,7 +49,8 @@ matrix:
       before_install:
           - export BUILD_DOCS="False"
           - export DEPLOY_SDIST="False"
-          - export DEPLOY_WHEEL="True"
+          - export DEPLOY_WHEEL="False"
+          - export DEPLOY_TEST="True"
           - export MYPY_STRICT="True"   
 
     - os: linux
@@ -60,7 +61,8 @@ matrix:
       before_install:
           - export BUILD_DOCS="False"
           - export DEPLOY_SDIST="False"
-          - export DEPLOY_WHEEL="True"
+          - export DEPLOY_WHEEL="False"
+          - export DEPLOY_TEST="True"
           - export MYPY_STRICT="True"   
 
     - os: linux
@@ -72,6 +74,7 @@ matrix:
           - export BUILD_DOCS="True"
           - export DEPLOY_SDIST="True"
           - export DEPLOY_WHEEL="True"
+          - export DEPLOY_TEST="True"
           - export MYPY_STRICT="True"   
 
     - os: linux
@@ -83,6 +86,7 @@ matrix:
           - export BUILD_DOCS="False"
           - export DEPLOY_SDIST="False"
           - export DEPLOY_WHEEL="False"
+          - export DEPLOY_TEST="True"
           - export MYPY_STRICT="True"   
 
     - os: linux
@@ -93,139 +97,152 @@ matrix:
       before_install:
           - export BUILD_DOCS="False"
           - export DEPLOY_SDIST="False"
-          - export DEPLOY_WHEEL="True"
+          - export DEPLOY_WHEEL="False"
+          - export DEPLOY_TEST="True"
           - export MYPY_STRICT="False"   
 
     - os: linux
       arch: "ppc64le"
-      if: tag IS present
+      if: true
       language: python
       python: "3.6"
       before_install:
           - export BUILD_DOCS="False"
           - export DEPLOY_SDIST="False"
-          - export DEPLOY_WHEEL="True"
+          - export DEPLOY_WHEEL="False"
+          - export DEPLOY_TEST="True"
           - export MYPY_STRICT="True"   
 
     - os: linux
       arch: "ppc64le"
-      if: tag IS present
+      if: true
       language: python
       python: "3.7"
       before_install:
           - export BUILD_DOCS="False"
           - export DEPLOY_SDIST="False"
-          - export DEPLOY_WHEEL="True"
+          - export DEPLOY_WHEEL="False"
+          - export DEPLOY_TEST="True"
           - export MYPY_STRICT="True"   
 
     - os: linux
       arch: "ppc64le"
-      if: tag IS present
+      if: true
       language: python
       python: "3.8"
       before_install:
           - export BUILD_DOCS="False"
           - export DEPLOY_SDIST="False"
           - export DEPLOY_WHEEL="True"
+          - export DEPLOY_TEST="True"
           - export MYPY_STRICT="True"   
 
     - os: linux
       arch: "ppc64le"
-      if: tag IS present
+      if: true
       language: python
       python: "3.8-dev"
       before_install:
           - export BUILD_DOCS="False"
           - export DEPLOY_SDIST="False"
           - export DEPLOY_WHEEL="False"
+          - export DEPLOY_TEST="True"
           - export MYPY_STRICT="True"   
 
     - os: linux
       arch: "s390x"
-      if: tag IS present
+      if: true
       language: python
       python: "3.6"
       before_install:
           - export BUILD_DOCS="False"
           - export DEPLOY_SDIST="False"
-          - export DEPLOY_WHEEL="True"
+          - export DEPLOY_WHEEL="False"
+          - export DEPLOY_TEST="True"
           - export MYPY_STRICT="True"   
 
     - os: linux
       arch: "s390x"
-      if: tag IS present
+      if: true
       language: python
       python: "3.7"
       before_install:
           - export BUILD_DOCS="False"
           - export DEPLOY_SDIST="False"
-          - export DEPLOY_WHEEL="True"
+          - export DEPLOY_WHEEL="False"
+          - export DEPLOY_TEST="True"
           - export MYPY_STRICT="True"   
 
     - os: linux
       arch: "s390x"
-      if: tag IS present
+      if: true
       language: python
       python: "3.8"
       before_install:
           - export BUILD_DOCS="False"
           - export DEPLOY_SDIST="False"
           - export DEPLOY_WHEEL="True"
+          - export DEPLOY_TEST="True"
           - export MYPY_STRICT="True"   
 
     - os: linux
       arch: "s390x"
-      if: tag IS present
+      if: true
       language: python
       python: "3.8-dev"
       before_install:
           - export BUILD_DOCS="False"
           - export DEPLOY_SDIST="False"
           - export DEPLOY_WHEEL="False"
+          - export DEPLOY_TEST="True"
           - export MYPY_STRICT="True"   
 
     - os: linux
       arch: "arm64"
-      if: tag IS present
+      if: true
       language: python
       python: "3.6"
       before_install:
           - export BUILD_DOCS="False"
           - export DEPLOY_SDIST="False"
-          - export DEPLOY_WHEEL="True"
+          - export DEPLOY_WHEEL="False"
+          - export DEPLOY_TEST="True"
           - export MYPY_STRICT="True"   
 
     - os: linux
       arch: "arm64"
-      if: tag IS present
+      if: true
       language: python
       python: "3.7"
       before_install:
           - export BUILD_DOCS="False"
           - export DEPLOY_SDIST="False"
-          - export DEPLOY_WHEEL="True"
+          - export DEPLOY_WHEEL="False"
+          - export DEPLOY_TEST="True"
           - export MYPY_STRICT="True"   
 
     - os: linux
       arch: "arm64"
-      if: tag IS present
+      if: true
       language: python
       python: "3.8"
       before_install:
           - export BUILD_DOCS="False"
           - export DEPLOY_SDIST="False"
           - export DEPLOY_WHEEL="True"
+          - export DEPLOY_TEST="True"
           - export MYPY_STRICT="True"   
 
     - os: linux
       arch: "arm64"
-      if: tag IS present
+      if: true
       language: python
       python: "3.8-dev"
       before_install:
           - export BUILD_DOCS="False"
           - export DEPLOY_SDIST="False"
           - export DEPLOY_WHEEL="False"
+          - export DEPLOY_TEST="True"
           - export MYPY_STRICT="True"   
 
     - os: osx
@@ -241,7 +258,8 @@ matrix:
         - cPIP="python3 -m pip"   	# command to launch pip (its different on macOs, there we need pip3)
         - export BUILD_DOCS="False"
         - export DEPLOY_SDIST="False"
-        - export DEPLOY_WHEEL="True"
+        - export DEPLOY_WHEEL="False"
+        - export DEPLOY_TEST="True"
         - export MYPY_STRICT="True"   
 
 
@@ -258,6 +276,7 @@ script:
 after_success:
     - lib_travis after_success
     - lib_travis deploy
+    - ls -l ./dist
 
 notifications:
   email:

@@ -1,9 +1,7 @@
-Version v2.0.5 as of 2020-07-31, see `Changelog`_
-
-=======================================================
-
 lib_travis
 ==========
+
+Version v2.0.6 as of 2020-08-01, see `Changelog`_.
 
 |travis_build| |license| |jupyter| |pypi|
 
@@ -519,7 +517,8 @@ python methods:
           before_install:
               - export BUILD_DOCS="False"
               - export DEPLOY_SDIST="False"
-              - export DEPLOY_WHEEL="True"
+              - export DEPLOY_WHEEL="False"
+              - export DEPLOY_TEST="True"
               - export MYPY_STRICT="True"
 
         - os: linux
@@ -530,7 +529,8 @@ python methods:
           before_install:
               - export BUILD_DOCS="False"
               - export DEPLOY_SDIST="False"
-              - export DEPLOY_WHEEL="True"
+              - export DEPLOY_WHEEL="False"
+              - export DEPLOY_TEST="True"
               - export MYPY_STRICT="True"
 
         - os: linux
@@ -542,6 +542,7 @@ python methods:
               - export BUILD_DOCS="True"
               - export DEPLOY_SDIST="True"
               - export DEPLOY_WHEEL="True"
+              - export DEPLOY_TEST="True"
               - export MYPY_STRICT="True"
 
         - os: linux
@@ -553,6 +554,7 @@ python methods:
               - export BUILD_DOCS="False"
               - export DEPLOY_SDIST="False"
               - export DEPLOY_WHEEL="False"
+              - export DEPLOY_TEST="True"
               - export MYPY_STRICT="True"
 
         - os: linux
@@ -563,139 +565,152 @@ python methods:
           before_install:
               - export BUILD_DOCS="False"
               - export DEPLOY_SDIST="False"
-              - export DEPLOY_WHEEL="True"
+              - export DEPLOY_WHEEL="False"
+              - export DEPLOY_TEST="True"
               - export MYPY_STRICT="False"
 
         - os: linux
           arch: "ppc64le"
-          if: tag IS present
+          if: true
           language: python
           python: "3.6"
           before_install:
               - export BUILD_DOCS="False"
               - export DEPLOY_SDIST="False"
-              - export DEPLOY_WHEEL="True"
+              - export DEPLOY_WHEEL="False"
+              - export DEPLOY_TEST="True"
               - export MYPY_STRICT="True"
 
         - os: linux
           arch: "ppc64le"
-          if: tag IS present
+          if: true
           language: python
           python: "3.7"
           before_install:
               - export BUILD_DOCS="False"
               - export DEPLOY_SDIST="False"
-              - export DEPLOY_WHEEL="True"
+              - export DEPLOY_WHEEL="False"
+              - export DEPLOY_TEST="True"
               - export MYPY_STRICT="True"
 
         - os: linux
           arch: "ppc64le"
-          if: tag IS present
+          if: true
           language: python
           python: "3.8"
           before_install:
               - export BUILD_DOCS="False"
               - export DEPLOY_SDIST="False"
               - export DEPLOY_WHEEL="True"
+              - export DEPLOY_TEST="True"
               - export MYPY_STRICT="True"
 
         - os: linux
           arch: "ppc64le"
-          if: tag IS present
+          if: true
           language: python
           python: "3.8-dev"
           before_install:
               - export BUILD_DOCS="False"
               - export DEPLOY_SDIST="False"
               - export DEPLOY_WHEEL="False"
+              - export DEPLOY_TEST="True"
               - export MYPY_STRICT="True"
 
         - os: linux
           arch: "s390x"
-          if: tag IS present
+          if: true
           language: python
           python: "3.6"
           before_install:
               - export BUILD_DOCS="False"
               - export DEPLOY_SDIST="False"
-              - export DEPLOY_WHEEL="True"
+              - export DEPLOY_WHEEL="False"
+              - export DEPLOY_TEST="True"
               - export MYPY_STRICT="True"
 
         - os: linux
           arch: "s390x"
-          if: tag IS present
+          if: true
           language: python
           python: "3.7"
           before_install:
               - export BUILD_DOCS="False"
               - export DEPLOY_SDIST="False"
-              - export DEPLOY_WHEEL="True"
+              - export DEPLOY_WHEEL="False"
+              - export DEPLOY_TEST="True"
               - export MYPY_STRICT="True"
 
         - os: linux
           arch: "s390x"
-          if: tag IS present
+          if: true
           language: python
           python: "3.8"
           before_install:
               - export BUILD_DOCS="False"
               - export DEPLOY_SDIST="False"
               - export DEPLOY_WHEEL="True"
+              - export DEPLOY_TEST="True"
               - export MYPY_STRICT="True"
 
         - os: linux
           arch: "s390x"
-          if: tag IS present
+          if: true
           language: python
           python: "3.8-dev"
           before_install:
               - export BUILD_DOCS="False"
               - export DEPLOY_SDIST="False"
               - export DEPLOY_WHEEL="False"
+              - export DEPLOY_TEST="True"
               - export MYPY_STRICT="True"
 
         - os: linux
           arch: "arm64"
-          if: tag IS present
+          if: true
           language: python
           python: "3.6"
           before_install:
               - export BUILD_DOCS="False"
               - export DEPLOY_SDIST="False"
-              - export DEPLOY_WHEEL="True"
+              - export DEPLOY_WHEEL="False"
+              - export DEPLOY_TEST="True"
               - export MYPY_STRICT="True"
 
         - os: linux
           arch: "arm64"
-          if: tag IS present
+          if: true
           language: python
           python: "3.7"
           before_install:
               - export BUILD_DOCS="False"
               - export DEPLOY_SDIST="False"
-              - export DEPLOY_WHEEL="True"
+              - export DEPLOY_WHEEL="False"
+              - export DEPLOY_TEST="True"
               - export MYPY_STRICT="True"
 
         - os: linux
           arch: "arm64"
-          if: tag IS present
+          if: true
           language: python
           python: "3.8"
           before_install:
               - export BUILD_DOCS="False"
               - export DEPLOY_SDIST="False"
               - export DEPLOY_WHEEL="True"
+              - export DEPLOY_TEST="True"
               - export MYPY_STRICT="True"
 
         - os: linux
           arch: "arm64"
-          if: tag IS present
+          if: true
           language: python
           python: "3.8-dev"
           before_install:
               - export BUILD_DOCS="False"
               - export DEPLOY_SDIST="False"
               - export DEPLOY_WHEEL="False"
+              - export DEPLOY_TEST="True"
               - export MYPY_STRICT="True"
 
         - os: osx
@@ -711,7 +726,8 @@ python methods:
             - cPIP="python3 -m pip"   	# command to launch pip (its different on macOs, there we need pip3)
             - export BUILD_DOCS="False"
             - export DEPLOY_SDIST="False"
-            - export DEPLOY_WHEEL="True"
+            - export DEPLOY_WHEEL="False"
+            - export DEPLOY_TEST="True"
             - export MYPY_STRICT="True"
 
 
@@ -728,6 +744,7 @@ python methods:
     after_success:
         - lib_travis after_success
         - lib_travis deploy
+        - ls -l ./dist
 
     notifications:
       email:
@@ -887,61 +904,10 @@ Changelog
 - new MINOR version for added functionality in a backwards compatible manner
 - new PATCH version for backwards compatible bug fixes
 
-v2.0.5
----------
-2020-07-31: fix cibuildwheel
 
-v2.0.4
+v2.0.6
 ---------
-2020-07-31: fix cibuildwheel
-
-v2.0.3
----------
-2020-07-31: fix cibuildwheel
-
-v2.0.2
----------
-2020-07-31: fix cibuildwheel
-
-v2.0.1
----------
-2020-07-31: fix cibuildwheel
-
-v2.0.0
----------
-2020-07-31: integrate cibuildwheel, architectures for arm, powerpc, S390
-
-v1.1.0
----------
-2020-07-31: fix pypi deploy
-
-v1.0.18
----------
-2020-07-31: fix pypi deploy
-
-v1.0.17
----------
-2020-07-31: fix pypi deploy
-
-v1.0.16
----------
-2020-07-30: fix pypi deploy
-
-v1.0.15
----------
-2020-07-30: fix pypi deploy
-
-v1.0.14
----------
-2020-07-30: fix pypi deploy
-
-v1.0.13
----------
-2020-07-30: fix pypi deploy
-
-v1.0.10
----------
-2020-07-30: fix pypi deploy
+2020-08-01: fix cibuildwheel
 
 v1.0.9
 ---------
