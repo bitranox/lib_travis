@@ -1,9 +1,7 @@
-Version v2.0.0 as of 2020-07-31, see changelog_
-
-=======================================================
-
 lib_travis
 ==========
+
+Version v2.0.6 as of 2020-08-01, see `Changelog`_.
 
 |travis_build| |license| |jupyter| |pypi|
 
@@ -56,7 +54,7 @@ automated tests, Travis Matrix, Documentation, Badges, etc. are managed with `Pi
 
 Python version required: 3.6.0 or newer
 
-tested on linux "bionic" with python 3.6, 3.7, 3.8, 3.8-dev, pypy3, wheels for architectures: amd64, ppc64le, s390x, arm64
+tested on linux "bionic" with python 3.6, 3.7, 3.8, 3.8-dev, pypy3 - architectures: amd64, ppc64le, s390x, arm64
 
 `100% code coverage <https://codecov.io/gh/bitranox/lib_travis>`_, codestyle checking ,mypy static type checking ,tested under `Linux, macOS <https://travis-ci.org/bitranox/lib_travis>`_, automatic daily builds and monitoring
 
@@ -506,7 +504,6 @@ python methods:
 
     services:   			# start services
       - xvfb    			# is needed for WINE on headless installation
-      - docker              # is needed for cibuildwheel
 
     matrix:
         include:
@@ -520,7 +517,8 @@ python methods:
           before_install:
               - export BUILD_DOCS="False"
               - export DEPLOY_SDIST="False"
-              - export DEPLOY_WHEEL="True"
+              - export DEPLOY_WHEEL="False"
+              - export DEPLOY_TEST="True"
               - export MYPY_STRICT="True"
 
         - os: linux
@@ -531,7 +529,8 @@ python methods:
           before_install:
               - export BUILD_DOCS="False"
               - export DEPLOY_SDIST="False"
-              - export DEPLOY_WHEEL="True"
+              - export DEPLOY_WHEEL="False"
+              - export DEPLOY_TEST="True"
               - export MYPY_STRICT="True"
 
         - os: linux
@@ -543,6 +542,7 @@ python methods:
               - export BUILD_DOCS="True"
               - export DEPLOY_SDIST="True"
               - export DEPLOY_WHEEL="True"
+              - export DEPLOY_TEST="True"
               - export MYPY_STRICT="True"
 
         - os: linux
@@ -554,6 +554,7 @@ python methods:
               - export BUILD_DOCS="False"
               - export DEPLOY_SDIST="False"
               - export DEPLOY_WHEEL="False"
+              - export DEPLOY_TEST="True"
               - export MYPY_STRICT="True"
 
         - os: linux
@@ -564,7 +565,8 @@ python methods:
           before_install:
               - export BUILD_DOCS="False"
               - export DEPLOY_SDIST="False"
-              - export DEPLOY_WHEEL="True"
+              - export DEPLOY_WHEEL="False"
+              - export DEPLOY_TEST="True"
               - export MYPY_STRICT="False"
 
         - os: linux
@@ -575,7 +577,8 @@ python methods:
           before_install:
               - export BUILD_DOCS="False"
               - export DEPLOY_SDIST="False"
-              - export DEPLOY_WHEEL="True"
+              - export DEPLOY_WHEEL="False"
+              - export DEPLOY_TEST="True"
               - export MYPY_STRICT="True"
 
         - os: linux
@@ -586,7 +589,8 @@ python methods:
           before_install:
               - export BUILD_DOCS="False"
               - export DEPLOY_SDIST="False"
-              - export DEPLOY_WHEEL="True"
+              - export DEPLOY_WHEEL="False"
+              - export DEPLOY_TEST="True"
               - export MYPY_STRICT="True"
 
         - os: linux
@@ -598,6 +602,7 @@ python methods:
               - export BUILD_DOCS="False"
               - export DEPLOY_SDIST="False"
               - export DEPLOY_WHEEL="True"
+              - export DEPLOY_TEST="True"
               - export MYPY_STRICT="True"
 
         - os: linux
@@ -609,6 +614,7 @@ python methods:
               - export BUILD_DOCS="False"
               - export DEPLOY_SDIST="False"
               - export DEPLOY_WHEEL="False"
+              - export DEPLOY_TEST="True"
               - export MYPY_STRICT="True"
 
         - os: linux
@@ -619,7 +625,8 @@ python methods:
           before_install:
               - export BUILD_DOCS="False"
               - export DEPLOY_SDIST="False"
-              - export DEPLOY_WHEEL="True"
+              - export DEPLOY_WHEEL="False"
+              - export DEPLOY_TEST="True"
               - export MYPY_STRICT="True"
 
         - os: linux
@@ -630,7 +637,8 @@ python methods:
           before_install:
               - export BUILD_DOCS="False"
               - export DEPLOY_SDIST="False"
-              - export DEPLOY_WHEEL="True"
+              - export DEPLOY_WHEEL="False"
+              - export DEPLOY_TEST="True"
               - export MYPY_STRICT="True"
 
         - os: linux
@@ -642,6 +650,7 @@ python methods:
               - export BUILD_DOCS="False"
               - export DEPLOY_SDIST="False"
               - export DEPLOY_WHEEL="True"
+              - export DEPLOY_TEST="True"
               - export MYPY_STRICT="True"
 
         - os: linux
@@ -653,6 +662,7 @@ python methods:
               - export BUILD_DOCS="False"
               - export DEPLOY_SDIST="False"
               - export DEPLOY_WHEEL="False"
+              - export DEPLOY_TEST="True"
               - export MYPY_STRICT="True"
 
         - os: linux
@@ -663,7 +673,8 @@ python methods:
           before_install:
               - export BUILD_DOCS="False"
               - export DEPLOY_SDIST="False"
-              - export DEPLOY_WHEEL="True"
+              - export DEPLOY_WHEEL="False"
+              - export DEPLOY_TEST="True"
               - export MYPY_STRICT="True"
 
         - os: linux
@@ -674,7 +685,8 @@ python methods:
           before_install:
               - export BUILD_DOCS="False"
               - export DEPLOY_SDIST="False"
-              - export DEPLOY_WHEEL="True"
+              - export DEPLOY_WHEEL="False"
+              - export DEPLOY_TEST="True"
               - export MYPY_STRICT="True"
 
         - os: linux
@@ -686,6 +698,7 @@ python methods:
               - export BUILD_DOCS="False"
               - export DEPLOY_SDIST="False"
               - export DEPLOY_WHEEL="True"
+              - export DEPLOY_TEST="True"
               - export MYPY_STRICT="True"
 
         - os: linux
@@ -697,9 +710,11 @@ python methods:
               - export BUILD_DOCS="False"
               - export DEPLOY_SDIST="False"
               - export DEPLOY_WHEEL="False"
+              - export DEPLOY_TEST="True"
               - export MYPY_STRICT="True"
 
         - os: osx
+          if: true
           language: sh
           name: "macOS 10.15.4"
           python: "3.8"
@@ -709,6 +724,11 @@ python methods:
             - cPREFIX=""				# prefix before commands - used for wine, there the prefix is "wine"
             - cPYTHON="python3"			# command to launch python interpreter (its different on macOs, there we need python3)
             - cPIP="python3 -m pip"   	# command to launch pip (its different on macOs, there we need pip3)
+            - export BUILD_DOCS="False"
+            - export DEPLOY_SDIST="False"
+            - export DEPLOY_WHEEL="False"
+            - export DEPLOY_TEST="True"
+            - export MYPY_STRICT="True"
 
 
     install:
@@ -724,6 +744,7 @@ python methods:
     after_success:
         - lib_travis after_success
         - lib_travis deploy
+        - ls -l ./dist
 
     notifications:
       email:
@@ -883,41 +904,10 @@ Changelog
 - new MINOR version for added functionality in a backwards compatible manner
 - new PATCH version for backwards compatible bug fixes
 
-v2.0.0
----------
-2020-07-31: integrate cibuildwheel, architectures for arm, powerpc, S390
 
-v1.1.0
+v2.0.6
 ---------
-2020-07-31: fix pypi deploy
-
-v1.0.18
----------
-2020-07-31: fix pypi deploy
-
-v1.0.17
----------
-2020-07-31: fix pypi deploy
-
-v1.0.16
----------
-2020-07-30: fix pypi deploy
-
-v1.0.15
----------
-2020-07-30: fix pypi deploy
-
-v1.0.14
----------
-2020-07-30: fix pypi deploy
-
-v1.0.13
----------
-2020-07-30: fix pypi deploy
-
-v1.0.10
----------
-2020-07-30: fix pypi deploy
+2020-08-01: fix pypi deploy
 
 v1.0.9
 ---------

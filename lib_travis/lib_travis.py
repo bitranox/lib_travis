@@ -284,7 +284,7 @@ def install(dry_run: bool = True) -> None:
     run(description='install readme renderer', command=' '.join([pip_prefix, 'install --upgrade readme_renderer']))
     run(description='install twine', command=' '.join([pip_prefix, 'install --upgrade twine']))
     run(description='install wheel', command=' '.join([pip_prefix, 'install --upgrade wheel']))
-    run(description='install cibuildwheel', command=' '.join([pip_prefix, 'install --upgrade cibuildwheel']))
+    run(description='install pycodestyle', command=' '.join([pip_prefix, 'install --upgrade pycodestyle']))
     run(description='install pytest-pycodestyle', command=' '.join([pip_prefix, 'install --upgrade "pytest-pycodestyle; python_version >= \\"3.5\\""']))
 
 
@@ -374,19 +374,18 @@ def script(dry_run: bool = True) -> None:
     else:
         lib_log_utils.banner_notice("rebuild doc file is disabled on this build")
 
-    if do_deploy_sdist():
+    if do_deploy_sdist() or do_deploy_test():
         run(description='create source distribution', command=' '.join([python_prefix, 'setup.py sdist']))
     else:
         lib_log_utils.banner_notice("create source distribution is disabled on this build")
 
-    if do_deploy_wheel():
-        # run(description='create binary distribution (wheel)', command=' '.join([python_prefix, 'setup.py bdist_wheel']))
-        # python3 -m cibuildwheel --output-dir wheelhouse
-        run(description='create binary distribution (wheel)', command=' '.join([python_prefix, '-m cibuildwheel --output-dir dist']))
+    if do_deploy_wheel() or do_deploy_test():
+        run(description='create binary distribution (wheel)', command=' '.join([python_prefix, 'setup.py bdist_wheel']))
+        # run(description='create binary distribution (wheel)', command=' '.join([python_prefix, '-m cibuildwheel --output-dir dist']))
     else:
         lib_log_utils.banner_notice("create wheel distribution is disabled on this build")
 
-    if do_deploy_sdist() or do_deploy_wheel():
+    if do_deploy_sdist() or do_deploy_wheel() or do_deploy_test():
         run(description='check distributions', command=' '.join([command_prefix, 'twine check dist/*']))
 
 
@@ -590,6 +589,13 @@ def do_deploy_sdist() -> bool:
 
 def do_deploy_wheel() -> bool:
     if os.getenv('DEPLOY_WHEEL', '').lower() == 'true':
+        return True
+    else:
+        return False
+
+
+def do_deploy_test() -> bool:
+    if os.getenv('DEPLOY_TEST', '').lower() == 'true':
         return True
     else:
         return False
