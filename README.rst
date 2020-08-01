@@ -1,7 +1,8 @@
 lib_travis
 ==========
 
-Version v2.0.6 as of 2020-08-01, see `Changelog`_.
+
+Version v2.0.6 as of 2020-08-01 see `Changelog`_
 
 |travis_build| |license| |jupyter| |pypi|
 
@@ -573,71 +574,11 @@ python methods:
           arch: "ppc64le"
           if: tag IS present
           language: python
-          python: "3.6"
-          before_install:
-              - export BUILD_DOCS="False"
-              - export DEPLOY_SDIST="False"
-              - export DEPLOY_WHEEL="False"
-              - export DEPLOY_TEST="True"
-              - export MYPY_STRICT="True"
-
-        - os: linux
-          arch: "ppc64le"
-          if: tag IS present
-          language: python
-          python: "3.7"
-          before_install:
-              - export BUILD_DOCS="False"
-              - export DEPLOY_SDIST="False"
-              - export DEPLOY_WHEEL="False"
-              - export DEPLOY_TEST="True"
-              - export MYPY_STRICT="True"
-
-        - os: linux
-          arch: "ppc64le"
-          if: tag IS present
-          language: python
           python: "3.8"
           before_install:
               - export BUILD_DOCS="False"
               - export DEPLOY_SDIST="False"
               - export DEPLOY_WHEEL="True"
-              - export DEPLOY_TEST="True"
-              - export MYPY_STRICT="True"
-
-        - os: linux
-          arch: "ppc64le"
-          if: tag IS present
-          language: python
-          python: "3.8-dev"
-          before_install:
-              - export BUILD_DOCS="False"
-              - export DEPLOY_SDIST="False"
-              - export DEPLOY_WHEEL="False"
-              - export DEPLOY_TEST="True"
-              - export MYPY_STRICT="True"
-
-        - os: linux
-          arch: "s390x"
-          if: tag IS present
-          language: python
-          python: "3.6"
-          before_install:
-              - export BUILD_DOCS="False"
-              - export DEPLOY_SDIST="False"
-              - export DEPLOY_WHEEL="False"
-              - export DEPLOY_TEST="True"
-              - export MYPY_STRICT="True"
-
-        - os: linux
-          arch: "s390x"
-          if: tag IS present
-          language: python
-          python: "3.7"
-          before_install:
-              - export BUILD_DOCS="False"
-              - export DEPLOY_SDIST="False"
-              - export DEPLOY_WHEEL="False"
               - export DEPLOY_TEST="True"
               - export MYPY_STRICT="True"
 
@@ -654,42 +595,6 @@ python methods:
               - export MYPY_STRICT="True"
 
         - os: linux
-          arch: "s390x"
-          if: tag IS present
-          language: python
-          python: "3.8-dev"
-          before_install:
-              - export BUILD_DOCS="False"
-              - export DEPLOY_SDIST="False"
-              - export DEPLOY_WHEEL="False"
-              - export DEPLOY_TEST="True"
-              - export MYPY_STRICT="True"
-
-        - os: linux
-          arch: "arm64"
-          if: tag IS present
-          language: python
-          python: "3.6"
-          before_install:
-              - export BUILD_DOCS="False"
-              - export DEPLOY_SDIST="False"
-              - export DEPLOY_WHEEL="False"
-              - export DEPLOY_TEST="True"
-              - export MYPY_STRICT="True"
-
-        - os: linux
-          arch: "arm64"
-          if: tag IS present
-          language: python
-          python: "3.7"
-          before_install:
-              - export BUILD_DOCS="False"
-              - export DEPLOY_SDIST="False"
-              - export DEPLOY_WHEEL="False"
-              - export DEPLOY_TEST="True"
-              - export MYPY_STRICT="True"
-
-        - os: linux
           arch: "arm64"
           if: tag IS present
           language: python
@@ -698,18 +603,6 @@ python methods:
               - export BUILD_DOCS="False"
               - export DEPLOY_SDIST="False"
               - export DEPLOY_WHEEL="True"
-              - export DEPLOY_TEST="True"
-              - export MYPY_STRICT="True"
-
-        - os: linux
-          arch: "arm64"
-          if: tag IS present
-          language: python
-          python: "3.8-dev"
-          before_install:
-              - export BUILD_DOCS="False"
-              - export DEPLOY_SDIST="False"
-              - export DEPLOY_WHEEL="False"
               - export DEPLOY_TEST="True"
               - export MYPY_STRICT="True"
 
