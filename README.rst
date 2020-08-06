@@ -2,7 +2,7 @@ lib_travis
 ==========
 
 
-Version v2.1.0 as of 2020-08-06 see `Changelog`_
+Version v2.2.0 as of 2020-08-06 see `Changelog`_
 
 |travis_build| |license| |jupyter| |pypi|
 
@@ -802,6 +802,10 @@ Changelog
 - new MINOR version for added functionality in a backwards compatible manner
 - new PATCH version for backwards compatible bug fixes
 
+
+v2.2.0
+---------
+2020-08-06: integrate flake8 (in transition)
 
 v2.1.0
 ---------

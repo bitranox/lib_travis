@@ -286,6 +286,8 @@ def install(dry_run: bool = True) -> None:
     run(description='install wheel', command=' '.join([pip_prefix, 'install --upgrade wheel']))
     run(description='install pycodestyle', command=' '.join([pip_prefix, 'install --upgrade pycodestyle']))
     run(description='install pytest-pycodestyle', command=' '.join([pip_prefix, 'install --upgrade "pytest-pycodestyle; python_version >= \\"3.5\\""']))
+    if do_flake8_tests():
+        run(description='install flake8', command=' '.join([pip_prefix, 'install --upgrade flake8']))
 
 
 # script{{{
