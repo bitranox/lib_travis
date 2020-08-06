@@ -6,6 +6,10 @@ Changelog
 - new PATCH version for backwards compatible bug fixes
 
 
+v2.2.0
+---------
+2020-08-06: integrate flake8 (in transition)
+
 v2.1.0
 ---------
 2020-08-06: integrate flake8 (in transition)
