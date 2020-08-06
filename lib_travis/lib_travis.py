@@ -348,6 +348,8 @@ def script(dry_run: bool = True) -> None:
     python_prefix = get_python_prefix()
     repository = get_repository()
     package_name = os.getenv('PACKAGE_NAME', '')
+    if do_flake8_tests():
+        run(description='flake8 test', command=' '.join([python_prefix, '-m flake8 --statistics --benchmark']))
     run(description='setup.py test', command=' '.join([python_prefix, './setup.py test']))
     run(description='pip install, option test', command=' '.join([pip_prefix, 'install', repository, '--install-option test']))
     run(description='pip standard install', command=' '.join([pip_prefix, 'install', repository]))
@@ -589,6 +591,13 @@ def do_deploy_sdist() -> bool:
 
 def do_deploy_wheel() -> bool:
     if os.getenv('DEPLOY_WHEEL', '').lower() == 'true':
+        return True
+    else:
+        return False
+
+
+def do_flake8_tests() -> bool:
+    if os.getenv('DO_FLAKE8_TESTS', '').lower() == 'true':
         return True
     else:
         return False

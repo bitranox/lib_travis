@@ -23,9 +23,14 @@ env:
         - RST_INCLUDE_SOURCE="./.docs/README_template.rst"
         # the target file for rst_include (rebuild rst file includes)
         - RST_INCLUDE_TARGET="./README.rst"
+
+        # do flake8 tests
+        - DO_FLAKE8_TESTS="True"
+
         # secure environment variable
         - secure: "PmyawDvf+hN5ACdHD0n3RjwfYmrh801cfcRGy9tyXvjnUWyrpseCQc1/Is3SX4Ju29zcWFS6P34uolGJ/4vPfrWS2vpIVXJuHa3tYPuQe0wKq1Ke9MmohjeM/4IRYWzyIQozjo1fy3RAk4hMzMK9mf9WDIcGNbi2jrxALJwG0HKeHberF+irjxfnV5/n/pz9mO9QPc+qc0b2cdFakNsth51XoxGkT1YdGbI6wjtPcsRX4JAKCF4K/gIAfXrAadNV+j9ttqQlq3qk5CrRKK5NyjnxMJwenCYd+GzEK7oFWwKOdJfoGQFpjZ0pV7bw8Xs6w0neZKq973GRvBvPhFBprF13dGeg1EOPlggzi9EAhLTgvCyfQGWkEEVCry8luNP56VSAzBGbMahN1KLZ/9FN1ZdZFF87E8Vg/jWiCHR7IM6DaETY5283NSnhB29rBmogoCxsC9l8FCY+OhYwnpKUl13LBi+XeqBry+hn5Y+sVGhYxwJsd8eY7+zjodVedtHCqO8mfOR6xAGh/stRAojOmP1o1DcB7CvmUDIO8vhDkrhwa5dUWZwOg6AeABmLlHn8KtyePqQ65RzkDYqoiphCG8EeVZWzEsuht8YORIi3ea4ZfcTDyKX9zxE6VI/wIBJeUPy0Pwbzb2m7k1DoMeecSaMHjHBrHWMErhbswwb1TTw="  # CC_TEST_REPORTER_ID.secret
         - secure: "rXWRzXKqtc6SE8aFcJKZlglsT7wPa2WKyRejc1vj0NE/IIFwQCo17vBLXZpbdfQYk9VdF6Es/Ylrj1iwp5+xdWdX0xTpEZxQR3s/N0WllRWvZZgJbNlUExjbhQb1lm0NAkTCxiBJ6hkkj/ThjLqS3LqW4YYvB6ICe31jZszeGZyvOzefCHQROt8IuX9wnwbiW3HupNXDhsHUkiqmyryjoGQJ6nkKq/hui5HxiGNsrDzeBAVj+GfKl2bpW9YWa64QOGaTps755AiLFVNh/4bZK5hH1sOmg6V9G3uYqzzE+EUOafPU1XZA5KDK0ntByemaosdin8BgEr+SAscRMUgfRq7C2pacac8pgP9ELAaS4/Ny3bi9qCCC89jydq+VbV6HxQHfKH3gWsiRXSF9m6tZm+Ld5VC243LcozKj/2izMYzmS7rRmLckHtaMg8UkZe/yJcGrwrJmyiXGb50P7i7tNIGYffNLoTfgqK2Wat9NCxxHIlME0P/L+pjIElSbMvmLbIaYwxTxnCbPsOTZ/bRDSBPT2n9W2yx3r1xmWlgkmf15weWbJyv/MTVTTWjDvuMGtZEEHe1Iv1R90Z60iyuwh5ycCsXu1l5tKGOwEPw/rClFy/5rbREz4iYwu3SfH36i3OW6wVs8qPSS/n6U/zdNYsBucW/R4A3APidRWOGrDRc="  # PYPI_PASSWORD.secret
+
 
 
 addons:
