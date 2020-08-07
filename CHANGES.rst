@@ -6,6 +6,11 @@ Changelog
 - new PATCH version for backwards compatible bug fixes
 
 
+v2.3.1
+---------
+2020-08-07:
+    - fix mypy pypy
+
 v2.3.0
 ---------
 2020-08-07:
