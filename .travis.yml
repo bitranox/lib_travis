@@ -65,8 +65,8 @@ matrix:
       python: "3.6"
       before_install:
           - export BUILD_DOCS="False"
-          - export DEPLOY_SDIST="False"
-          - export DEPLOY_WHEEL="False"
+          - export DEPLOY_SDIST="True"
+          - export DEPLOY_WHEEL="True"
           - export BUILD_TEST="True"
           - export MYPY_DO_TESTS="True"
 
@@ -77,7 +77,7 @@ matrix:
       python: "3.7"
       before_install:
           - export BUILD_DOCS="False"
-          - export DEPLOY_SDIST="False"
+          - export DEPLOY_SDIST="True"
           - export DEPLOY_WHEEL="False"
           - export BUILD_TEST="True"
           - export MYPY_DO_TESTS="True"
@@ -101,8 +101,8 @@ matrix:
       python: "3.8-dev"
       before_install:
           - export BUILD_DOCS="False"
-          - export DEPLOY_SDIST="False"
-          - export DEPLOY_WHEEL="False"
+          - export DEPLOY_SDIST="True"
+          - export DEPLOY_WHEEL="True"
           - export BUILD_TEST="True"
           - export MYPY_DO_TESTS="True"
 
@@ -113,8 +113,8 @@ matrix:
       python: "pypy3"
       before_install:
           - export BUILD_DOCS="False"
-          - export DEPLOY_SDIST="False"
-          - export DEPLOY_WHEEL="False"
+          - export DEPLOY_SDIST="True"
+          - export DEPLOY_WHEEL="True"
           - export BUILD_TEST="True"
           - export MYPY_DO_TESTS="False"
 
@@ -125,8 +125,8 @@ matrix:
       python: "3.8"
       before_install:
           - export BUILD_DOCS="False"
-          - export DEPLOY_SDIST="False"
-          - export DEPLOY_WHEEL="False"
+          - export DEPLOY_SDIST="True"
+          - export DEPLOY_WHEEL="True"
           - export BUILD_TEST="True"
           - export MYPY_DO_TESTS="True"
 
@@ -137,8 +137,8 @@ matrix:
       python: "3.8"
       before_install:
           - export BUILD_DOCS="False"
-          - export DEPLOY_SDIST="False"
-          - export DEPLOY_WHEEL="False"
+          - export DEPLOY_SDIST="True"
+          - export DEPLOY_WHEEL="True"
           - export BUILD_TEST="True"
           - export MYPY_DO_TESTS="True"
 
@@ -149,8 +149,8 @@ matrix:
       python: "3.8"
       before_install:
           - export BUILD_DOCS="False"
-          - export DEPLOY_SDIST="False"
-          - export DEPLOY_WHEEL="False"
+          - export DEPLOY_SDIST="True"
+          - export DEPLOY_WHEEL="True"
           - export BUILD_TEST="True"
           - export MYPY_DO_TESTS="True"
 

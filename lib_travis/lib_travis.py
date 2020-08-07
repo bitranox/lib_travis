@@ -491,7 +491,7 @@ def deploy(dry_run: bool = True) -> None:
 
     if do_deploy():
         run(description='upload to pypi', command=' '.join([command_prefix, 'twine upload --repository-url https://upload.pypi.org/legacy/ -u',
-                                                            github_username, '-p', pypi_password, 'dist/*']), show_command=False)
+                                                            github_username, '-p', pypi_password, '--skip-existing', 'dist/*']), show_command=False)
     else:
         lib_log_utils.banner_notice("pypi deploy is disabled on this build")
 
