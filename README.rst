@@ -2,7 +2,7 @@ lib_travis
 ==========
 
 
-Version v2.2.0 as of 2020-08-07 see `Changelog`_
+Version v2.3.0 as of 2020-08-07 see `Changelog`_
 
 |travis_build| |license| |jupyter| |pypi|
 
@@ -57,7 +57,7 @@ Python version required: 3.6.0 or newer
 
 tested on linux "bionic" with python 3.6, 3.7, 3.8, 3.8-dev, pypy3 - architectures: amd64, ppc64le, s390x, arm64
 
-`100% code coverage <https://codecov.io/gh/bitranox/lib_travis>`_, codestyle checking ,mypy static type checking ,tested under `Linux, macOS <https://travis-ci.org/bitranox/lib_travis>`_, automatic daily builds and monitoring
+`100% code coverage <https://codecov.io/gh/bitranox/lib_travis>`_, flake8 style checking ,mypy static type checking ,tested under `Linux, macOS <https://travis-ci.org/bitranox/lib_travis>`_, automatic daily builds and monitoring
 
 ----
 
@@ -482,8 +482,23 @@ python methods:
             - cPIP="python -m pip"
             # switch off wine fix me messages
             - WINEDEBUG=fixme-all
-            # mypy path
+
+            # PYTEST
+            - PYTEST_DO_TESTS="True"
+
+            # FLAKE8 tests
+            - DO_FLAKE8_TESTS="True"
+
+            # MYPY tests
+            - MYPY_DO_TESTS="True"
+            - MYPY_OPTIONS="--follow-imports=normal --implicit-reexport --no-warn-unused-ignores --strict"
             - MYPYPATH="./lib_travis/3rd_party_stubs"
+
+            # coverage
+            - DO_COVERAGE="True"
+            - DO_COVERAGE_UPLOAD_CODECOV="True"
+            - DO_COVERAGE_UPLOAD_CODE_CLIMATE="True"
+
             # package name
             - PACKAGE_NAME="lib_travis"
             # the registered CLI Command
@@ -492,9 +507,6 @@ python methods:
             - RST_INCLUDE_SOURCE="./.docs/README_template.rst"
             # the target file for rst_include (rebuild rst file includes)
             - RST_INCLUDE_TARGET="./README.rst"
-
-            # do flake8 tests
-            - DO_FLAKE8_TESTS="True"
 
             # secure environment variable
             - secure: "PmyawDvf+hN5ACdHD0n3RjwfYmrh801cfcRGy9tyXvjnUWyrpseCQc1/Is3SX4Ju29zcWFS6P34uolGJ/4vPfrWS2vpIVXJuHa3tYPuQe0wKq1Ke9MmohjeM/4IRYWzyIQozjo1fy3RAk4hMzMK9mf9WDIcGNbi2jrxALJwG0HKeHberF+irjxfnV5/n/pz9mO9QPc+qc0b2cdFakNsth51XoxGkT1YdGbI6wjtPcsRX4JAKCF4K/gIAfXrAadNV+j9ttqQlq3qk5CrRKK5NyjnxMJwenCYd+GzEK7oFWwKOdJfoGQFpjZ0pV7bw8Xs6w0neZKq973GRvBvPhFBprF13dGeg1EOPlggzi9EAhLTgvCyfQGWkEEVCry8luNP56VSAzBGbMahN1KLZ/9FN1ZdZFF87E8Vg/jWiCHR7IM6DaETY5283NSnhB29rBmogoCxsC9l8FCY+OhYwnpKUl13LBi+XeqBry+hn5Y+sVGhYxwJsd8eY7+zjodVedtHCqO8mfOR6xAGh/stRAojOmP1o1DcB7CvmUDIO8vhDkrhwa5dUWZwOg6AeABmLlHn8KtyePqQ65RzkDYqoiphCG8EeVZWzEsuht8YORIi3ea4ZfcTDyKX9zxE6VI/wIBJeUPy0Pwbzb2m7k1DoMeecSaMHjHBrHWMErhbswwb1TTw="  # CC_TEST_REPORTER_ID.secret
@@ -525,7 +537,6 @@ python methods:
               - export DEPLOY_SDIST="False"
               - export DEPLOY_WHEEL="False"
               - export BUILD_TEST="True"
-              - export MYPY_STRICT="True"
 
         - os: linux
           arch: "amd64"
@@ -537,7 +548,6 @@ python methods:
               - export DEPLOY_SDIST="False"
               - export DEPLOY_WHEEL="False"
               - export BUILD_TEST="True"
-              - export MYPY_STRICT="True"
 
         - os: linux
           arch: "amd64"
@@ -549,7 +559,6 @@ python methods:
               - export DEPLOY_SDIST="True"
               - export DEPLOY_WHEEL="True"
               - export BUILD_TEST="True"
-              - export MYPY_STRICT="True"
 
         - os: linux
           arch: "amd64"
@@ -561,7 +570,6 @@ python methods:
               - export DEPLOY_SDIST="False"
               - export DEPLOY_WHEEL="False"
               - export BUILD_TEST="True"
-              - export MYPY_STRICT="True"
 
         - os: linux
           arch: "amd64"
@@ -573,7 +581,6 @@ python methods:
               - export DEPLOY_SDIST="False"
               - export DEPLOY_WHEEL="False"
               - export BUILD_TEST="True"
-              - export MYPY_STRICT="False"
 
         - os: linux
           arch: "ppc64le"
@@ -585,7 +592,6 @@ python methods:
               - export DEPLOY_SDIST="False"
               - export DEPLOY_WHEEL="False"
               - export BUILD_TEST="True"
-              - export MYPY_STRICT="True"
 
         - os: linux
           arch: "s390x"
@@ -597,7 +603,6 @@ python methods:
               - export DEPLOY_SDIST="False"
               - export DEPLOY_WHEEL="False"
               - export BUILD_TEST="True"
-              - export MYPY_STRICT="True"
 
         - os: linux
           arch: "arm64"
@@ -609,7 +614,6 @@ python methods:
               - export DEPLOY_SDIST="False"
               - export DEPLOY_WHEEL="False"
               - export BUILD_TEST="True"
-              - export MYPY_STRICT="True"
 
         - os: osx
           if: true
@@ -626,7 +630,6 @@ python methods:
             - export DEPLOY_SDIST="False"
             - export DEPLOY_WHEEL="False"
             - export DEPLOY_TEST="True"
-            - export MYPY_STRICT="True"
 
 
     install:
@@ -802,6 +805,12 @@ Changelog
 - new MINOR version for added functionality in a backwards compatible manner
 - new PATCH version for backwards compatible bug fixes
 
+
+v2.3.0
+---------
+2020-08-07:
+    - mypy without pytest
+    - coverage refractor
 
 v2.2.0
 ---------
