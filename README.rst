@@ -2,7 +2,7 @@ lib_travis
 ==========
 
 
-Version v2.3.0 as of 2020-08-07 see `Changelog`_
+Version v2.3.1 as of 2020-08-07 see `Changelog`_
 
 |travis_build| |license| |jupyter| |pypi|
 
@@ -537,6 +537,7 @@ python methods:
               - export DEPLOY_SDIST="False"
               - export DEPLOY_WHEEL="False"
               - export BUILD_TEST="True"
+              - export MYPY_DO_TESTS="True"
 
         - os: linux
           arch: "amd64"
@@ -548,6 +549,7 @@ python methods:
               - export DEPLOY_SDIST="False"
               - export DEPLOY_WHEEL="False"
               - export BUILD_TEST="True"
+              - export MYPY_DO_TESTS="True"
 
         - os: linux
           arch: "amd64"
@@ -559,6 +561,7 @@ python methods:
               - export DEPLOY_SDIST="True"
               - export DEPLOY_WHEEL="True"
               - export BUILD_TEST="True"
+              - export MYPY_DO_TESTS="True"
 
         - os: linux
           arch: "amd64"
@@ -570,6 +573,7 @@ python methods:
               - export DEPLOY_SDIST="False"
               - export DEPLOY_WHEEL="False"
               - export BUILD_TEST="True"
+              - export MYPY_DO_TESTS="True"
 
         - os: linux
           arch: "amd64"
@@ -581,6 +585,7 @@ python methods:
               - export DEPLOY_SDIST="False"
               - export DEPLOY_WHEEL="False"
               - export BUILD_TEST="True"
+              - export MYPY_DO_TESTS="False"
 
         - os: linux
           arch: "ppc64le"
@@ -592,6 +597,7 @@ python methods:
               - export DEPLOY_SDIST="False"
               - export DEPLOY_WHEEL="False"
               - export BUILD_TEST="True"
+              - export MYPY_DO_TESTS="True"
 
         - os: linux
           arch: "s390x"
@@ -603,6 +609,7 @@ python methods:
               - export DEPLOY_SDIST="False"
               - export DEPLOY_WHEEL="False"
               - export BUILD_TEST="True"
+              - export MYPY_DO_TESTS="True"
 
         - os: linux
           arch: "arm64"
@@ -614,6 +621,7 @@ python methods:
               - export DEPLOY_SDIST="False"
               - export DEPLOY_WHEEL="False"
               - export BUILD_TEST="True"
+              - export MYPY_DO_TESTS="True"
 
         - os: osx
           if: true
@@ -805,6 +813,11 @@ Changelog
 - new MINOR version for added functionality in a backwards compatible manner
 - new PATCH version for backwards compatible bug fixes
 
+
+v2.3.1
+---------
+2020-08-07:
+    - fix mypy pypy
 
 v2.3.0
 ---------
