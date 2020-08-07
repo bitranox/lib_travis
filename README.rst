@@ -2,7 +2,7 @@ lib_travis
 ==========
 
 
-Version v2.3.1 as of 2020-08-07 see `Changelog`_
+Version v2.3.2 as of 2020-08-07 see `Changelog`_
 
 |travis_build| |license| |jupyter| |pypi|
 
@@ -534,8 +534,8 @@ python methods:
           python: "3.6"
           before_install:
               - export BUILD_DOCS="False"
-              - export DEPLOY_SDIST="False"
-              - export DEPLOY_WHEEL="False"
+              - export DEPLOY_SDIST="True"
+              - export DEPLOY_WHEEL="True"
               - export BUILD_TEST="True"
               - export MYPY_DO_TESTS="True"
 
@@ -546,7 +546,7 @@ python methods:
           python: "3.7"
           before_install:
               - export BUILD_DOCS="False"
-              - export DEPLOY_SDIST="False"
+              - export DEPLOY_SDIST="True"
               - export DEPLOY_WHEEL="False"
               - export BUILD_TEST="True"
               - export MYPY_DO_TESTS="True"
@@ -570,8 +570,8 @@ python methods:
           python: "3.8-dev"
           before_install:
               - export BUILD_DOCS="False"
-              - export DEPLOY_SDIST="False"
-              - export DEPLOY_WHEEL="False"
+              - export DEPLOY_SDIST="True"
+              - export DEPLOY_WHEEL="True"
               - export BUILD_TEST="True"
               - export MYPY_DO_TESTS="True"
 
@@ -582,8 +582,8 @@ python methods:
           python: "pypy3"
           before_install:
               - export BUILD_DOCS="False"
-              - export DEPLOY_SDIST="False"
-              - export DEPLOY_WHEEL="False"
+              - export DEPLOY_SDIST="True"
+              - export DEPLOY_WHEEL="True"
               - export BUILD_TEST="True"
               - export MYPY_DO_TESTS="False"
 
@@ -594,8 +594,8 @@ python methods:
           python: "3.8"
           before_install:
               - export BUILD_DOCS="False"
-              - export DEPLOY_SDIST="False"
-              - export DEPLOY_WHEEL="False"
+              - export DEPLOY_SDIST="True"
+              - export DEPLOY_WHEEL="True"
               - export BUILD_TEST="True"
               - export MYPY_DO_TESTS="True"
 
@@ -606,8 +606,8 @@ python methods:
           python: "3.8"
           before_install:
               - export BUILD_DOCS="False"
-              - export DEPLOY_SDIST="False"
-              - export DEPLOY_WHEEL="False"
+              - export DEPLOY_SDIST="True"
+              - export DEPLOY_WHEEL="True"
               - export BUILD_TEST="True"
               - export MYPY_DO_TESTS="True"
 
@@ -618,8 +618,8 @@ python methods:
           python: "3.8"
           before_install:
               - export BUILD_DOCS="False"
-              - export DEPLOY_SDIST="False"
-              - export DEPLOY_WHEEL="False"
+              - export DEPLOY_SDIST="True"
+              - export DEPLOY_WHEEL="True"
               - export BUILD_TEST="True"
               - export MYPY_DO_TESTS="True"
 
@@ -813,6 +813,11 @@ Changelog
 - new MINOR version for added functionality in a backwards compatible manner
 - new PATCH version for backwards compatible bug fixes
 
+
+v2.3.2
+---------
+2020-08-07:
+    - fix pypy eggs
 
 v2.3.1
 ---------

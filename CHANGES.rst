@@ -6,6 +6,11 @@ Changelog
 - new PATCH version for backwards compatible bug fixes
 
 
+v2.3.2
+---------
+2020-08-07:
+    - fix pypy eggs
+
 v2.3.1
 ---------
 2020-08-07:
