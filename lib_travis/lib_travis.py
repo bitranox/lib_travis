@@ -284,10 +284,7 @@ def install(dry_run: bool = True) -> None:
     run(description='install readme renderer', command=' '.join([pip_prefix, 'install --upgrade readme_renderer']))
     run(description='install twine', command=' '.join([pip_prefix, 'install --upgrade twine']))
     run(description='install wheel', command=' '.join([pip_prefix, 'install --upgrade wheel']))
-    run(description='install pycodestyle', command=' '.join([pip_prefix, 'install --upgrade pycodestyle']))
-    run(description='install pytest-pycodestyle', command=' '.join([pip_prefix, 'install --upgrade "pytest-pycodestyle; python_version >= \\"3.5\\""']))
-    if do_flake8_tests():
-        run(description='install flake8', command=' '.join([pip_prefix, 'install --upgrade flake8']))
+    run(description='install test requirements', command=' '.join([pip_prefix, 'install --upgrade -r ./requirements_test.txt']))
 
 
 # script{{{
@@ -350,23 +347,32 @@ def script(dry_run: bool = True) -> None:
     python_prefix = get_python_prefix()
     repository = get_repository()
     package_name = os.getenv('PACKAGE_NAME', '')
+
     if do_flake8_tests():
-        run(description='flake8 test', command=' '.join([python_prefix, '-m flake8 --statistics --benchmark']))
+        run(description='flake8 tests', command=' '.join([python_prefix, '-m flake8 --statistics --benchmark']))
+    else:
+        lib_log_utils.banner_notice("flake8 tests disabled on this build")
+
+    if do_mypy_tests():
+        mypy_options = os.getenv('MYPY_OPTIONS', '')
+        run(description='mypy tests', command=' '.join([python_prefix, '-m mypy -p', package_name, mypy_options]))
+    else:
+        lib_log_utils.banner_notice("mypy typecheck --strict disabled on this build")
+
+    if do_pytest():
+        if do_coverage():
+            option_codecov = ''.join(['--cov=', package_name])
+        else:
+            lib_log_utils.banner_notice("coverage disabled")
+            option_codecov = ''
+        run(description='run pytest', command=' '.join([python_prefix, '-m pytest', option_codecov]))
+    else:
+        lib_log_utils.banner_notice("pytest disabled")
+
     run(description='setup.py test', command=' '.join([python_prefix, './setup.py test']))
     run(description='pip install, option test', command=' '.join([pip_prefix, 'install', repository, '--install-option test']))
     run(description='pip standard install', command=' '.join([pip_prefix, 'install', repository]))
     run(description='check CLI command', command=' '.join([command_prefix, cli_command, '--version']))
-    run(description='install test requirements', command=' '.join([pip_prefix, 'install --upgrade -r ./requirements_test.txt']))
-    run(description='install codecov', command=' '.join([pip_prefix, 'install --upgrade codecov']))
-    run(description='install pytest-cov', command=' '.join([pip_prefix, 'install --upgrade pytest-cov']))
-    run(description='run pytest, coverage only', command=' '.join([python_prefix, '-m pytest --cov={package_name}'.format(package_name=package_name)]))
-
-    if do_mypy_strict_check():
-
-        run(description='run mypy strict', command=' '.join([python_prefix, '-m mypy -p', package_name, '--strict --no-warn-unused-ignores',
-                                                             '--implicit-reexport --follow-imports=silent']))
-    else:
-        lib_log_utils.banner_notice("mypy typecheck --strict disabled on this build")
 
     if do_build_docs():
         rst_include_source = os.getenv('RST_INCLUDE_SOURCE', '')
@@ -425,25 +431,30 @@ def after_success(dry_run: bool = True) -> None:
 
     if dry_run:
         return
+
     command_prefix = get_command_prefix()
     pip_prefix = get_pip_prefix()
 
-    run(description='coverage report', command=' '.join([command_prefix, 'coverage report']))
-    run(description='codecov', command=' '.join([command_prefix, 'codecov']))
-
-    if os.getenv('CC_TEST_REPORTER_ID'):
-        if os_is_windows():
-            os.environ['CODECLIMATE_REPO_TOKEN'] = os.getenv('CC_TEST_REPORTER_ID', '')
-            run(description='install codeclimate-test-reporter', command=' '.join([pip_prefix, 'install codeclimate-test-reporter']))
-            run(description='report to codeclimate', command=' '.join([command_prefix, 'codeclimate-test-reporter']))
+    if do_coverage():
+        run(description='coverage report', command=' '.join([command_prefix, 'coverage report']))
+        if do_upload_codecov():
+            run(description='coverage upload to codecov', command=' '.join([command_prefix, 'codecov']))
         else:
-            run(description='download test reporter',
-                command='curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter')
-            run(description='test reporter set permissions', banner=False, command='chmod +x ./cc-test-reporter')
-            travis_test_result = os.getenv('TRAVIS_TEST_RESULT', '')
-            run(description='report to codeclimate', command=' '.join(['./cc-test-reporter after-build --exit-code', travis_test_result]))
-    else:
-        lib_log_utils.banner_notice("Code Climate Coverage is disabled, no CC_TEST_REPORTER_ID")
+            lib_log_utils.banner_notice("codecov upload disabled")
+
+        if do_upload_code_climate() and os.getenv('CC_TEST_REPORTER_ID'):
+            if os_is_windows():
+                os.environ['CODECLIMATE_REPO_TOKEN'] = os.getenv('CC_TEST_REPORTER_ID', '')
+                run(description='install codeclimate-test-reporter', command=' '.join([pip_prefix, 'install codeclimate-test-reporter']))
+                run(description='coverage upload to codeclimate', command=' '.join([command_prefix, 'codeclimate-test-reporter']))
+            else:
+                run(description='download test reporter',
+                    command='curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter')
+                run(description='test reporter set permissions', banner=False, command='chmod +x ./cc-test-reporter')
+                travis_test_result = os.getenv('TRAVIS_TEST_RESULT', '')
+                run(description='coverage upload to codeclimate', command=' '.join(['./cc-test-reporter after-build --exit-code', travis_test_result]))
+        else:
+            lib_log_utils.banner_notice("Code Climate Coverage is disabled, no CC_TEST_REPORTER_ID")
 
 
 # deploy{{{
@@ -475,7 +486,6 @@ def deploy(dry_run: bool = True) -> None:
 
     if dry_run:
         return
-
     command_prefix = get_command_prefix()
     github_username = get_github_username()
     pypi_password = os.getenv('PYPI_PASSWORD', '')
@@ -562,9 +572,37 @@ def get_github_username() -> str:
     return github_username
 
 
-def do_mypy_strict_check() -> bool:
+def do_mypy_tests() -> bool:
     """ if mypy check should run """
-    if os.getenv('MYPY_STRICT', '').lower() == 'true':
+    if os.getenv('MYPY_DO_TESTS', '').lower() == 'true':
+        return True
+    else:
+        return False
+
+
+def do_pytest() -> bool:
+    if os.getenv('PYTEST_DO_TESTS', '').lower() == 'true':
+        return True
+    else:
+        return False
+
+
+def do_coverage() -> bool:
+    if os.getenv('DO_COVERAGE', '').lower() == 'true':
+        return True
+    else:
+        return False
+
+
+def do_upload_codecov() -> bool:
+    if os.getenv('DO_COVERAGE_UPLOAD_CODECOV', '').lower() == 'true':
+        return True
+    else:
+        return False
+
+
+def do_upload_code_climate() -> bool:
+    if os.getenv('DO_COVERAGE_UPLOAD_CODE_CLIMATE', '').lower() == 'true':
         return True
     else:
         return False
@@ -607,35 +645,6 @@ def do_flake8_tests() -> bool:
 
 def do_build_test() -> bool:
     if os.getenv('BUILD_TEST', '').lower() == 'true':
-        return True
-    else:
-        return False
-
-
-def do_check_deployment() -> bool:
-    """ if we should check if deployment would work on pypi
-        we only check when :
-            - setup.py is existing
-            - there is no Travis_TAG (then it will be deployed anyway
-            - and CHECK_DEPLOYMENT = True
-    """
-    path_setup_file = pathlib.Path('./setup.py')
-
-    if not path_setup_file.is_file():
-        return False
-    if os.getenv('TRAVIS_TAG'):
-        return False
-    if os.getenv('DEPLOY_CHECK', '').lower() == 'true':
-        return True
-    else:
-        return False
-
-
-def on_travis() -> bool:
-    """
-    if we run on travis
-    """
-    if 'TRAVIS' in os.environ:
         return True
     else:
         return False

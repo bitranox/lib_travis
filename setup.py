@@ -5,7 +5,7 @@ import os
 import pathlib
 from typing import Any, List, Dict
 
-from setuptools import setup
+from setuptools import setup  # type: ignore
 from setuptools import find_packages
 
 
@@ -86,7 +86,7 @@ if is_travis_deploy() and is_tagged_commit():
 
 setup_kwargs: Dict[str, Any] = dict()
 setup_kwargs["name"] = "lib_travis"
-setup_kwargs["version"] = "v2.2.0"
+setup_kwargs["version"] = "v2.3.0"
 setup_kwargs["url"] = "https://github.com/bitranox/lib_travis"
 setup_kwargs["packages"] = find_packages()
 setup_kwargs["package_data"] = {"lib_travis": ["py.typed", "*.pyi", "__init__.pyi"]}
