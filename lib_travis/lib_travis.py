@@ -369,9 +369,10 @@ def script(dry_run: bool = True) -> None:
     else:
         lib_log_utils.banner_notice("pytest disabled")
 
-    run(description='setup.py test', command=' '.join([python_prefix, './setup.py test']))
-    run(description='pip install, option test', command=' '.join([pip_prefix, 'install', repository, '--install-option test']))
-    run(description='pip standard install', command=' '.join([pip_prefix, 'install', repository]))
+    # run(description='setup.py test', command=' '.join([python_prefix, './setup.py test']))
+    # run(description='pip install, option test', command=' '.join([pip_prefix, 'install', repository, '--install-option test']))
+    # run(description='pip standard install', command=' '.join([pip_prefix, 'install', repository]))
+    run(description='setup.py install', command=' '.join([python_prefix, './setup.py install']))
     run(description='check CLI command', command=' '.join([command_prefix, cli_command, '--version']))
 
     if do_build_docs():
