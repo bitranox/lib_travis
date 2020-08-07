@@ -343,9 +343,7 @@ def script(dry_run: bool = True) -> None:
     lib_log_utils.setup_handler()
     cli_command = os.getenv('CLI_COMMAND', '')
     command_prefix = get_command_prefix()
-    pip_prefix = get_pip_prefix()
     python_prefix = get_python_prefix()
-    repository = get_repository()
     package_name = os.getenv('PACKAGE_NAME', '')
 
     if do_flake8_tests():
