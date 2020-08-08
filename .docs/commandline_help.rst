@@ -16,5 +16,4 @@
      info           get program informations
      install        updates pip, setuptools, wheel, pytest-pycodestyle
      run            run string command wrapped in run/success/error banners
-     run_x          run commands wrapped in run/success/error banners
      script         updates pip, setuptools, wheel, pytest-pycodestyle

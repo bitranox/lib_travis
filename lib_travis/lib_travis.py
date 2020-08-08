@@ -50,13 +50,19 @@ def run(description: str, command: str, retry: int = 3, sleep: int = 30, quote: 
     Examples
     ------------
 
-
     >>> run('test', "unknown command", sleep=0)
     Traceback (most recent call last):
         ...
     SystemExit: ...
 
+    >>> run('test', "unknown command", sleep=0, show_command=False)
+    Traceback (most recent call last):
+        ...
+    SystemExit: ...
+
     >>> run('test', "echo test")
+    >>> run('test', "echo test", quote=True)
+    >>> run('test', "echo test", show_command=False)
 
     """
     # run}}}
@@ -97,101 +103,6 @@ def run(description: str, command: str, retry: int = 3, sleep: int = 30, quote: 
                 if hasattr(exc, 'returncode'):
                     if exc.returncode is not None:  # type: ignore
                         sys.exit(exc.returncode)    # type: ignore
-                sys.exit(1)     # pragma: no cover
-        finally:
-            cli_exit_tools.flush_streams()
-
-
-# run_x{{{
-def run_x(description: str, commands: List[str], retry: int = 3, sleep: int = 30, split: bool = True, banner: bool = False, show_command: bool = True) -> None:
-    """
-    runs and retries a command passed as list of strings and wrap it in "success" or "error" banners
-
-
-    Parameter
-    ---------
-    description
-        description of the action, shown in the banner
-    commands
-        the commands to launch
-    retry
-        retry the command n times, default = 3
-    sleep
-        sleep for n seconds between the commands, default = 30
-    split
-        split the commands again with shlex - default = False
-        this we need because some commands passed are an array of commands themself
-    banner
-        if to use banner for run/success or just colored lines.
-        Errors will be always shown as banner
-    show_command
-        if the command is shown - take care not to reveal secrets here !
-
-
-    Result
-    ---------
-    none
-
-
-    Exceptions
-    ------------
-    none
-
-
-    Examples
-    ------------
-
-
-    >>> run_x('test', ['unknown', 'command'], sleep=0)
-    Traceback (most recent call last):
-        ...
-    SystemExit: ...
-
-    >>> run_x('test', ['echo', 'test'])
-
-    >>> run_x('test', ['echo test'])
-
-    """
-    # run_x}}}
-
-    if split:
-        splitted_commands: List[str] = list()
-        for command in commands:
-            sp_commands = shlex.split(command)
-            splitted_commands = splitted_commands + sp_commands
-        commands = splitted_commands
-
-    lib_log_utils.setup_handler()
-
-    if show_command:
-        command_description = ' '.join(commands)
-    else:
-        command_description = '***secret***'
-
-    lib_log_utils.banner_success("Action: {description}\nCommand: {command}".format(description=description, command=command_description), banner=banner)
-    tries = retry
-    while True:
-        try:
-            subprocess.run(commands, shell=True, check=True)
-            lib_log_utils.banner_success("Success : {description}".format(description=description), banner=False)
-            break
-        except Exception as exc:
-            tries = tries - 1
-            # try 3 times, because sometimes connection or other errors on travis
-            if tries:
-                lib_log_utils.banner_notice("Retry in {sleep} seconds: {description}\nCommand: {command}".format(
-                    sleep=sleep, description=description, command=command_description), banner=False)
-                time.sleep(sleep)
-            else:
-                if show_command:
-                    exc_message = str(exc)
-                else:
-                    exc_message = 'Command ***secret*** returned non-zero exit status'
-                lib_log_utils.banner_error("Error: {description}\nCommand: {command}\n{exc}".format(
-                    description=description, command=command_description, exc=exc_message), banner=True)
-                if hasattr(exc, 'returncode'):
-                    if exc.returncode is not None:      # type: ignore
-                        sys.exit(exc.returncode)        # type: ignore
                 sys.exit(1)     # pragma: no cover
         finally:
             cli_exit_tools.flush_streams()

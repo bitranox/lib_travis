@@ -41,14 +41,6 @@ usage commandline:
         --quote --plain         use shlex auto quote, default = False
         --banner --no-banner    wrap in banners, default = True
 
-     run_x [Options] -- <description> <command1> <command2> ...
-        run commands wrapped in run/success/error banners
-        -r --retry              retry n times, default = 3
-        -s --sleep              sleep when retry, default = 30 seconds
-        --split --no-split      if to split arguments with shlex, default = False
-        --banner --no-banner    wrap in banners, default = True
-
-
 
 - run a command passed as string
 
@@ -57,22 +49,6 @@ usage commandline:
     # to be used in travis.yml
     # run a command passed as string, wrap it in colored banners, retry 3 times, sleep 30 seconds when retry
     $> lib_travis run "description" "command -some -options" --retry=3 --sleep=30
-
-
-- run a command passed as a list of arguments
-
-.. code-block:: bash
-
-    # You need to pass '--' after the options for lib_travis run_x command,
-    # then all following strings are considered as arguments to run a command,
-    # and are not parsed as options for the run_x command itself.
-    # that means, all options need to be stated before the '--' marker.
-    # commands can be splitted again with shlex - in case there are multiple commands in an argument
-    $> lib_travis run_x --retry=3 --sleep=30 -- "description" command -some -options
-
-    # in that case "echo test" will be splitted into ['echo', 'test']
-    $> EXAMPLE="echo test"
-    $> lib_travis run_x --retry=3 --sleep=30 --split -- ${EXAMPLE}
 
 
 - get the branch to work on from travis environment variables
@@ -126,13 +102,6 @@ python methods:
     :code: python
     :start-after: # run{{{
     :end-before: # run}}}
-
-- run_x, usually used internally
-
-.. include:: ../lib_travis/lib_travis.py
-    :code: python
-    :start-after: # run_x{{{
-    :end-before: # run_x}}}
 
 - travis.py example
 

@@ -66,18 +66,6 @@ def cli_run(description: str, command: str, retry: int, sleep: int, quote: bool,
     lib_travis.run(description, command, retry=retry, sleep=sleep, quote=quote, banner=banner)
 
 
-@cli_main.command('run_x', context_settings=CLICK_CONTEXT_SETTINGS)
-@click.option('-r', '--retry', type=int, default=3, help='retry in case of failure, default=3')
-@click.option('-s', '--sleep', type=int, default=30, help='seconds to sleep on repeat, default=30')
-@click.option('--split/--no-split', default=False, help='split the arguments with shlex, default=False')
-@click.option('--banner/--no-banner', default=True, help='use Banners')
-@click.argument('description')
-@click.argument('commands', nargs=-1)
-def cli_run_commands(description: str, commands: List[str], retry: int, sleep: int, split: bool, banner: bool) -> None:
-    """ run commands wrapped in run/success/error banners """
-    lib_travis.run_x(description, commands, retry=retry, sleep=sleep, split=split, banner=banner)
-
-
 @cli_main.command('install', context_settings=CLICK_CONTEXT_SETTINGS)
 @click.option('--dry-run', is_flag=True, default=False, help='dry run')
 def cli_install(dry_run: bool) -> None:
