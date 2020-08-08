@@ -6,6 +6,11 @@ Changelog
 - new PATCH version for backwards compatible bug fixes
 
 
+v2.3.4
+--------
+2020-08-08: service release
+    - cleanup
+
 v2.3.3
 --------
 2020-08-08: service release

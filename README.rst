@@ -2,7 +2,7 @@ lib_travis
 ==========
 
 
-Version v2.3.3 as of 2020-08-08 see `Changelog`_
+Version v2.3.4 as of 2020-08-08 see `Changelog`_
 
 |travis_build| |license| |jupyter| |pypi|
 
@@ -125,16 +125,7 @@ usage commandline:
         run string command wrapped in run/success/error banners
         -r --retry              retry n times, default = 3
         -s --sleep              sleep when retry, default = 30 seconds
-        --quote --plain         use shlex auto quote, default = False
         --banner --no-banner    wrap in banners, default = True
-
-     run_x [Options] -- <description> <command1> <command2> ...
-        run commands wrapped in run/success/error banners
-        -r --retry              retry n times, default = 3
-        -s --sleep              sleep when retry, default = 30 seconds
-        --split --no-split      if to split arguments with shlex, default = False
-        --banner --no-banner    wrap in banners, default = True
-
 
 
 - run a command passed as string
@@ -144,22 +135,6 @@ usage commandline:
     # to be used in travis.yml
     # run a command passed as string, wrap it in colored banners, retry 3 times, sleep 30 seconds when retry
     $> lib_travis run "description" "command -some -options" --retry=3 --sleep=30
-
-
-- run a command passed as a list of arguments
-
-.. code-block:: bash
-
-    # You need to pass '--' after the options for lib_travis run_x command,
-    # then all following strings are considered as arguments to run a command,
-    # and are not parsed as options for the run_x command itself.
-    # that means, all options need to be stated before the '--' marker.
-    # commands can be splitted again with shlex - in case there are multiple commands in an argument
-    $> lib_travis run_x --retry=3 --sleep=30 -- "description" command -some -options
-
-    # in that case "echo test" will be splitted into ['echo', 'test']
-    $> EXAMPLE="echo test"
-    $> lib_travis run_x --retry=3 --sleep=30 --split -- ${EXAMPLE}
 
 
 - get the branch to work on from travis environment variables
@@ -187,7 +162,9 @@ python methods:
 
         Examples
         --------
-        >>> install()
+
+        >>> if os.getenv('TRAVIS'):
+        ...     install(dry_run=False)
 
         """
 
@@ -362,7 +339,7 @@ python methods:
 
 .. code-block:: python
 
-    def run(description: str, command: str, retry: int = 3, sleep: int = 30, quote: bool = False, banner: bool = True, show_command: bool = True) -> None:
+    def run(description: str, command: str, retry: int = 3, sleep: int = 30, banner: bool = True, show_command: bool = True) -> None:
         """
         runs and retries a command passed as string and wrap it in "success" or "error" banners
 
@@ -377,8 +354,6 @@ python methods:
             retry the command n times, default = 3
         sleep
             sleep for n seconds between the commands, default = 30
-        quote
-            use shlex.quote for automatic quoting of shell commands, default=False
         banner
             if to use banner for run/success or just colored lines.
             Errors will be always shown as banner
@@ -398,68 +373,19 @@ python methods:
 
         Examples
         ------------
-
 
         >>> run('test', "unknown command", sleep=0)
         Traceback (most recent call last):
             ...
         SystemExit: ...
 
-        >>> run('test', "echo test")
-
-        """
-
-- run_x, usually used internally
-
-.. code-block:: python
-
-    def run_x(description: str, commands: List[str], retry: int = 3, sleep: int = 30, split: bool = True, banner: bool = False, show_command: bool = True) -> None:
-        """
-        runs and retries a command passed as list of strings and wrap it in "success" or "error" banners
-
-
-        Parameter
-        ---------
-        description
-            description of the action, shown in the banner
-        commands
-            the commands to launch
-        retry
-            retry the command n times, default = 3
-        sleep
-            sleep for n seconds between the commands, default = 30
-        split
-            split the commands again with shlex - default = False
-            this we need because some commands passed are an array of commands themself
-        banner
-            if to use banner for run/success or just colored lines.
-            Errors will be always shown as banner
-        show_command
-            if the command is shown - take care not to reveal secrets here !
-
-
-        Result
-        ---------
-        none
-
-
-        Exceptions
-        ------------
-        none
-
-
-        Examples
-        ------------
-
-
-        >>> run_x('test', ['unknown', 'command'], sleep=0)
+        >>> run('test', "unknown command", sleep=0, show_command=False)
         Traceback (most recent call last):
             ...
         SystemExit: ...
 
-        >>> run_x('test', ['echo', 'test'])
-
-        >>> run_x('test', ['echo test'])
+        >>> run('test', "echo test")
+        >>> run('test', "echo test", show_command=False)
 
         """
 
@@ -685,7 +611,6 @@ Usage from Commandline
      info           get program informations
      install        updates pip, setuptools, wheel, pytest-pycodestyle
      run            run string command wrapped in run/success/error banners
-     run_x          run commands wrapped in run/success/error banners
      script         updates pip, setuptools, wheel, pytest-pycodestyle
 
 Installation and Upgrade
@@ -796,6 +721,11 @@ Changelog
 - new MINOR version for added functionality in a backwards compatible manner
 - new PATCH version for backwards compatible bug fixes
 
+
+v2.3.4
+--------
+2020-08-08: service release
+    - cleanup
 
 v2.3.3
 --------
