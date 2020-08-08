@@ -2,7 +2,7 @@ lib_travis
 ==========
 
 
-Version v2.3.3 as of 2020-08-08 see `Changelog`_
+Version v2.3.4 as of 2020-08-08 see `Changelog`_
 
 |travis_build| |license| |jupyter| |pypi|
 
@@ -721,6 +721,11 @@ Changelog
 - new MINOR version for added functionality in a backwards compatible manner
 - new PATCH version for backwards compatible bug fixes
 
+
+v2.3.4
+--------
+2020-08-08: service release
+    - cleanup
 
 v2.3.3
 --------
