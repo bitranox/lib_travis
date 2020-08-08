@@ -2,7 +2,7 @@ lib_travis
 ==========
 
 
-Version v2.3.2 as of 2020-08-07 see `Changelog`_
+Version v2.3.3 as of 2020-08-08 see `Changelog`_
 
 
 .. include:: ./badges.rst
