@@ -169,6 +169,7 @@ matrix:
         - export DEPLOY_SDIST="False"
         - export DEPLOY_WHEEL="False"
         - export DEPLOY_TEST="True"
+        - export MYPY_DO_TESTS="True"
 
 
 install:
