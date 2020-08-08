@@ -272,7 +272,9 @@ def install(dry_run: bool = True) -> None:
 
     Examples
     --------
-    >>> install()
+
+    >>> if os.getenv('TRAVIS'):
+    ...     install(dry_run=False)
 
     """
     # install}}}
@@ -342,7 +344,7 @@ def script(dry_run: bool = True) -> None:
         return
     lib_log_utils.setup_handler()
     cli_command = os.getenv('CLI_COMMAND', '')
-    command_prefix = get_command_prefix()
+    command_prefix = os.getenv('cPREFIX', '')
     python_prefix = get_python_prefix()
     package_name = os.getenv('PACKAGE_NAME', '')
 
@@ -431,7 +433,7 @@ def after_success(dry_run: bool = True) -> None:
     if dry_run:
         return
 
-    command_prefix = get_command_prefix()
+    command_prefix = os.getenv('cPREFIX', '')
     pip_prefix = get_pip_prefix()
 
     if do_coverage():
@@ -485,13 +487,16 @@ def deploy(dry_run: bool = True) -> None:
 
     if dry_run:
         return
-    command_prefix = get_command_prefix()
+    command_prefix = os.getenv('cPREFIX', '')
     github_username = get_github_username()
     pypi_password = os.getenv('PYPI_PASSWORD', '')
 
     if do_deploy():
-        run(description='upload to pypi', command=' '.join([command_prefix, 'twine upload --repository-url https://upload.pypi.org/legacy/ -u',
-                                                            github_username, '-p', pypi_password, '--skip-existing', 'dist/*']), show_command=False)
+        if not dry_run:                 # pragma: no cover
+            run(description='upload to pypi', command=' '.join([command_prefix, 'twine upload --repository-url https://upload.pypi.org/legacy/ -u',
+                                                                github_username, '-p', pypi_password,
+                                                                '--skip-existing', 'dist/*']),
+                show_command=False)     # pragma: no cover
     else:
         lib_log_utils.banner_notice("pypi deploy is disabled on this build")
 
@@ -505,9 +510,8 @@ def get_pip_prefix() -> str:
 
     """
     c_parts: List[str] = list()
-    c_parts.append(get_command_prefix())
-    if 'cPIP' in os.environ:
-        c_parts.append(os.environ['cPIP'])
+    c_parts.append(os.getenv('cPREFIX', ''))
+    c_parts.append(os.getenv('cPIP', ''))
     command_prefix = ' '.join(c_parts).strip()
     return command_prefix
 
@@ -521,42 +525,10 @@ def get_python_prefix() -> str:
 
     """
     c_parts: List[str] = list()
-    c_parts.append(get_command_prefix())
-    if 'cPYTHON' in os.environ:
-        c_parts.append(os.environ['cPYTHON'])
+    c_parts.append(os.getenv('cPREFIX', ''))
+    c_parts.append(os.getenv('cPYTHON', ''))
     python_prefix = ' '.join(c_parts).strip()
     return python_prefix
-
-
-def get_command_prefix() -> str:
-    """
-    get the command_prefix like : 'wine' or ''
-    """
-
-    command_prefix = ''
-    if 'cPREFIX' in os.environ:
-        command_prefix = os.environ['cPREFIX']
-    return command_prefix
-
-
-def get_repository() -> str:
-    """
-    get the repository including the branch to work on , like :
-    'git+https://github.com/bitranox/lib_travis.git@master'
-
-    >>> get_repository()
-    'git+https://github.com/...git@...'
-
-    """
-
-    c_parts: List[str] = list()
-    c_parts.append('git+https://github.com/')
-    if 'TRAVIS_REPO_SLUG' in os.environ:
-        c_parts.append(os.environ['TRAVIS_REPO_SLUG'])
-    c_parts.append('.git@')
-    c_parts.append(get_branch())
-    repository = ''.join(c_parts)
-    return repository
 
 
 def get_github_username() -> str:
@@ -572,7 +544,35 @@ def get_github_username() -> str:
 
 
 def do_mypy_tests() -> bool:
-    """ if mypy check should run """
+    """
+    if mypy should be run
+
+    Parameter
+    ---------
+    MYPY_DO_TESTS
+        from environment
+
+    Examples:
+
+    >>> # Setup
+    >>> save_do_mypy = os.getenv('MYPY_DO_TESTS')
+
+    >>> # BUILD_TEST != 'True'
+    >>> os.environ['MYPY_DO_TESTS'] = 'false'
+    >>> assert not do_mypy_tests()
+
+    >>> # BUILD_TEST == 'true'
+    >>> os.environ['MYPY_DO_TESTS'] = 'True'
+    >>> assert do_mypy_tests()
+
+    >>> # Teardown
+    >>> if save_do_mypy is None:
+    ...     os.unsetenv('MYPY_DO_TESTS')
+    ... else:
+    ...     os.environ['MYPY_DO_TESTS'] = save_do_mypy
+
+    """
+
     if os.getenv('MYPY_DO_TESTS', '').lower() == 'true':
         return True
     else:
