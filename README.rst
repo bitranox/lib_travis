@@ -125,7 +125,6 @@ usage commandline:
         run string command wrapped in run/success/error banners
         -r --retry              retry n times, default = 3
         -s --sleep              sleep when retry, default = 30 seconds
-        --quote --plain         use shlex auto quote, default = False
         --banner --no-banner    wrap in banners, default = True
 
 
@@ -340,7 +339,7 @@ python methods:
 
 .. code-block:: python
 
-    def run(description: str, command: str, retry: int = 3, sleep: int = 30, quote: bool = False, banner: bool = True, show_command: bool = True) -> None:
+    def run(description: str, command: str, retry: int = 3, sleep: int = 30, banner: bool = True, show_command: bool = True) -> None:
         """
         runs and retries a command passed as string and wrap it in "success" or "error" banners
 
@@ -355,8 +354,6 @@ python methods:
             retry the command n times, default = 3
         sleep
             sleep for n seconds between the commands, default = 30
-        quote
-            use shlex.quote for automatic quoting of shell commands, default=False
         banner
             if to use banner for run/success or just colored lines.
             Errors will be always shown as banner
@@ -388,7 +385,6 @@ python methods:
         SystemExit: ...
 
         >>> run('test', "echo test")
-        >>> run('test', "echo test", quote=True)
         >>> run('test', "echo test", show_command=False)
 
         """

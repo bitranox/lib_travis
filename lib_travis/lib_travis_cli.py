@@ -57,13 +57,12 @@ def cli_get_branch() -> None:
 @cli_main.command('run', context_settings=CLICK_CONTEXT_SETTINGS)
 @click.option('-r', '--retry', type=int, default=3, help='retry in case of failure, default=3')
 @click.option('-s', '--sleep', type=int, default=30, help='seconds to sleep on repeat, default=30')
-@click.option('--quote/--plain', default=False, help='use shlex auto quote, default=False')
 @click.option('--banner/--no-banner', default=True, help='use Banners, default=True')
 @click.argument('description')
 @click.argument('command')
-def cli_run(description: str, command: str, retry: int, sleep: int, quote: bool, banner: bool) -> None:
+def cli_run(description: str, command: str, retry: int, sleep: int, banner: bool) -> None:
     """ run string command wrapped in run/success/error banners """
-    lib_travis.run(description, command, retry=retry, sleep=sleep, quote=quote, banner=banner)
+    lib_travis.run(description, command, retry=retry, sleep=sleep, banner=banner)
 
 
 @cli_main.command('install', context_settings=CLICK_CONTEXT_SETTINGS)

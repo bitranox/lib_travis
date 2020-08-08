@@ -38,7 +38,6 @@ usage commandline:
         run string command wrapped in run/success/error banners
         -r --retry              retry n times, default = 3
         -s --sleep              sleep when retry, default = 30 seconds
-        --quote --plain         use shlex auto quote, default = False
         --banner --no-banner    wrap in banners, default = True
 
 

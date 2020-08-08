@@ -13,7 +13,7 @@ import cli_exit_tools
 
 
 # run{{{
-def run(description: str, command: str, retry: int = 3, sleep: int = 30, quote: bool = False, banner: bool = True, show_command: bool = True) -> None:
+def run(description: str, command: str, retry: int = 3, sleep: int = 30, banner: bool = True, show_command: bool = True) -> None:
     """
     runs and retries a command passed as string and wrap it in "success" or "error" banners
 
@@ -28,8 +28,6 @@ def run(description: str, command: str, retry: int = 3, sleep: int = 30, quote: 
         retry the command n times, default = 3
     sleep
         sleep for n seconds between the commands, default = 30
-    quote
-        use shlex.quote for automatic quoting of shell commands, default=False
     banner
         if to use banner for run/success or just colored lines.
         Errors will be always shown as banner
@@ -61,17 +59,12 @@ def run(description: str, command: str, retry: int = 3, sleep: int = 30, quote: 
     SystemExit: ...
 
     >>> run('test', "echo test")
-    >>> run('test', "echo test", quote=True)
     >>> run('test', "echo test", show_command=False)
 
     """
     # run}}}
 
     command = command.strip()
-
-    if quote:
-        command = shlex.quote(command)
-
     lib_log_utils.setup_handler()
 
     if show_command:
