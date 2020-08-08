@@ -272,7 +272,9 @@ def install(dry_run: bool = True) -> None:
 
     Examples
     --------
-    >>> install()
+
+    >>> if os.getenv('TRAVIS'):
+    ...     install(dry_run=False)
 
     """
     # install}}}
@@ -342,7 +344,7 @@ def script(dry_run: bool = True) -> None:
         return
     lib_log_utils.setup_handler()
     cli_command = os.getenv('CLI_COMMAND', '')
-    command_prefix = get_command_prefix()
+    command_prefix = os.getenv('cPREFIX', '')
     python_prefix = get_python_prefix()
     package_name = os.getenv('PACKAGE_NAME', '')
 
@@ -431,7 +433,7 @@ def after_success(dry_run: bool = True) -> None:
     if dry_run:
         return
 
-    command_prefix = get_command_prefix()
+    command_prefix = os.getenv('cPREFIX', '')
     pip_prefix = get_pip_prefix()
 
     if do_coverage():
@@ -485,13 +487,16 @@ def deploy(dry_run: bool = True) -> None:
 
     if dry_run:
         return
-    command_prefix = get_command_prefix()
+    command_prefix = os.getenv('cPREFIX', '')
     github_username = get_github_username()
     pypi_password = os.getenv('PYPI_PASSWORD', '')
 
     if do_deploy():
-        run(description='upload to pypi', command=' '.join([command_prefix, 'twine upload --repository-url https://upload.pypi.org/legacy/ -u',
-                                                            github_username, '-p', pypi_password, '--skip-existing', 'dist/*']), show_command=False)
+        if not dry_run:                 # pragma: no cover
+            run(description='upload to pypi', command=' '.join([command_prefix, 'twine upload --repository-url https://upload.pypi.org/legacy/ -u',
+                                                                github_username, '-p', pypi_password,
+                                                                '--skip-existing', 'dist/*']),
+                show_command=False)     # pragma: no cover
     else:
         lib_log_utils.banner_notice("pypi deploy is disabled on this build")
 
@@ -505,9 +510,8 @@ def get_pip_prefix() -> str:
 
     """
     c_parts: List[str] = list()
-    c_parts.append(get_command_prefix())
-    if 'cPIP' in os.environ:
-        c_parts.append(os.environ['cPIP'])
+    c_parts.append(os.getenv('cPREFIX', ''))
+    c_parts.append(os.getenv('cPIP', ''))
     command_prefix = ' '.join(c_parts).strip()
     return command_prefix
 
@@ -521,42 +525,10 @@ def get_python_prefix() -> str:
 
     """
     c_parts: List[str] = list()
-    c_parts.append(get_command_prefix())
-    if 'cPYTHON' in os.environ:
-        c_parts.append(os.environ['cPYTHON'])
+    c_parts.append(os.getenv('cPREFIX', ''))
+    c_parts.append(os.getenv('cPYTHON', ''))
     python_prefix = ' '.join(c_parts).strip()
     return python_prefix
-
-
-def get_command_prefix() -> str:
-    """
-    get the command_prefix like : 'wine' or ''
-    """
-
-    command_prefix = ''
-    if 'cPREFIX' in os.environ:
-        command_prefix = os.environ['cPREFIX']
-    return command_prefix
-
-
-def get_repository() -> str:
-    """
-    get the repository including the branch to work on , like :
-    'git+https://github.com/bitranox/lib_travis.git@master'
-
-    >>> get_repository()
-    'git+https://github.com/...git@...'
-
-    """
-
-    c_parts: List[str] = list()
-    c_parts.append('git+https://github.com/')
-    if 'TRAVIS_REPO_SLUG' in os.environ:
-        c_parts.append(os.environ['TRAVIS_REPO_SLUG'])
-    c_parts.append('.git@')
-    c_parts.append(get_branch())
-    repository = ''.join(c_parts)
-    return repository
 
 
 def get_github_username() -> str:
@@ -572,7 +544,35 @@ def get_github_username() -> str:
 
 
 def do_mypy_tests() -> bool:
-    """ if mypy check should run """
+    """
+    if mypy should be run
+
+    Parameter
+    ---------
+    MYPY_DO_TESTS
+        from environment
+
+    Examples:
+
+    >>> # Setup
+    >>> save_do_mypy = os.getenv('MYPY_DO_TESTS')
+
+    >>> # BUILD_TEST != 'True'
+    >>> os.environ['MYPY_DO_TESTS'] = 'false'
+    >>> assert not do_mypy_tests()
+
+    >>> # BUILD_TEST == 'true'
+    >>> os.environ['MYPY_DO_TESTS'] = 'True'
+    >>> assert do_mypy_tests()
+
+    >>> # Teardown
+    >>> if save_do_mypy is None:
+    ...     os.unsetenv('MYPY_DO_TESTS')
+    ... else:
+    ...     os.environ['MYPY_DO_TESTS'] = save_do_mypy
+
+    """
+
     if os.getenv('MYPY_DO_TESTS', '').lower() == 'true':
         return True
     else:
@@ -580,6 +580,34 @@ def do_mypy_tests() -> bool:
 
 
 def do_pytest() -> bool:
+    """
+    if pytest should be run
+
+    Parameter
+    ---------
+    PYTEST_DO_TESTS
+        from environment
+
+    Examples:
+
+    >>> # Setup
+    >>> save_do_pytest = os.getenv('PYTEST_DO_TESTS')
+
+    >>> # BUILD_TEST != 'True'
+    >>> os.environ['PYTEST_DO_TESTS'] = 'false'
+    >>> assert not do_pytest()
+
+    >>> # BUILD_TEST == 'true'
+    >>> os.environ['PYTEST_DO_TESTS'] = 'True'
+    >>> assert do_pytest()
+
+    >>> # Teardown
+    >>> if save_do_pytest is None:
+    ...     os.unsetenv('PYTEST_DO_TESTS')
+    ... else:
+    ...     os.environ['PYTEST_DO_TESTS'] = save_do_pytest
+
+    """
     if os.getenv('PYTEST_DO_TESTS', '').lower() == 'true':
         return True
     else:
@@ -587,6 +615,34 @@ def do_pytest() -> bool:
 
 
 def do_coverage() -> bool:
+    """
+    if coverage should be run (via pytest)
+
+    Parameter
+    ---------
+    DO_COVERAGE
+        from environment
+
+    Examples:
+
+    >>> # Setup
+    >>> save_do_coverage = os.getenv('DO_COVERAGE')
+
+    >>> # BUILD_TEST != 'True'
+    >>> os.environ['DO_COVERAGE'] = 'false'
+    >>> assert not do_coverage()
+
+    >>> # BUILD_TEST == 'true'
+    >>> os.environ['DO_COVERAGE'] = 'True'
+    >>> assert do_coverage()
+
+    >>> # Teardown
+    >>> if save_do_coverage is None:
+    ...     os.unsetenv('DO_COVERAGE')
+    ... else:
+    ...     os.environ['DO_COVERAGE'] = save_do_coverage
+
+    """
     if os.getenv('DO_COVERAGE', '').lower() == 'true':
         return True
     else:
@@ -594,6 +650,34 @@ def do_coverage() -> bool:
 
 
 def do_upload_codecov() -> bool:
+    """
+    if code coverage should be uploaded to codecov
+
+    Parameter
+    ---------
+    DO_COVERAGE_UPLOAD_CODECOV
+        from environment
+
+    Examples:
+
+    >>> # Setup
+    >>> save_upload_codecov = os.getenv('DO_COVERAGE_UPLOAD_CODECOV')
+
+    >>> # BUILD_TEST != 'True'
+    >>> os.environ['DO_COVERAGE_UPLOAD_CODECOV'] = 'false'
+    >>> assert not do_upload_codecov()
+
+    >>> # BUILD_TEST == 'true'
+    >>> os.environ['DO_COVERAGE_UPLOAD_CODECOV'] = 'True'
+    >>> assert do_upload_codecov()
+
+    >>> # Teardown
+    >>> if save_upload_codecov is None:
+    ...     os.unsetenv('DO_COVERAGE_UPLOAD_CODECOV')
+    ... else:
+    ...     os.environ['DO_COVERAGE_UPLOAD_CODECOV'] = save_upload_codecov
+
+    """
     if os.getenv('DO_COVERAGE_UPLOAD_CODECOV', '').lower() == 'true':
         return True
     else:
@@ -601,6 +685,34 @@ def do_upload_codecov() -> bool:
 
 
 def do_upload_code_climate() -> bool:
+    """
+    if code coverage should be uploaded to code climate
+
+    Parameter
+    ---------
+    DO_COVERAGE_UPLOAD_CODE_CLIMATE
+        from environment
+
+    Examples:
+
+    >>> # Setup
+    >>> save_upload_code_climate = os.getenv('DO_COVERAGE_UPLOAD_CODE_CLIMATE')
+
+    >>> # BUILD_TEST != 'True'
+    >>> os.environ['DO_COVERAGE_UPLOAD_CODE_CLIMATE'] = 'false'
+    >>> assert not do_upload_code_climate()
+
+    >>> # BUILD_TEST == 'true'
+    >>> os.environ['DO_COVERAGE_UPLOAD_CODE_CLIMATE'] = 'True'
+    >>> assert do_upload_code_climate()
+
+    >>> # Teardown
+    >>> if save_upload_code_climate is None:
+    ...     os.unsetenv('DO_COVERAGE_UPLOAD_CODE_CLIMATE')
+    ... else:
+    ...     os.environ['DO_COVERAGE_UPLOAD_CODE_CLIMATE'] = save_upload_code_climate
+
+    """
     if os.getenv('DO_COVERAGE_UPLOAD_CODE_CLIMATE', '').lower() == 'true':
         return True
     else:
@@ -608,7 +720,65 @@ def do_upload_code_climate() -> bool:
 
 
 def do_build_docs() -> bool:
-    """ if README.rst should be rebuilt """
+    """
+    if README.rst should be rebuilt
+
+    Parameter
+    ---------
+    BUILD_DOCS
+        from environment, "True" or "False"
+    RST_INCLUDE_SOURCE
+        from environment, the source template file
+    RST_INCLUDE_TARGET
+        from environment, the target file
+
+
+    Examples:
+
+    >>> # Setup
+    >>> save_build_docs = os.getenv('BUILD_DOCS')
+    >>> save_rst_include_source = os.getenv('RST_INCLUDE_SOURCE')
+    >>> save_rst_include_target = os.getenv('RST_INCLUDE_TARGET')
+
+    >>> # BUILD_DOCS != 'true'
+    >>> os.environ['BUILD_DOCS'] = 'false'
+    >>> os.unsetenv('RST_INCLUDE_SOURCE')
+    >>> os.unsetenv('RST_INCLUDE_TARGET')
+    >>> assert not do_build_docs()
+
+    >>> # BUILD_DOCS == 'true', no source, no target
+    >>> os.environ['BUILD_DOCS'] = 'True'
+    >>> # no real test here, we cant set environ in travis
+    >>> assert do_build_docs() is not None
+
+    >>> # BUILD_DOCS == 'true', no source
+    >>> os.environ['RST_INCLUDE_TARGET'] = 'some_target_file'
+    >>> # no real test here, we cant set environ in travis
+    >>> assert do_build_docs() is not None
+
+    >>> # BUILD_DOCS == 'true', source and target
+    >>> os.environ['RST_INCLUDE_SOURCE'] = 'some_source_file'
+    >>> # no real test here, we cant set environ in travis
+    >>> assert do_build_docs() is not None
+
+    >>> # Teardown
+    >>> if save_build_docs is None:
+    ...     os.unsetenv('BUILD_DOCS')
+    ... else:
+    ...     os.environ['BUILD_DOCS'] = save_build_docs
+
+    >>> if save_rst_include_source is None:
+    ...     os.unsetenv('RST_INCLUDE_SOURCE')
+    ... else:
+    ...     os.environ['RST_INCLUDE_SOURCE'] = save_rst_include_source
+
+    >>> if save_rst_include_target is None:
+    ...     os.unsetenv('RST_INCLUDE_TARGET')
+    ... else:
+    ...     os.environ['RST_INCLUDE_TARGET'] = save_rst_include_target
+
+
+    """
     if os.getenv('BUILD_DOCS', '').lower() != 'true':
         return False
 
@@ -622,6 +792,36 @@ def do_build_docs() -> bool:
 
 
 def do_deploy_sdist() -> bool:
+    """
+    if we should deploy sdist
+
+
+    Parameter
+    ---------
+    DEPLOY_SDIST
+        from environment
+
+    Examples:
+
+    >>> # Setup
+    >>> save_deploy_sdist = os.getenv('DEPLOY_SDIST')
+
+    >>> # DEPLOY_WHEEL != 'true'
+    >>> os.environ['DEPLOY_SDIST'] = 'false'
+    >>> assert not do_deploy_sdist()
+
+    >>> # DO_FLAKE8_TESTS == 'true'
+    >>> os.environ['DEPLOY_SDIST'] = 'True'
+    >>> assert do_deploy_sdist()
+
+    >>> # Teardown
+    >>> if save_deploy_sdist is None:
+    ...     os.unsetenv('DEPLOY_SDIST')
+    ... else:
+    ...     os.environ['DEPLOY_SDIST'] = save_deploy_sdist
+
+    """
+
     if os.getenv('DEPLOY_SDIST', '').lower() == 'true':
         return True
     else:
@@ -629,6 +829,35 @@ def do_deploy_sdist() -> bool:
 
 
 def do_deploy_wheel() -> bool:
+    """
+    if we should deploy wheels
+
+    Parameter
+    ---------
+    DEPLOY_WHEEL
+        from environment
+
+    Examples:
+
+    >>> # Setup
+    >>> save_deploy_wheel = os.getenv('DEPLOY_WHEEL')
+
+    >>> # DEPLOY_WHEEL != 'true'
+    >>> os.environ['DEPLOY_WHEEL'] = 'false'
+    >>> assert not do_deploy_wheel()
+
+    >>> # DO_FLAKE8_TESTS == 'true'
+    >>> os.environ['DEPLOY_WHEEL'] = 'True'
+    >>> assert do_deploy_wheel()
+
+    >>> # Teardown
+    >>> if save_deploy_wheel is None:
+    ...     os.unsetenv('DEPLOY_WHEEL')
+    ... else:
+    ...     os.environ['DEPLOY_WHEEL'] = save_deploy_wheel
+
+    """
+
     if os.getenv('DEPLOY_WHEEL', '').lower() == 'true':
         return True
     else:
@@ -636,6 +865,36 @@ def do_deploy_wheel() -> bool:
 
 
 def do_flake8_tests() -> bool:
+    """
+    if we should do flake8 tests
+
+    Parameter
+    ---------
+    DO_FLAKE8_TESTS
+        from environment
+
+    Examples:
+
+    >>> # Setup
+    >>> save_flake8_test = os.getenv('DO_FLAKE8_TESTS')
+
+    >>> # DO_FLAKE8_TESTS != 'true'
+    >>> os.environ['DO_FLAKE8_TESTS'] = 'false'
+    >>> assert not do_flake8_tests()
+
+    >>> # DO_FLAKE8_TESTS == 'true'
+    >>> os.environ['DO_FLAKE8_TESTS'] = 'True'
+    >>> assert do_flake8_tests()
+
+    >>> # Teardown
+    >>> if save_flake8_test is None:
+    ...     os.unsetenv('DO_FLAKE8_TESTS')
+    ... else:
+    ...     os.environ['DO_FLAKE8_TESTS'] = save_flake8_test
+
+
+
+    """
     if os.getenv('DO_FLAKE8_TESTS', '').lower() == 'true':
         return True
     else:
@@ -643,6 +902,34 @@ def do_flake8_tests() -> bool:
 
 
 def do_build_test() -> bool:
+    """
+    if a build should be created for test purposes
+
+    Parameter
+    ---------
+    BUILD_TEST
+        from environment
+
+    Examples:
+
+    >>> # Setup
+    >>> save_build_test = os.getenv('BUILD_TEST')
+
+    >>> # BUILD_TEST != 'True'
+    >>> os.environ['BUILD_TEST'] = 'false'
+    >>> assert not do_build_test()
+
+    >>> # BUILD_TEST == 'true'
+    >>> os.environ['BUILD_TEST'] = 'True'
+    >>> assert do_build_test()
+
+    >>> # Teardown
+    >>> if save_build_test is None:
+    ...     os.unsetenv('BUILD_TEST')
+    ... else:
+    ...     os.environ['BUILD_TEST'] = save_build_test
+
+    """
     if os.getenv('BUILD_TEST', '').lower() == 'true':
         return True
     else:
@@ -650,6 +937,35 @@ def do_build_test() -> bool:
 
 
 def os_is_windows() -> bool:
+    """
+    if it is a travis windows build
+
+    Parameter
+    ---------
+    TRAVIS_OS_NAME
+        from environment
+
+    Examples:
+
+    >>> # Setup
+    >>> save_travis_os_name = os.getenv('TRAVIS_OS_NAME')
+
+    >>> # TRAVIS_OS_NAME == 'linux'
+    >>> os.environ['TRAVIS_OS_NAME'] = 'linux'
+    >>> assert not os_is_windows()
+
+    >>> # TRAVIS_OS_NAME == 'windows'
+    >>> os.environ['TRAVIS_OS_NAME'] = 'windows'
+    >>> assert os_is_windows()
+
+    >>> # Teardown
+    >>> if save_travis_os_name is None:
+    ...     os.unsetenv('TRAVIS_OS_NAME')
+    ... else:
+    ...     os.environ['TRAVIS_OS_NAME'] = save_travis_os_name
+
+
+     """
     if os.getenv('TRAVIS_OS_NAME', '').lower() == 'windows':
         return True
     else:
@@ -659,8 +975,56 @@ def os_is_windows() -> bool:
 def do_deploy() -> bool:
     """
     if we should deploy
-        - when $deploy_on_pypi = True
-        - when TRAVIS_TAG != ''
+    if (DEPLOY_SDIST  or DEPLOY_WHEEL) and TRAVIS_TAG
+
+    Parameter
+    ---------
+    DEPLOY_SDIST
+        from environment
+    DEPLOY_WHEEL
+        from environment
+    TRAVIS_TAG
+        from environment
+
+    Examples:
+
+    >>> # Setup
+    >>> save_travis_tag = os.getenv('TRAVIS_TAG')
+    >>> save_deploy_sdist = os.getenv('DEPLOY_SDIST')
+    >>> save_deploy_wheel = os.getenv('DEPLOY_WHEEL')
+
+    >>> # no Tagged Commit
+    >>> os.unsetenv('TRAVIS_TAG')
+    >>> assert not do_deploy()
+
+    >>> # Tagged Commit, DEPLOY_SDIST, DEPLOY_WHEEL != True
+    >>> os.environ['TRAVIS_TAG'] = 'SOME_TAG'
+    >>> os.unsetenv('DEPLOY_SDIST')
+    >>> os.unsetenv('DEPLOY_WHEEL')
+    >>> # no real test here, we cant set environ in travis
+    >>> assert do_deploy() is not None
+
+    >>> # Tagged Commit, DEPLOY_SDIST == True
+    >>> os.environ['DEPLOY_SDIST'] = 'True'
+    >>> # no real test here, we cant set environ in travis
+    >>> assert do_deploy() is not None
+
+    >>> # Teardown
+    >>> if save_travis_tag is None:
+    ...     os.unsetenv('TRAVIS_TAG')
+    ... else:
+    ...     os.environ['TRAVIS_TAG'] = save_travis_tag
+
+    >>> if save_deploy_sdist is None:
+    ...     os.unsetenv('DEPLOY_SDIST')
+    ... else:
+    ...     os.environ['DEPLOY_SDIST'] = save_deploy_sdist
+
+    >>> if save_deploy_wheel is None:
+    ...     os.unsetenv('DEPLOY_WHEEL')
+    ... else:
+    ...     os.environ['DEPLOY_WHEEL'] = save_deploy_wheel
+
     """
     if not os.getenv('TRAVIS_TAG'):
         return False
