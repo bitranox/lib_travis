@@ -751,13 +751,13 @@ def do_build_docs() -> bool:
     >>> # no real test here, we cant set environ in travis
     >>> assert do_build_docs() is not None
 
-    >>> # BUILD_DOCS == 'true', no target
-    >>> os.environ['RST_INCLUDE_SOURCE'] = 'some_source_file'
+    >>> # BUILD_DOCS == 'true', no source
+    >>> os.environ['RST_INCLUDE_TARGET'] = 'some_target_file'
     >>> # no real test here, we cant set environ in travis
     >>> assert do_build_docs() is not None
 
     >>> # BUILD_DOCS == 'true', source and target
-    >>> os.environ['RST_INCLUDE_TARGET'] = 'some_target_file'
+    >>> os.environ['RST_INCLUDE_SOURCE'] = 'some_source_file'
     >>> # no real test here, we cant set environ in travis
     >>> assert do_build_docs() is not None
 
