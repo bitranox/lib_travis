@@ -2,7 +2,7 @@ lib_travis
 ==========
 
 
-Version v2.3.5 as of 2020-08-15 see `Changelog`_
+Version v2.3.6 as of 2020-08-16 see `Changelog`_
 
 |travis_build| |license| |jupyter| |pypi| |black|
 
@@ -167,7 +167,7 @@ python methods:
         --------
 
         >>> if os.getenv('TRAVIS'):
-        ...     install(dry_run=False)
+        ...     install(dry_run=True)
 
         """
 
@@ -702,9 +702,9 @@ following modules will be automatically installed :
 
     ## Project Requirements
     click
-    cli_exit_tools @ git+https://github.com/bitranox/cli_exit_tools.git
-    lib_log_utils @ git+https://github.com/bitranox/lib_log_utils.git
-    rst_include @ git+https://github.com/bitranox/rst_include.git
+    cli_exit_tools
+    lib_log_utils
+    rst_include
 
 Acknowledgements
 ----------------
@@ -731,6 +731,11 @@ Changelog
 - new MINOR version for added functionality in a backwards compatible manner
 - new PATCH version for backwards compatible bug fixes
 
+
+v2.3.6
+--------
+2020-08-16: service release
+    - correct requirements
 
 v2.3.5
 --------
