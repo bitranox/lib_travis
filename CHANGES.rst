@@ -6,6 +6,13 @@ Changelog
 - new PATCH version for backwards compatible bug fixes
 
 
+v2.3.5
+--------
+2020-08-15: service release
+    - install requirements
+    - more cleanup
+    - black codestyle
+
 v2.3.4
 --------
 2020-08-08: service release

@@ -1,7 +1,6 @@
 # STDLIB
 import os
 import pathlib
-import shlex
 import subprocess
 import sys
 import time
@@ -13,7 +12,14 @@ import cli_exit_tools
 
 
 # run{{{
-def run(description: str, command: str, retry: int = 3, sleep: int = 30, banner: bool = True, show_command: bool = True) -> None:
+def run(
+    description: str,
+    command: str,
+    retry: int = 3,
+    sleep: int = 30,
+    banner: bool = True,
+    show_command: bool = True,
+) -> None:
     """
     runs and retries a command passed as string and wrap it in "success" or "error" banners
 
@@ -70,33 +76,52 @@ def run(description: str, command: str, retry: int = 3, sleep: int = 30, banner:
     if show_command:
         command_description = command
     else:
-        command_description = '***secret***'
+        command_description = "***secret***"
 
-    lib_log_utils.banner_success("Action: {description}\nCommand: {command}".format(description=description, command=command_description), banner=banner)
+    lib_log_utils.banner_success(
+        "Action: {description}\nCommand: {command}".format(
+            description=description, command=command_description
+        ),
+        banner=banner,
+    )
     tries = retry
     while True:
         try:
             subprocess.run(command, shell=True, check=True)
-            lib_log_utils.banner_success("Success: {description}".format(description=description), banner=False)
+            lib_log_utils.banner_success(
+                "Success: {description}".format(description=description), banner=False
+            )
             break
         except Exception as exc:
             tries = tries - 1
             # try 3 times, because sometimes connection or other errors on travis
             if tries:
-                lib_log_utils.banner_notice("Retry in {sleep} seconds: {description}\nCommand: {command}".format(
-                    sleep=sleep, description=description, command=command_description), banner=False)
+                lib_log_utils.banner_notice(
+                    "Retry in {sleep} seconds: {description}\nCommand: {command}".format(
+                        sleep=sleep,
+                        description=description,
+                        command=command_description,
+                    ),
+                    banner=False,
+                )
                 time.sleep(sleep)
             else:
                 if show_command:
                     exc_message = str(exc)
                 else:
-                    exc_message = 'Command ***secret*** returned non-zero exit status'
-                lib_log_utils.banner_error("Error: {description}\nCommand: {command}\n{exc}".format(
-                    description=description, command=command_description, exc=exc_message), banner=True)
-                if hasattr(exc, 'returncode'):
+                    exc_message = "Command ***secret*** returned non-zero exit status"
+                lib_log_utils.banner_error(
+                    "Error: {description}\nCommand: {command}\n{exc}".format(
+                        description=description,
+                        command=command_description,
+                        exc=exc_message,
+                    ),
+                    banner=True,
+                )
+                if hasattr(exc, "returncode"):
                     if exc.returncode is not None:  # type: ignore
-                        sys.exit(exc.returncode)    # type: ignore
-                sys.exit(1)     # pragma: no cover
+                        sys.exit(exc.returncode)  # type: ignore
+                sys.exit(1)  # pragma: no cover
         finally:
             cli_exit_tools.flush_streams()
 
@@ -151,14 +176,17 @@ def get_branch() -> str:
     """
     # get_branch}}}
 
-    if 'TRAVIS_TAG' in os.environ and os.environ['TRAVIS_TAG']:
-        branch = 'master'
-    elif 'TRAVIS_PULL_REQUEST_BRANCH' in os.environ and os.environ['TRAVIS_PULL_REQUEST_BRANCH']:
-        branch = os.environ['TRAVIS_PULL_REQUEST_BRANCH']
-    elif 'TRAVIS_BRANCH' in os.environ and os.environ['TRAVIS_BRANCH']:
-        branch = os.environ['TRAVIS_BRANCH']
+    if "TRAVIS_TAG" in os.environ and os.environ["TRAVIS_TAG"]:
+        branch = "master"
+    elif (
+        "TRAVIS_PULL_REQUEST_BRANCH" in os.environ
+        and os.environ["TRAVIS_PULL_REQUEST_BRANCH"]
+    ):
+        branch = os.environ["TRAVIS_PULL_REQUEST_BRANCH"]
+    elif "TRAVIS_BRANCH" in os.environ and os.environ["TRAVIS_BRANCH"]:
+        branch = os.environ["TRAVIS_BRANCH"]
     else:
-        branch = 'master'
+        branch = "master"
     return branch
 
 
@@ -185,12 +213,34 @@ def install(dry_run: bool = True) -> None:
     if dry_run:
         return
     pip_prefix = get_pip_prefix()
-    run(description='install pip', command=' '.join([pip_prefix, 'install --upgrade pip']))
-    run(description='install setuptools', command=' '.join([pip_prefix, 'install --upgrade setuptools']))
-    run(description='install readme renderer', command=' '.join([pip_prefix, 'install --upgrade readme_renderer']))
-    run(description='install twine', command=' '.join([pip_prefix, 'install --upgrade twine']))
-    run(description='install wheel', command=' '.join([pip_prefix, 'install --upgrade wheel']))
-    run(description='install test requirements', command=' '.join([pip_prefix, 'install --upgrade -r ./requirements_test.txt']))
+    run(
+        description="install pip",
+        command=" ".join([pip_prefix, "install --upgrade pip"]),
+    )
+    run(
+        description="install setuptools",
+        command=" ".join([pip_prefix, "install --upgrade setuptools"]),
+    )
+    run(
+        description="install readme renderer",
+        command=" ".join([pip_prefix, "install --upgrade readme_renderer"]),
+    )
+    run(
+        description="install twine",
+        command=" ".join([pip_prefix, "install --upgrade twine"]),
+    )
+    run(
+        description="install wheel",
+        command=" ".join([pip_prefix, "install --upgrade wheel"]),
+    )
+    run(
+        description="install requirements",
+        command=" ".join([pip_prefix, "install --upgrade -r ./requirements.txt"]),
+    )
+    run(
+        description="install test requirements",
+        command=" ".join([pip_prefix, "install --upgrade -r ./requirements_test.txt"]),
+    )
 
 
 # script{{{
@@ -247,61 +297,104 @@ def script(dry_run: bool = True) -> None:
     if dry_run:
         return
     lib_log_utils.setup_handler()
-    cli_command = os.getenv('CLI_COMMAND', '')
-    command_prefix = os.getenv('cPREFIX', '')
+    cli_command = os.getenv("CLI_COMMAND", "")
+    command_prefix = os.getenv("cPREFIX", "")
     python_prefix = get_python_prefix()
-    package_name = os.getenv('PACKAGE_NAME', '')
+    package_name = os.getenv("PACKAGE_NAME", "")
 
     if do_flake8_tests():
-        run(description='flake8 tests', command=' '.join([python_prefix, '-m flake8 --statistics --benchmark']))
+        run(
+            description="flake8 tests",
+            command=" ".join([python_prefix, "-m flake8 --statistics --benchmark"]),
+        )
     else:
         lib_log_utils.banner_notice("flake8 tests disabled on this build")
 
     if do_mypy_tests():
-        mypy_options = os.getenv('MYPY_OPTIONS', '')
-        run(description='mypy tests', command=' '.join([python_prefix, '-m mypy -p', package_name, mypy_options]))
+        mypy_options = os.getenv("MYPY_OPTIONS", "")
+        run(
+            description="mypy tests",
+            command=" ".join([python_prefix, "-m mypy -p", package_name, mypy_options]),
+        )
     else:
         lib_log_utils.banner_notice("mypy typecheck --strict disabled on this build")
 
     if do_pytest():
         if do_coverage():
-            option_codecov = ''.join(['--cov=', package_name])
+            option_codecov = "".join(["--cov=", package_name])
         else:
             lib_log_utils.banner_notice("coverage disabled")
-            option_codecov = ''
-        run(description='run pytest', command=' '.join([python_prefix, '-m pytest', option_codecov]))
+            option_codecov = ""
+        run(
+            description="run pytest",
+            command=" ".join([python_prefix, "-m pytest", option_codecov]),
+        )
     else:
         lib_log_utils.banner_notice("pytest disabled")
 
     # run(description='setup.py test', command=' '.join([python_prefix, './setup.py test']))
     # run(description='pip install, option test', command=' '.join([pip_prefix, 'install', repository, '--install-option test']))
     # run(description='pip standard install', command=' '.join([pip_prefix, 'install', repository]))
-    run(description='setup.py install', command=' '.join([python_prefix, './setup.py install']))
-    run(description='check CLI command', command=' '.join([command_prefix, cli_command, '--version']))
+    run(
+        description="setup.py install",
+        command=" ".join([python_prefix, "./setup.py install"]),
+    )
+    run(
+        description="check CLI command",
+        command=" ".join([command_prefix, cli_command, "--version"]),
+    )
 
     if do_build_docs():
-        rst_include_source = os.getenv('RST_INCLUDE_SOURCE', '')
-        rst_include_target = os.getenv('RST_INCLUDE_TARGET', '')
+        rst_include_source = os.getenv("RST_INCLUDE_SOURCE", "")
+        rst_include_target = os.getenv("RST_INCLUDE_TARGET", "")
         rst_include_source_name = pathlib.Path(rst_include_source).name
         rst_include_target_name = pathlib.Path(rst_include_target).name
-        run(description=' '.join(['rst rebuild', rst_include_target_name, 'from', rst_include_source_name]),
-            command=' '.join([command_prefix, 'rst_include include', rst_include_source, rst_include_target]))
+        run(
+            description=" ".join(
+                [
+                    "rst rebuild",
+                    rst_include_target_name,
+                    "from",
+                    rst_include_source_name,
+                ]
+            ),
+            command=" ".join(
+                [
+                    command_prefix,
+                    "rst_include include",
+                    rst_include_source,
+                    rst_include_target,
+                ]
+            ),
+        )
     else:
         lib_log_utils.banner_notice("rebuild doc file is disabled on this build")
 
     if do_deploy_sdist() or do_build_test():
-        run(description='create source distribution', command=' '.join([python_prefix, 'setup.py sdist']))
+        run(
+            description="create source distribution",
+            command=" ".join([python_prefix, "setup.py sdist"]),
+        )
     else:
-        lib_log_utils.banner_notice("create source distribution is disabled on this build")
+        lib_log_utils.banner_notice(
+            "create source distribution is disabled on this build"
+        )
 
     if do_deploy_wheel() or do_build_test():
-        run(description='create binary distribution (wheel)', command=' '.join([python_prefix, 'setup.py bdist_wheel']))
-        # run(description='create binary distribution (wheel)', command=' '.join([python_prefix, '-m cibuildwheel --output-dir dist']))
+        run(
+            description="create binary distribution (wheel)",
+            command=" ".join([python_prefix, "setup.py bdist_wheel"]),
+        )
     else:
-        lib_log_utils.banner_notice("create wheel distribution is disabled on this build")
+        lib_log_utils.banner_notice(
+            "create wheel distribution is disabled on this build"
+        )
 
     if do_deploy_sdist() or do_deploy_wheel() or do_build_test():
-        run(description='check distributions', command=' '.join([command_prefix, 'twine check dist/*']))
+        run(
+            description="check distributions",
+            command=" ".join([command_prefix, "twine check dist/*"]),
+        )
 
 
 # after_success{{{
@@ -337,29 +430,59 @@ def after_success(dry_run: bool = True) -> None:
     if dry_run:
         return
 
-    command_prefix = os.getenv('cPREFIX', '')
+    command_prefix = os.getenv("cPREFIX", "")
     pip_prefix = get_pip_prefix()
 
     if do_coverage():
-        run(description='coverage report', command=' '.join([command_prefix, 'coverage report']))
+        run(
+            description="coverage report",
+            command=" ".join([command_prefix, "coverage report"]),
+        )
         if do_upload_codecov():
-            run(description='coverage upload to codecov', command=' '.join([command_prefix, 'codecov']))
+            run(
+                description="coverage upload to codecov",
+                command=" ".join([command_prefix, "codecov"]),
+            )
         else:
             lib_log_utils.banner_notice("codecov upload disabled")
 
-        if do_upload_code_climate() and os.getenv('CC_TEST_REPORTER_ID'):
+        if do_upload_code_climate() and os.getenv("CC_TEST_REPORTER_ID"):
             if os_is_windows():
-                os.environ['CODECLIMATE_REPO_TOKEN'] = os.getenv('CC_TEST_REPORTER_ID', '')
-                run(description='install codeclimate-test-reporter', command=' '.join([pip_prefix, 'install codeclimate-test-reporter']))
-                run(description='coverage upload to codeclimate', command=' '.join([command_prefix, 'codeclimate-test-reporter']))
+                os.environ["CODECLIMATE_REPO_TOKEN"] = os.getenv(
+                    "CC_TEST_REPORTER_ID", ""
+                )
+                run(
+                    description="install codeclimate-test-reporter",
+                    command=" ".join([pip_prefix, "install codeclimate-test-reporter"]),
+                )
+                run(
+                    description="coverage upload to codeclimate",
+                    command=" ".join([command_prefix, "codeclimate-test-reporter"]),
+                )
             else:
-                run(description='download test reporter',
-                    command='curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter')
-                run(description='test reporter set permissions', banner=False, command='chmod +x ./cc-test-reporter')
-                travis_test_result = os.getenv('TRAVIS_TEST_RESULT', '')
-                run(description='coverage upload to codeclimate', command=' '.join(['./cc-test-reporter after-build --exit-code', travis_test_result]))
+                run(
+                    description="download test reporter",
+                    command="curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter",
+                )
+                run(
+                    description="test reporter set permissions",
+                    banner=False,
+                    command="chmod +x ./cc-test-reporter",
+                )
+                travis_test_result = os.getenv("TRAVIS_TEST_RESULT", "")
+                run(
+                    description="coverage upload to codeclimate",
+                    command=" ".join(
+                        [
+                            "./cc-test-reporter after-build --exit-code",
+                            travis_test_result,
+                        ]
+                    ),
+                )
         else:
-            lib_log_utils.banner_notice("Code Climate Coverage is disabled, no CC_TEST_REPORTER_ID")
+            lib_log_utils.banner_notice(
+                "Code Climate Coverage is disabled, no CC_TEST_REPORTER_ID"
+            )
 
 
 # deploy{{{
@@ -391,16 +514,27 @@ def deploy(dry_run: bool = True) -> None:
 
     if dry_run:
         return
-    command_prefix = os.getenv('cPREFIX', '')
+    command_prefix = os.getenv("cPREFIX", "")
     github_username = get_github_username()
-    pypi_password = os.getenv('PYPI_PASSWORD', '')
+    pypi_password = os.getenv("PYPI_PASSWORD", "")
 
     if do_deploy():
-        if not dry_run:                 # pragma: no cover
-            run(description='upload to pypi', command=' '.join([command_prefix, 'twine upload --repository-url https://upload.pypi.org/legacy/ -u',
-                                                                github_username, '-p', pypi_password,
-                                                                '--skip-existing', 'dist/*']),
-                show_command=False)     # pragma: no cover
+        if not dry_run:  # pragma: no cover
+            run(
+                description="upload to pypi",
+                command=" ".join(
+                    [
+                        command_prefix,
+                        "twine upload --repository-url https://upload.pypi.org/legacy/ -u",
+                        github_username,
+                        "-p",
+                        pypi_password,
+                        "--skip-existing",
+                        "dist/*",
+                    ]
+                ),
+                show_command=False,
+            )  # pragma: no cover
     else:
         lib_log_utils.banner_notice("pypi deploy is disabled on this build")
 
@@ -414,9 +548,9 @@ def get_pip_prefix() -> str:
 
     """
     c_parts: List[str] = list()
-    c_parts.append(os.getenv('cPREFIX', ''))
-    c_parts.append(os.getenv('cPIP', ''))
-    command_prefix = ' '.join(c_parts).strip()
+    c_parts.append(os.getenv("cPREFIX", ""))
+    c_parts.append(os.getenv("cPIP", ""))
+    command_prefix = " ".join(c_parts).strip()
     return command_prefix
 
 
@@ -429,9 +563,9 @@ def get_python_prefix() -> str:
 
     """
     c_parts: List[str] = list()
-    c_parts.append(os.getenv('cPREFIX', ''))
-    c_parts.append(os.getenv('cPYTHON', ''))
-    python_prefix = ' '.join(c_parts).strip()
+    c_parts.append(os.getenv("cPREFIX", ""))
+    c_parts.append(os.getenv("cPYTHON", ""))
+    python_prefix = " ".join(c_parts).strip()
     return python_prefix
 
 
@@ -442,8 +576,8 @@ def get_github_username() -> str:
     >>> discard = get_github_username()
 
     """
-    repo_slug = os.getenv('TRAVIS_REPO_SLUG', '')
-    github_username = repo_slug.split('/')[0]
+    repo_slug = os.getenv("TRAVIS_REPO_SLUG", "")
+    github_username = repo_slug.split("/")[0]
     return github_username
 
 
@@ -477,7 +611,7 @@ def do_mypy_tests() -> bool:
 
     """
 
-    if os.getenv('MYPY_DO_TESTS', '').lower() == 'true':
+    if os.getenv("MYPY_DO_TESTS", "").lower() == "true":
         return True
     else:
         return False
@@ -512,7 +646,7 @@ def do_pytest() -> bool:
     ...     os.environ['PYTEST_DO_TESTS'] = save_do_pytest
 
     """
-    if os.getenv('PYTEST_DO_TESTS', '').lower() == 'true':
+    if os.getenv("PYTEST_DO_TESTS", "").lower() == "true":
         return True
     else:
         return False
@@ -547,7 +681,7 @@ def do_coverage() -> bool:
     ...     os.environ['DO_COVERAGE'] = save_do_coverage
 
     """
-    if os.getenv('DO_COVERAGE', '').lower() == 'true':
+    if os.getenv("DO_COVERAGE", "").lower() == "true":
         return True
     else:
         return False
@@ -582,7 +716,7 @@ def do_upload_codecov() -> bool:
     ...     os.environ['DO_COVERAGE_UPLOAD_CODECOV'] = save_upload_codecov
 
     """
-    if os.getenv('DO_COVERAGE_UPLOAD_CODECOV', '').lower() == 'true':
+    if os.getenv("DO_COVERAGE_UPLOAD_CODECOV", "").lower() == "true":
         return True
     else:
         return False
@@ -617,7 +751,7 @@ def do_upload_code_climate() -> bool:
     ...     os.environ['DO_COVERAGE_UPLOAD_CODE_CLIMATE'] = save_upload_code_climate
 
     """
-    if os.getenv('DO_COVERAGE_UPLOAD_CODE_CLIMATE', '').lower() == 'true':
+    if os.getenv("DO_COVERAGE_UPLOAD_CODE_CLIMATE", "").lower() == "true":
         return True
     else:
         return False
@@ -683,13 +817,13 @@ def do_build_docs() -> bool:
 
 
     """
-    if os.getenv('BUILD_DOCS', '').lower() != 'true':
+    if os.getenv("BUILD_DOCS", "").lower() != "true":
         return False
 
-    if not os.getenv('RST_INCLUDE_SOURCE'):
+    if not os.getenv("RST_INCLUDE_SOURCE"):
         return False
 
-    if not os.getenv('RST_INCLUDE_TARGET'):
+    if not os.getenv("RST_INCLUDE_TARGET"):
         return False
     else:
         return True
@@ -726,7 +860,7 @@ def do_deploy_sdist() -> bool:
 
     """
 
-    if os.getenv('DEPLOY_SDIST', '').lower() == 'true':
+    if os.getenv("DEPLOY_SDIST", "").lower() == "true":
         return True
     else:
         return False
@@ -762,7 +896,7 @@ def do_deploy_wheel() -> bool:
 
     """
 
-    if os.getenv('DEPLOY_WHEEL', '').lower() == 'true':
+    if os.getenv("DEPLOY_WHEEL", "").lower() == "true":
         return True
     else:
         return False
@@ -799,7 +933,7 @@ def do_flake8_tests() -> bool:
 
 
     """
-    if os.getenv('DO_FLAKE8_TESTS', '').lower() == 'true':
+    if os.getenv("DO_FLAKE8_TESTS", "").lower() == "true":
         return True
     else:
         return False
@@ -834,7 +968,7 @@ def do_build_test() -> bool:
     ...     os.environ['BUILD_TEST'] = save_build_test
 
     """
-    if os.getenv('BUILD_TEST', '').lower() == 'true':
+    if os.getenv("BUILD_TEST", "").lower() == "true":
         return True
     else:
         return False
@@ -870,7 +1004,7 @@ def os_is_windows() -> bool:
 
 
      """
-    if os.getenv('TRAVIS_OS_NAME', '').lower() == 'windows':
+    if os.getenv("TRAVIS_OS_NAME", "").lower() == "windows":
         return True
     else:
         return False
@@ -931,7 +1065,7 @@ def do_deploy() -> bool:
     ...     os.environ['DEPLOY_WHEEL'] = save_deploy_wheel
 
     """
-    if not os.getenv('TRAVIS_TAG'):
+    if not os.getenv("TRAVIS_TAG"):
         return False
     if do_deploy_sdist() or do_deploy_wheel():
         return True
@@ -939,5 +1073,8 @@ def do_deploy() -> bool:
         return False
 
 
-if __name__ == '__main__':
-    print(b'this is a library only, the executable is named "lib_travis_cli.py"', file=sys.stderr)
+if __name__ == "__main__":
+    print(
+        b'this is a library only, the executable is named "lib_travis_cli.py"',
+        file=sys.stderr,
+    )
