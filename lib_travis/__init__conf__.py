@@ -1,20 +1,22 @@
-name = 'lib_travis'
-title = 'travis related utilities'
-version = 'v2.3.4'
-url = 'https://github.com/bitranox/lib_travis'
-author = 'Robert Nowotny'
-author_email = 'bitranox@gmail.com'
-shell_command = 'lib_travis'
+name = "lib_travis"
+title = "travis related utilities"
+version = "v2.3.5"
+url = "https://github.com/bitranox/lib_travis"
+author = "Robert Nowotny"
+author_email = "bitranox@gmail.com"
+shell_command = "lib_travis"
 
 
 def print_info() -> None:
-    print("""\
+    print(
+        """\
 
 Info for lib_travis:
 
     travis related utilities
 
-    Version : v2.3.4
+    Version : v2.3.5
     Url     : https://github.com/bitranox/lib_travis
     Author  : Robert Nowotny
-    Email   : bitranox@gmail.com""")
+    Email   : bitranox@gmail.com"""
+    )

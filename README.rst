@@ -2,9 +2,9 @@ lib_travis
 ==========
 
 
-Version v2.3.4 as of 2020-08-08 see `Changelog`_
+Version v2.3.5 as of 2020-08-15 see `Changelog`_
 
-|travis_build| |license| |jupyter| |pypi|
+|travis_build| |license| |jupyter| |pypi| |black|
 
 |codecov| |better_code| |cc_maintain| |cc_issues| |cc_coverage| |snyk|
 
@@ -42,6 +42,9 @@ Version v2.3.4 as of 2020-08-08 see `Changelog`_
 
 .. |snyk| image:: https://img.shields.io/snyk/vulnerabilities/github/bitranox/lib_travis
    :target: https://snyk.io/test/github/bitranox/lib_travis
+
+.. |black| image:: https://img.shields.io/badge/code%20style-black-000000.svg
+   :target: https://github.com/psf/black
 
 small utils for travis:
  - print colored banners
@@ -339,7 +342,14 @@ python methods:
 
 .. code-block:: python
 
-    def run(description: str, command: str, retry: int = 3, sleep: int = 30, banner: bool = True, show_command: bool = True) -> None:
+    def run(
+        description: str,
+        command: str,
+        retry: int = 3,
+        sleep: int = 30,
+        banner: bool = True,
+        show_command: bool = True,
+    ) -> None:
         """
         runs and retries a command passed as string and wrap it in "success" or "error" banners
 
@@ -721,6 +731,13 @@ Changelog
 - new MINOR version for added functionality in a backwards compatible manner
 - new PATCH version for backwards compatible bug fixes
 
+
+v2.3.5
+--------
+2020-08-15: service release
+    - install requirements
+    - more cleanup
+    - black codestyle
 
 v2.3.4
 --------
