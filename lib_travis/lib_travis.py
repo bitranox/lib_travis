@@ -206,7 +206,7 @@ def install(dry_run: bool = True) -> None:
     --------
 
     >>> if os.getenv('TRAVIS'):
-    ...     install(dry_run=False)
+    ...     install(dry_run=True)
 
     """
     # install}}}
