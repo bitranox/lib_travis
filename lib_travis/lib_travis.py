@@ -79,16 +79,13 @@ def run(
         command_description = "***secret***"
 
     lib_log_utils.banner_success(
-        f"Action: {description}\nCommand: {command_description}",
-        banner=banner,
+        f"Action: {description}\nCommand: {command_description}", banner=banner,
     )
     tries = retry
     while True:
         try:
             subprocess.run(command, shell=True, check=True)
-            lib_log_utils.banner_success(
-                f"Success: {description}", banner=False
-            )
+            lib_log_utils.banner_success(f"Success: {description}", banner=False)
             break
         except Exception as exc:
             tries = tries - 1

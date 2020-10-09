@@ -2,7 +2,7 @@ lib_travis
 ==========
 
 
-Version v2.3.6 as of 2020-08-16 see `Changelog`_
+Version v2.3.7 as of 2020-10-09 see `Changelog`_
 
 |travis_build| |license| |jupyter| |pypi| |black|
 
@@ -58,7 +58,7 @@ automated tests, Travis Matrix, Documentation, Badges, etc. are managed with `Pi
 
 Python version required: 3.6.0 or newer
 
-tested on linux "bionic" with python 3.6, 3.7, 3.8, 3.8-dev, pypy3 - architectures: amd64, ppc64le, s390x, arm64
+tested on linux "bionic" with python 3.6, 3.7, 3.8, 3.9-dev, pypy3 - architectures: amd64, ppc64le, s390x, arm64
 
 `100% code coverage <https://codecov.io/gh/bitranox/lib_travis>`_, flake8 style checking ,mypy static type checking ,tested under `Linux, macOS <https://travis-ci.org/bitranox/lib_travis>`_, automatic daily builds and monitoring
 
@@ -503,7 +503,7 @@ python methods:
           arch: "amd64"
           if: true
           language: python
-          python: "3.8-dev"
+          python: "3.9-dev"
           before_install:
               - export BUILD_DOCS="False"
               - export DEPLOY_SDIST="True"
@@ -731,6 +731,11 @@ Changelog
 - new MINOR version for added functionality in a backwards compatible manner
 - new PATCH version for backwards compatible bug fixes
 
+v2.3.7
+--------
+2020-10-09: service release
+    - update travis build matrix for linux 3.9-dev
+    - update travis build matrix (paths) for windows 3.9 / 3.10
 
 v2.3.6
 --------
