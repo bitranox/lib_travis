@@ -79,29 +79,20 @@ def run(
         command_description = "***secret***"
 
     lib_log_utils.banner_success(
-        "Action: {description}\nCommand: {command}".format(
-            description=description, command=command_description
-        ),
-        banner=banner,
+        f"Action: {description}\nCommand: {command_description}", banner=banner,
     )
     tries = retry
     while True:
         try:
             subprocess.run(command, shell=True, check=True)
-            lib_log_utils.banner_success(
-                "Success: {description}".format(description=description), banner=False
-            )
+            lib_log_utils.banner_success(f"Success: {description}", banner=False)
             break
         except Exception as exc:
             tries = tries - 1
             # try 3 times, because sometimes connection or other errors on travis
             if tries:
                 lib_log_utils.banner_notice(
-                    "Retry in {sleep} seconds: {description}\nCommand: {command}".format(
-                        sleep=sleep,
-                        description=description,
-                        command=command_description,
-                    ),
+                    f"Retry in {sleep} seconds: {description}\nCommand: {command_description}",
                     banner=False,
                 )
                 time.sleep(sleep)
@@ -111,11 +102,7 @@ def run(
                 else:
                     exc_message = "Command ***secret*** returned non-zero exit status"
                 lib_log_utils.banner_error(
-                    "Error: {description}\nCommand: {command}\n{exc}".format(
-                        description=description,
-                        command=command_description,
-                        exc=exc_message,
-                    ),
+                    f"Error: {description}\nCommand: {command_description}\n{exc_message}",
                     banner=True,
                 )
                 if hasattr(exc, "returncode"):

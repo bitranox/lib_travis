@@ -98,7 +98,7 @@ matrix:
       arch: "amd64"
       if: true
       language: python
-      python: "3.8-dev"
+      python: "3.9-dev"
       before_install:
           - export BUILD_DOCS="False"
           - export DEPLOY_SDIST="True"
