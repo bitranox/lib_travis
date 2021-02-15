@@ -222,6 +222,7 @@ def install(dry_run: bool = True) -> None:
         os.environ["PATH"] = ":".join(
             [os.getenv("PATH", ""), str(pathlib.Path.home() / ".cargo/bin")]
         )
+        os.environ["CRYPTOGRAPHY_DONT_BUILD_RUST"] = "1"
 
     run(
         description="install twine",
