@@ -2,7 +2,7 @@ lib_travis
 ==========
 
 
-Version v2.3.7 as of 2020-10-09 see `Changelog`_
+Version v2.3.8 as of 2021-02-15 see `Changelog`_
 
 |travis_build| |license| |jupyter| |pypi| |black|
 
@@ -10,7 +10,7 @@ Version v2.3.7 as of 2020-10-09 see `Changelog`_
 
 
 .. |travis_build| image:: https://img.shields.io/travis/bitranox/lib_travis/master.svg
-   :target: https://travis-ci.org/bitranox/lib_travis
+   :target: https://travis-ci.com/bitranox/lib_travis
 
 .. |license| image:: https://img.shields.io/github/license/webcomics/pywine.svg
    :target: http://en.wikipedia.org/wiki/MIT_License
@@ -58,7 +58,7 @@ automated tests, Travis Matrix, Documentation, Badges, etc. are managed with `Pi
 
 Python version required: 3.6.0 or newer
 
-tested on linux "bionic" with python 3.6, 3.7, 3.8, 3.9-dev, pypy3 - architectures: amd64, ppc64le, s390x, arm64
+tested on linux "bionic" with python 3.6, 3.7, 3.8, 3.9, 3.9-dev, pypy3 - architectures: amd64, ppc64le, s390x, arm64
 
 `100% code coverage <https://codecov.io/gh/bitranox/lib_travis>`_, flake8 style checking ,mypy static type checking ,tested under `Linux, macOS <https://travis-ci.org/bitranox/lib_travis>`_, automatic daily builds and monitoring
 
@@ -493,6 +493,18 @@ python methods:
           language: python
           python: "3.8"
           before_install:
+              - export BUILD_DOCS="False"
+              - export DEPLOY_SDIST="True"
+              - export DEPLOY_WHEEL="True"
+              - export BUILD_TEST="True"
+              - export MYPY_DO_TESTS="True"
+
+        - os: linux
+          arch: "amd64"
+          if: true
+          language: python
+          python: "3.9"
+          before_install:
               - export BUILD_DOCS="True"
               - export DEPLOY_SDIST="True"
               - export DEPLOY_WHEEL="True"
@@ -730,6 +742,11 @@ Changelog
 - new MAJOR version for incompatible API changes,
 - new MINOR version for added functionality in a backwards compatible manner
 - new PATCH version for backwards compatible bug fixes
+
+v2.3.8
+--------
+2021-02-15: service release
+    - install rust compiler for pypy3 on linux, needed for twine
 
 v2.3.7
 --------
