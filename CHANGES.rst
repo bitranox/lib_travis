@@ -5,6 +5,12 @@ Changelog
 - new MINOR version for added functionality in a backwards compatible manner
 - new PATCH version for backwards compatible bug fixes
 
+v2.3.9
+--------
+2021-02-15: service release
+    - install rust compiler for pypy3 on linux, needed for twine
+    - update secrets for travis-ci.com
+
 v2.3.8
 --------
 2021-02-15: service release

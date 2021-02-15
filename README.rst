@@ -2,7 +2,7 @@ lib_travis
 ==========
 
 
-Version v2.3.8 as of 2021-02-15 see `Changelog`_
+Version v2.3.9 as of 2021-02-15 see `Changelog`_
 
 |travis_build| |license| |jupyter| |pypi| |black|
 
@@ -742,6 +742,12 @@ Changelog
 - new MAJOR version for incompatible API changes,
 - new MINOR version for added functionality in a backwards compatible manner
 - new PATCH version for backwards compatible bug fixes
+
+v2.3.9
+--------
+2021-02-15: service release
+    - install rust compiler for pypy3 on linux, needed for twine
+    - update secrets for travis-ci.com
 
 v2.3.8
 --------
