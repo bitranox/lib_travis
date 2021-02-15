@@ -5,6 +5,12 @@ Changelog
 - new MINOR version for added functionality in a backwards compatible manner
 - new PATCH version for backwards compatible bug fixes
 
+
+v2.3.10
+--------
+2021-02-15: service release
+    - install rust compiler for s390x and ppc64le architecture for twine
+
 v2.3.9
 --------
 2021-02-15: service release
