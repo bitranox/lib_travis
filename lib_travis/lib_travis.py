@@ -213,12 +213,14 @@ def install(dry_run: bool = True) -> None:
         command=" ".join([pip_prefix, "install --upgrade readme_renderer"]),
     )
 
-    if os.getenv('python').lower().startswith('pypy3') and os.getenv('TRAVIS_OS_NAME').lower().startswith('linux'):
+    if os.getenv("python").lower().startswith("pypy3") and os.getenv(
+        "TRAVIS_OS_NAME"
+    ).lower().startswith("linux"):
         # for pypy3 install rust compiler on linux
         run(
             description="install rust compiler",
             command="curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y",
-            )
+        )
     run(
         description="install twine",
         command=" ".join([pip_prefix, "install --upgrade twine"]),
