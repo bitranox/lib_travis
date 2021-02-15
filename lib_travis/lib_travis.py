@@ -213,9 +213,7 @@ def install(dry_run: bool = True) -> None:
         command=" ".join([pip_prefix, "install --upgrade readme_renderer"]),
     )
 
-    if os.getenv("python").lower().startswith("pypy3") and os.getenv(
-        "TRAVIS_OS_NAME"
-    ).lower().startswith("linux"):
+    if is_pypy3() and os_is_linux():
         # for pypy3 install rust compiler on linux
         run(
             description="install rust compiler",
@@ -970,6 +968,40 @@ def do_build_test() -> bool:
         return False
 
 
+def is_pypy3() -> bool:
+    """
+    if it is a travis pypy3 build
+
+    Parameter
+    ---------
+    TRAVIS_PYTHON_VERSION
+        from environment
+
+    Examples:
+
+    >>> # Setup
+    >>> save_python_version = os.getenv('TRAVIS_PYTHON_VERSION')
+
+    >>> # Test
+    >>> os.environ['TRAVIS_PYTHON_VERSION'] = 'pypy3'
+    >>> assert is_pypy3()
+
+    >>> os.environ['TRAVIS_PYTHON_VERSION'] = '3.9'
+    >>> assert not is_pypy3()
+
+    >>> # Teardown
+    >>> if save_python_version is None:
+    ...     os.unsetenv('TRAVIS_PYTHON_VERSION')
+    ... else:
+    ...     os.environ['TRAVIS_PYTHON_VERSION'] = save_python_version
+
+    """
+    if os.getenv("TRAVIS_PYTHON_VERSION", "").lower() == "pypy3":
+        return True
+    else:
+        return False
+
+
 def os_is_windows() -> bool:
     """
     if it is a travis windows build
@@ -1001,6 +1033,42 @@ def os_is_windows() -> bool:
 
      """
     if os.getenv("TRAVIS_OS_NAME", "").lower() == "windows":
+        return True
+    else:
+        return False
+
+
+def os_is_linux() -> bool:
+    """
+    if it is a travis linux build
+
+    Parameter
+    ---------
+    TRAVIS_OS_NAME
+        from environment
+
+    Examples:
+
+    >>> # Setup
+    >>> save_travis_os_name = os.getenv('TRAVIS_OS_NAME')
+
+    >>> # TRAVIS_OS_NAME == 'linux'
+    >>> os.environ['TRAVIS_OS_NAME'] = 'linux'
+    >>> assert os_is_linux()
+
+    >>> # TRAVIS_OS_NAME == 'windows'
+    >>> os.environ['TRAVIS_OS_NAME'] = 'windows'
+    >>> assert not os_is_linux()
+
+    >>> # Teardown
+    >>> if save_travis_os_name is None:
+    ...     os.unsetenv('TRAVIS_OS_NAME')
+    ... else:
+    ...     os.environ['TRAVIS_OS_NAME'] = save_travis_os_name
+
+
+     """
+    if os.getenv("TRAVIS_OS_NAME", "").lower() == "linux":
         return True
     else:
         return False
