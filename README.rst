@@ -2,7 +2,7 @@ lib_travis
 ==========
 
 
-Version v2.3.11 as of 2021-02-15 see `Changelog`_
+Version v2.3.12 as of 2021-02-15 see `Changelog`_
 
 |travis_build| |license| |jupyter| |pypi| |black|
 
@@ -539,7 +539,7 @@ python methods:
           arch: "ppc64le"
           if: tag IS present
           language: python
-          python: "3.8"
+          python: "3.9"
           before_install:
               - export BUILD_DOCS="False"
               - export DEPLOY_SDIST="True"
@@ -551,7 +551,7 @@ python methods:
           arch: "s390x"
           if: tag IS present
           language: python
-          python: "3.8"
+          python: "3.9"
           before_install:
               - export BUILD_DOCS="False"
               - export DEPLOY_SDIST="True"
@@ -563,7 +563,7 @@ python methods:
           arch: "arm64"
           if: tag IS present
           language: python
-          python: "3.8"
+          python: "3.9"
           before_install:
               - export BUILD_DOCS="False"
               - export DEPLOY_SDIST="True"
@@ -743,6 +743,11 @@ Changelog
 - new MINOR version for added functionality in a backwards compatible manner
 - new PATCH version for backwards compatible bug fixes
 
+
+v2.3.12
+--------
+2021-02-15: service release
+    - s390x, arm and ppc to python 3.9
 
 v2.3.11
 --------
