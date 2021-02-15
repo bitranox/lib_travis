@@ -213,12 +213,16 @@ def install(dry_run: bool = True) -> None:
         command=" ".join([pip_prefix, "install --upgrade readme_renderer"]),
     )
 
-    if is_pypy3() and os_is_linux():
+    if (is_pypy3() and os_is_linux()) or is_arch_s390x() or is_arch_ppc64le():
         # for pypy3 install rust compiler on linux
         run(
-            description="install rust compiler",
+            description="install rust compiler for twine",
             command="curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y",
         )
+        os.environ["PATH"] = ":".join(
+            [os.getenv("PATH", ""), str(pathlib.Path.home() / ".cargo/bin")]
+        )
+
     run(
         description="install twine",
         command=" ".join([pip_prefix, "install --upgrade twine"]),
@@ -1002,6 +1006,72 @@ def is_pypy3() -> bool:
         return False
 
 
+def is_arch_s390x() -> bool:
+    """
+    if it is a travis s390x cpu architecture
+    Parameter
+    ---------
+    TRAVIS_CPU_ARCH
+        from environment
+
+    Examples:
+
+    >>> # Setup
+    >>> save_cpu_arch = os.getenv('TRAVIS_CPU_ARCH')
+
+    >>> # Test
+    >>> os.environ['TRAVIS_CPU_ARCH'] = 's390x'
+    >>> assert is_arch_s390x()
+
+    >>> os.environ['TRAVIS_CPU_ARCH'] = 'amd64'
+    >>> assert not is_arch_s390x()
+
+    >>> # Teardown
+    >>> if save_cpu_arch is None:
+    ...     os.unsetenv('TRAVIS_CPU_ARCH')
+    ... else:
+    ...     os.environ['TRAVIS_CPU_ARCH'] = save_cpu_arch
+
+    """
+    if os.getenv("TRAVIS_CPU_ARCH", "").lower() == "s390x":
+        return True
+    else:
+        return False
+
+
+def is_arch_ppc64le() -> bool:
+    """
+    if it is a travis ppc64le cpu architecture
+    Parameter
+    ---------
+    TRAVIS_CPU_ARCH
+        from environment
+
+    Examples:
+
+    >>> # Setup
+    >>> save_cpu_arch = os.getenv('TRAVIS_CPU_ARCH')
+
+    >>> # Test
+    >>> os.environ['TRAVIS_CPU_ARCH'] = 'ppc64le'
+    >>> assert is_arch_ppc64le()
+
+    >>> os.environ['TRAVIS_CPU_ARCH'] = 'amd64'
+    >>> assert not is_arch_ppc64le()
+
+    >>> # Teardown
+    >>> if save_cpu_arch is None:
+    ...     os.unsetenv('TRAVIS_CPU_ARCH')
+    ... else:
+    ...     os.environ['TRAVIS_CPU_ARCH'] = save_cpu_arch
+
+    """
+    if os.getenv("TRAVIS_CPU_ARCH", "").lower() == "ppc64le":
+        return True
+    else:
+        return False
+
+
 def os_is_windows() -> bool:
     """
     if it is a travis windows build
@@ -1031,7 +1101,7 @@ def os_is_windows() -> bool:
     ...     os.environ['TRAVIS_OS_NAME'] = save_travis_os_name
 
 
-     """
+    """
     if os.getenv("TRAVIS_OS_NAME", "").lower() == "windows":
         return True
     else:
@@ -1067,7 +1137,7 @@ def os_is_linux() -> bool:
     ...     os.environ['TRAVIS_OS_NAME'] = save_travis_os_name
 
 
-     """
+    """
     if os.getenv("TRAVIS_OS_NAME", "").lower() == "linux":
         return True
     else:

@@ -2,7 +2,7 @@ lib_travis
 ==========
 
 
-Version v2.3.9 as of 2021-02-15 see `Changelog`_
+Version v2.3.10 as of 2021-02-15 see `Changelog`_
 
 |travis_build| |license| |jupyter| |pypi| |black|
 
@@ -742,6 +742,12 @@ Changelog
 - new MAJOR version for incompatible API changes,
 - new MINOR version for added functionality in a backwards compatible manner
 - new PATCH version for backwards compatible bug fixes
+
+
+v2.3.10
+--------
+2021-02-15: service release
+    - install rust compiler for s390x and ppc64le architecture for twine
 
 v2.3.9
 --------
