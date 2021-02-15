@@ -213,8 +213,8 @@ def install(dry_run: bool = True) -> None:
         command=" ".join([pip_prefix, "install --upgrade readme_renderer"]),
     )
 
-    if (is_pypy3() and os_is_linux()) or is_arch_s390x() or is_arch_ppc64le():
-        # for pypy3 install rust compiler on linux
+    if is_pypy3() and os_is_linux():
+        # for pypy3 install rust compiler on linux to compile cryptography
         run(
             description="install rust compiler for twine",
             command="curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y",
@@ -222,6 +222,10 @@ def install(dry_run: bool = True) -> None:
         os.environ["PATH"] = ":".join(
             [os.getenv("PATH", ""), str(pathlib.Path.home() / ".cargo/bin")]
         )
+
+    if is_arch_s390x() or is_arch_ppc64le():
+        # for s390 and ppc64le do not install rust compiler, and skip rust build -
+        # because it did not work 2021-02-15, error on compiling cryptography
         os.environ["CRYPTOGRAPHY_DONT_BUILD_RUST"] = "1"
 
     run(
