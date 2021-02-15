@@ -6,6 +6,11 @@ Changelog
 - new PATCH version for backwards compatible bug fixes
 
 
+v2.3.11
+--------
+2021-02-15: service release
+    - update macOS to 10.15.7
+
 v2.3.10
 --------
 2021-02-15: service release

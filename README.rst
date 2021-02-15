@@ -2,7 +2,7 @@ lib_travis
 ==========
 
 
-Version v2.3.10 as of 2021-02-15 see `Changelog`_
+Version v2.3.11 as of 2021-02-15 see `Changelog`_
 
 |travis_build| |license| |jupyter| |pypi| |black|
 
@@ -574,9 +574,9 @@ python methods:
         - os: osx
           if: true
           language: sh
-          name: "macOS 10.15.4"
+          name: "macOS 10.15.7"
           python: "3.8"
-          osx_image: xcode11.5
+          osx_image: xcode12.2
           env:
             # on osx pip and python points to python 2.7 - therefore we have to use pip3 and python3 here
             - cPREFIX=""				# prefix before commands - used for wine, there the prefix is "wine"
@@ -743,6 +743,11 @@ Changelog
 - new MINOR version for added functionality in a backwards compatible manner
 - new PATCH version for backwards compatible bug fixes
 
+
+v2.3.11
+--------
+2021-02-15: service release
+    - update macOS to 10.15.7
 
 v2.3.10
 --------
