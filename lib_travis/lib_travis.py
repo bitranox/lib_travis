@@ -213,9 +213,7 @@ def install(dry_run: bool = True) -> None:
         command=" ".join([pip_prefix, "install --upgrade readme_renderer"]),
     )
 
-    if os.getenv("TRAVIS_PYTHON_VERSION").lower().startswith("pypy3") and os.getenv(
-        "TRAVIS_OS_NAME"
-    ).lower().startswith("linux"):
+    if is_pypy3() and os_is_linux():
         # for pypy3 install rust compiler on linux
         run(
             description="install rust compiler",
