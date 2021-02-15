@@ -539,7 +539,7 @@ python methods:
           arch: "ppc64le"
           if: tag IS present
           language: python
-          python: "3.8"
+          python: "3.9"
           before_install:
               - export BUILD_DOCS="False"
               - export DEPLOY_SDIST="True"
@@ -551,7 +551,7 @@ python methods:
           arch: "s390x"
           if: tag IS present
           language: python
-          python: "3.8"
+          python: "3.9"
           before_install:
               - export BUILD_DOCS="False"
               - export DEPLOY_SDIST="True"
@@ -563,7 +563,7 @@ python methods:
           arch: "arm64"
           if: tag IS present
           language: python
-          python: "3.8"
+          python: "3.9"
           before_install:
               - export BUILD_DOCS="False"
               - export DEPLOY_SDIST="True"
