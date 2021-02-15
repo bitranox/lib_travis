@@ -6,10 +6,15 @@ Changelog
 - new PATCH version for backwards compatible bug fixes
 
 
+v2.3.11
+--------
+2021-02-15: service release
+    - update macOS to 10.15.7
+
 v2.3.10
 --------
 2021-02-15: service release
-    - install rust compiler for s390x and ppc64le architecture for twine
+    - disable rust-crypto build for architectures s390x and ppc64le, since compile errors
 
 v2.3.9
 --------
